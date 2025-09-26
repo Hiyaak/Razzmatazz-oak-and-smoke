@@ -1,37 +1,39 @@
-import React from 'react';
-import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "../../assets/concept.jpg";
 
 const ShoppingCartPage = () => {
   const navigate = useNavigate();
-  
+
   // Mock data - in a real app, this would come from state management
   const cartItems = []; // Empty cart for now
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left Sidebar - 40% */}
-      <div className="w-2/5 bg-gray-50 min-h-screen border-r border-gray-200">
+    <div className="flex flex-col md:flex-row min-h-screen">
+      {/* Left Sidebar (40% on desktop, full on mobile) */}
+      <div className="w-full md:w-2/5 bg-gray-50 min-h-screen border-r border-gray-200 flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center mb-4">
-            <button 
+            <button
               onClick={() => navigate("/menu")}
               className="p-2 hover:bg-gray-200 rounded-full transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
           </div>
-          <h1 className="text-2xl font-semibold text-gray-900">Shopping Cart</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Shopping Cart
+          </h1>
         </div>
 
         {/* Promotions Section */}
         <div className="p-4 border-b border-gray-200">
           <h2 className="text-lg font-medium text-gray-900 mb-3">Promotions</h2>
           <div className="flex space-x-2">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Enter promotion code"
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -42,15 +44,17 @@ const ShoppingCartPage = () => {
         </div>
 
         {/* Items Section */}
-        <div className="p-4">
+        <div className="p-4 flex-1 overflow-y-auto">
           <h2 className="text-lg font-medium text-gray-900 mb-3">Items</h2>
-          
+
           {cartItems.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">Your cart is empty.</p>
-              <p className="text-gray-500 text-sm mb-6">Add some items to your cart.</p>
-              <button 
+              <p className="text-gray-600 mb-2">Your cart is empty.</p>
+              <p className="text-gray-500 text-sm mb-6">
+                Add some items to your cart.
+              </p>
+              <button
                 onClick={() => navigate("/menu")}
                 className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
               >
@@ -59,7 +63,7 @@ const ShoppingCartPage = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {/* Cart items would be mapped here */}
+              {/* Example cart item */}
               <div className="border-b border-gray-200 pb-4">
                 <div className="flex justify-between items-start">
                   <div>
@@ -87,7 +91,7 @@ const ShoppingCartPage = () => {
 
         {/* Order Summary - Only show when cart has items */}
         {cartItems.length > 0 && (
-          <div className="p-4 border-t border-gray-200 mt-auto">
+          <div className="p-4 border-t border-gray-200">
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
@@ -109,8 +113,8 @@ const ShoppingCartPage = () => {
         )}
       </div>
 
-      {/* Right Panel - 60% */}
-      <div className="w-3/5 relative">
+      {/* Right Panel (hidden on mobile, visible on md+) */}
+      <div className="hidden md:block md:w-3/5 relative">
         <img
           src={heroImage}
           alt="Background"
