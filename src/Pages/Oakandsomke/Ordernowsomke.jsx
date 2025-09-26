@@ -1,6 +1,13 @@
-
 import React, { useState } from "react";
-import { Clock, MapPin, Menu, ShoppingBag, Search, User, Leaf } from "lucide-react";
+import {
+  Clock,
+  MapPin,
+  Menu,
+  ShoppingBag,
+  Search,
+  User,
+  Leaf,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroImage from "../../assets/concept.jpg";
 import dash from "../../assets/productimage.jpg";
@@ -39,6 +46,10 @@ const FoodDeliveryApp = () => {
     navigate("/pickupdeviler");
   };
 
+  const goToCart = () => {
+    navigate("/cartitems");
+  };
+
   return (
     <>
       {/* Desktop layout (md and up) */}
@@ -46,7 +57,7 @@ const FoodDeliveryApp = () => {
         {/* Left Panel - 40% */}
         <div className="w-2/5 bg-white border-r border-gray-200 flex flex-col">
           {/* Brand Header with Icon - Clickable */}
-          <div 
+          <div
             onClick={handleBrandClick}
             className="px-4 py-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
           >
@@ -109,7 +120,7 @@ const FoodDeliveryApp = () => {
                 selectedTab === "Pickup"
                   ? "bg-gray-900 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`} 
+              }`}
             >
               Pickup
             </button>
@@ -182,7 +193,7 @@ const FoodDeliveryApp = () => {
           />
 
           {/* Brand Logo */}
-          <div className="absolute bottom-8 right-8 z-10">
+          {/* <div className="absolute bottom-8 right-8 z-10">
             <div className="text-red-500 font-bold text-4xl transform -rotate-12">
               <span className="text-red-600">Oak</span>
               <span className="text-white mx-2">and</span>
@@ -190,12 +201,11 @@ const FoodDeliveryApp = () => {
             </div>
           </div>
 
-          {/* Instagram Icon */}
           <div className="absolute bottom-8 left-8 z-20">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
               IG
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -208,7 +218,7 @@ const FoodDeliveryApp = () => {
               <Menu className="w-6 h-6 text-gray-700" />
             </button>
           </div>
-          <div 
+          <div
             onClick={handleBrandClick}
             className="flex items-center space-x-2 cursor-pointer"
           >
@@ -232,12 +242,12 @@ const FoodDeliveryApp = () => {
 
         {/* Hero Image */}
         <div className="w-full relative">
-          <img 
-            src={heroImage} 
-            alt="Hero Food" 
-            className="w-full h-48 object-cover" 
+          <img
+            src={heroImage}
+            alt="Hero Food"
+            className="w-full h-48 object-cover"
           />
-          
+
           {/* Instagram Floating Button */}
           <div className="absolute bottom-4 left-4 z-20">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
@@ -279,7 +289,7 @@ const FoodDeliveryApp = () => {
               selectedTab === "Pickup"
                 ? "bg-gray-900 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`} 
+            }`}
           >
             Pickup
           </button>
@@ -299,7 +309,7 @@ const FoodDeliveryApp = () => {
               Edit
             </button>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-gray-400" />
             <div>
@@ -311,11 +321,14 @@ const FoodDeliveryApp = () => {
         {/* Product Grid Section */}
         <div className="w-full px-4 py-4 grid grid-cols-2 gap-4">
           {productCategories.map((item) => (
-            <div key={item._id} className="relative rounded-lg overflow-hidden shadow group">
-              <img 
-                src={item.product_img} 
-                alt={item.productName} 
-                className="w-full h-36 object-cover" 
+            <div
+              key={item._id}
+              className="relative rounded-lg overflow-hidden shadow group"
+            >
+              <img
+                src={item.product_img}
+                alt={item.productName}
+                className="w-full h-36 object-cover"
               />
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                 <h3 className="text-white font-bold text-lg text-center">
@@ -328,7 +341,10 @@ const FoodDeliveryApp = () => {
 
         {/* Select Location Button */}
         <div className="p-4 mt-auto">
-          <button className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg transition-colors">
+          <button
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg transition-colors"
+            onClick={goToCart}
+          >
             Select your location
           </button>
         </div>

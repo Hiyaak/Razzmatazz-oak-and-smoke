@@ -10,7 +10,7 @@
 //   return (
 //     <>
 //       <Router>
-       
+
 //         <Suspense fallback={<Loader />}>
 //           <Routes>
 //             <Route path="/" element={<Oakandsomke/>} />
@@ -24,7 +24,6 @@
 
 // export default App;
 
-
 // App.js
 import React, { lazy, Suspense } from "react";
 import "./App.css";
@@ -36,7 +35,7 @@ const Menu = lazy(() => import("./Pages/Oakandsomke/Menu"));
 const Shoopingcart = lazy(() => import("./Pages/Oakandsomke/Shoopingcart"));
 const Review = lazy(() => import("./Pages/Oakandsomke/Review"));
 const Pickupdeviler = lazy(() => import("./Pages/Oakandsomke/Pickupdeviler"));
-
+const Cart = lazy(() => import("./Pages/Oakandsomke/Cart"));
 
 function App() {
   return (
@@ -44,11 +43,12 @@ function App() {
       <Router>
         <Suspense fallback={<Loader />}>
           <Routes>
-            <Route path="/" element={<Oakandsomke/>} />
-            <Route path="/menu" element={<Menu/>} />
-            <Route path="/shoopingcart" element={<Shoopingcart/>} />
-            <Route path="/review" element={<Review/>} />
-            <Route path="/pickupdeviler" element={<Pickupdeviler/>} />
+            <Route path="/" element={<Oakandsomke />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/shoopingcart" element={<Shoopingcart />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/pickupdeviler" element={<Pickupdeviler />} />
+            <Route path="/cartitems" element={<Cart />} />
           </Routes>
         </Suspense>
       </Router>
