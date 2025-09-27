@@ -47,6 +47,10 @@ const FoodDeliveryApp = () => {
     navigate("/pickupdeviler");
   };
 
+  const goToCart = () => {
+    navigate("/cartitems");
+  };
+
   return (
     <>
       {/* Desktop layout (md and up) */}
@@ -235,22 +239,15 @@ const FoodDeliveryApp = () => {
             className="w-full h-full object-cover"
           />
 
-          {/* Brand Logo */}
-          <div className="absolute bottom-8 right-8 z-10">
-            <div className="text-red-500 font-bold text-4xl transform -rotate-12">
-              {/* <span className="text-red-600">Oak</span>
-              <span className="text-white mx-2">and</span>
-              <span className="text-red-600">Smoke</span> */}
-            </div>
-          </div>
+       
+        
 
-          {/* Instagram Icon */}
           <div className="absolute bottom-8 left-8 z-20">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
               IG
             </div>
-          </div>
-        </div>
+          </div> 
+        </div> 
       </div>
 
       {/* Mobile layout (below md) */}
@@ -385,7 +382,10 @@ const FoodDeliveryApp = () => {
 
         {/* Select Location Button */}
         <div className="p-4 mt-auto">
-          <button className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg transition-colors">
+          <button
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg transition-colors"
+            onClick={goToCart}
+          >
             Select your location
           </button>
         </div>
