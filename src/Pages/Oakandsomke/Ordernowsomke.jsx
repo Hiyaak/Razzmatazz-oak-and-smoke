@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import heroImage from "../../assets/concept.jpg";
 import dash from "../../assets/productimage.jpg";
 import board from "../../assets/subproductimage.jpg";
+import oak from "../../assets/oaklogo1.png";
 
 const FoodDeliveryApp = () => {
   const [selectedTab, setSelectedTab] = useState("Delivery");
@@ -54,24 +55,70 @@ const FoodDeliveryApp = () => {
     <>
       {/* Desktop layout (md and up) */}
       <div className="hidden md:flex min-h-screen bg-gray-50">
-        {/* Left Panel - 40% */}
         <div className="w-2/5 bg-white border-r border-gray-200 flex flex-col">
-          {/* Brand Header with Icon - Clickable */}
           <div
             onClick={handleBrandClick}
             className="px-4 py-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
           >
-            <div className="flex items-center justify-center space-x-3 mb-2">
-              <div className="flex items-center justify-center w-10 h-10 bg-red-100 rounded-full">
-                <Leaf className="w-6 h-6 text-red-600" />
-              </div>
+            {/* <div className="flex items-center justify-center space-x-3 mb-2">
+              <img src={oak} alt="Logo" className="w-20 h-20 object-contain" />
+              <img src="oaklogo1.png" alt="" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 text-center">
+            <h1 className="text-1xl font-bold text-gray-900 text-left">
               Oak and Smoke
             </h1>
-            <p className="text-sm text-gray-600 text-center mt-1">
+            <p className="text-sm text-gray-600 text-left mt-1">
               Smoke Meet Everyday
-            </p>
+            </p> */}
+             <div className="flex items-center space-x-3">
+    {/* Logo */}
+    <img
+      src={oak}
+      alt="Logo"
+      className="w-20 h-20 object-contain"
+    />
+
+    {/* Brand text */}
+    <div>
+      <h1 className="text-x2 font-bold text-gray-900">
+        Oak and Smoke
+      </h1>
+      <p className="text-sm text-gray-600 mt-1">
+        Smoke Meat Everyday
+      </p>
+    </div>
+  </div>
+
+  <hr />
+
+     <div className="flex p-4 justify-center space-x-20">
+            <button
+              onClick={() => {
+                setSelectedTab("Delivery");
+                pickupdelivery();
+              }}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                selectedTab === "Delivery"
+                  ? "bg-red-900 text-white"
+                  : "bg-red-500 text-gray-600 hover:bg-red-200"
+              }`}
+            >
+              Delivery
+            </button>
+            <button
+              onClick={() => {
+                setSelectedTab("Pickup");
+                pickupdelivery();
+              }}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                selectedTab === "Pickup"
+                  ? "bg-white-900 text-white"
+                  : "bg-red-500 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              Pickup
+            </button>
+          </div>
           </div>
 
           {/* Location and Time */}
@@ -97,7 +144,7 @@ const FoodDeliveryApp = () => {
             </div>
           </div>
 
-          <div className="flex p-4 justify-center space-x-4">
+          {/* <div className="flex p-4 justify-center space-x-4">
             <button
               onClick={() => {
                 setSelectedTab("Delivery");
@@ -124,7 +171,7 @@ const FoodDeliveryApp = () => {
             >
               Pickup
             </button>
-          </div>
+          </div> */}
 
           {/* Food Categories - Side by Side */}
           <div className="flex-1 px-4 space-y-4">
@@ -192,21 +239,15 @@ const FoodDeliveryApp = () => {
             className="w-full h-full object-cover"
           />
 
-          {/* Brand Logo */}
-          {/* <div className="absolute bottom-8 right-8 z-10">
-            <div className="text-red-500 font-bold text-4xl transform -rotate-12">
-              <span className="text-red-600">Oak</span>
-              <span className="text-white mx-2">and</span>
-              <span className="text-red-600">Smoke</span>
-            </div>
-          </div>
+       
+        
 
           <div className="absolute bottom-8 left-8 z-20">
             <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
               IG
             </div>
-          </div> */}
-        </div>
+          </div> 
+        </div> 
       </div>
 
       {/* Mobile layout (below md) */}
@@ -258,9 +299,9 @@ const FoodDeliveryApp = () => {
           {/* Brand Logo on Hero */}
           <div className="absolute bottom-4 right-4 z-10">
             <div className="text-red-500 font-bold text-2xl transform -rotate-12">
-              <span className="text-red-600">Oak</span>
+              {/* <span className="text-red-600">Oak</span>
               <span className="text-white mx-1">and</span>
-              <span className="text-red-600">Smoke</span>
+              <span className="text-red-600">Smoke</span> */}
             </div>
           </div>
         </div>
