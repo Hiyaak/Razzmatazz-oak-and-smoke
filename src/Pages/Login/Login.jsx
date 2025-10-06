@@ -45,7 +45,7 @@ const ContactInfoForm = () => {
   }
 
   const handleSignUp = () => {
-    console.log('Sign up clicked')
+    navigate('/menu')
   }
 
   const handleContinueAsGuest = () => {

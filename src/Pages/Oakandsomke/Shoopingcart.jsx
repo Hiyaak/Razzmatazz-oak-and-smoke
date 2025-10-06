@@ -18,7 +18,9 @@ const ShoppingCartPage = () => {
 
   const handleGotocheckout = () => {
     const guestUserId = localStorage.getItem('guestUserId')
-    if (guestUserId) {
+    const registredUserId = localStorage.getItem('registredUserId')
+
+    if (guestUserId || registredUserId) {
       navigate('/placeorder')
     } else {
       navigate('/login')
