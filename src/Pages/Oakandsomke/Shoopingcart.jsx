@@ -1,8 +1,20 @@
 import React from 'react'
-import { ArrowLeft, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react'
+import {
+  ArrowLeft,
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  Menu,
+  ShoppingBag,
+  Search,
+  User
+} from 'lucide-react'
+
 import { useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import { useCart } from '../../Context/CartContext'
+import { ImagePath } from '../../Services/Apiservice'
 
 const ShoppingCartPage = () => {
   const navigate = useNavigate()
@@ -25,6 +37,14 @@ const ShoppingCartPage = () => {
     } else {
       navigate('/login')
     }
+  }
+
+  const handleMenuClick = () => {
+    navigate('/menu')
+  }
+
+  const handleshoopingcartClick = () => {
+    navigate('/shoopingcart')
   }
 
   return (
@@ -89,49 +109,54 @@ const ShoppingCartPage = () => {
               {cart.map(item => (
                 <div
                   key={item._id}
-                  className='border-b border-gray-200 pb-4 last:border-b-0'
+                  className='flex items-center justify-between border-b border-gray-200 pb-4 last:border-b-0'
                 >
-                  <div className='flex justify-between items-start'>
-                    <div className='flex-1'>
-                      <h3 className='font-medium text-gray-900'>{item.name}</h3>
+                  {/* Product Image */}
+                  <img
+                    src={`${ImagePath}${item.image}`}
+                    alt={item.name}
+                    className='w-20 h-20 object-cover rounded-md'
+                  />
 
-                      <p className='text-red-500 font-bold'>{item.price} KD</p>
-                    </div>
-
-                    <div className='flex items-center space-x-2'>
-                      {/* Quantity Controls */}
-                      <div className='flex items-center border border-gray-300 rounded-lg'>
-                        <button
-                          onClick={() =>
-                            handleQuantityChange(item._id, item.quantity - 1)
-                          }
-                          className='p-2 hover:bg-gray-100 transition-colors'
-                        >
-                          <Minus className='w-4 h-4' />
-                        </button>
-                        <span className='px-3 py-1 min-w-8 text-center'>
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            handleQuantityChange(item._id, item.quantity + 1)
-                          }
-                          className='p-2 hover:bg-gray-100 transition-colors'
-                        >
-                          <Plus className='w-4 h-4' />
-                        </button>
-                      </div>
-
-                      {/* Remove Button */}
-                      <button
-                        onClick={() => removeFromCart(item._id)}
-                        className='p-2 rounded-full hover:bg-red-100 transition-colors ml-2'
-                        title='Remove item'
-                      >
-                        <Trash2 className='w-4 h-4 text-red-500' />
-                      </button>
-                    </div>
+                  {/* Name & Price */}
+                  <div className='flex-1 flex flex-col justify-center px-4'>
+                    <h2 className='text-lg font-semibold'>{item.name}</h2>
+                    <span className='text-red-500 font-bold'>
+                      {item.price} KD
+                    </span>
                   </div>
+
+                  {/* Quantity Controls */}
+                  <div className='flex items-center border border-gray-300 rounded-lg'>
+                    <button
+                      onClick={() =>
+                        handleQuantityChange(item._id, item.quantity - 1)
+                      }
+                      className='p-2 hover:bg-gray-100 transition-colors'
+                    >
+                      <Minus className='w-4 h-4' />
+                    </button>
+                    <span className='px-3 py-1 min-w-8 text-center'>
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() =>
+                        handleQuantityChange(item._id, item.quantity + 1)
+                      }
+                      className='p-2 hover:bg-gray-100 transition-colors'
+                    >
+                      <Plus className='w-4 h-4' />
+                    </button>
+                  </div>
+
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => removeFromCart(item._id)}
+                    className='p-2 rounded-full hover:bg-red-100 transition-colors ml-4'
+                    title='Remove item'
+                  >
+                    <Trash2 className='w-4 h-4 text-red-500' />
+                  </button>
                 </div>
               ))}
             </div>
@@ -165,13 +190,49 @@ const ShoppingCartPage = () => {
         </div>
       </div>
 
-      {/* Right Panel (hidden on mobile, visible on md+) */}
-      <div className='hidden md:block md:w-3/5 relative'>
-        <img
-          src={heroImage}
-          alt='Background'
-          className='w-full h-full object-cover'
-        />
+      {/* Right Panel */}
+      <div className='flex-1 relative bg-black'>
+        {/* Top Navigation — hidden on mobile */}
+        <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
+          <div className='flex justify-between items-center'>
+            <div className='flex space-x-4'>
+              <button
+                onClick={handleMenuClick}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <Menu className='w-6 h-6' />
+              </button>
+              <button
+                onClick={handleshoopingcartClick}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <ShoppingBag className='w-6 h-6' />
+              </button>
+              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
+                <Search className='w-6 h-6' />
+              </button>
+              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
+                <User className='w-6 h-6' />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Section — hidden on mobile */}
+        <div className='hidden md:block relative h-screen'>
+          <img
+            src={heroImage}
+            alt='Hero Food'
+            className='w-full h-full object-cover'
+          />
+
+          {/* Bottom IG button */}
+          <div className='absolute bottom-8 left-8 z-20'>
+            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
+              IG
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
