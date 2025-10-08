@@ -103,7 +103,7 @@ const Menu = () => {
     {
       icon: <Clock className='w-5 h-5 text-gray-600' />,
       label: 'My Orders',
-      path: '/placeorder'
+      path: '/myorders'
     }
   ]
   return (

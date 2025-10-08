@@ -3,6 +3,7 @@ import heroImage from '../../assets/concept.jpg'
 import { ArrowLeft, Menu, Search, User, ShoppingBag } from 'lucide-react'
 
 import { useCart } from '../../Context/CartContext'
+import ApiService from '../../Services/Apiservice'
 
 const Placeorder = () => {
   const navigate = useNavigate()
@@ -14,6 +15,48 @@ const Placeorder = () => {
 
   const handleshoopingcartClick = () => {
     navigate('/shoopingcart')
+  }
+
+  const handlePlaceOrder = async () => {
+    try {
+      // Get user ID (guest or registered)
+      const userId =
+        localStorage.getItem('guestUserId') ||
+        localStorage.getItem('registredUserId')
+
+      // Get location details from localStorage
+      const { selectedMethod, selectedGovernateId, selectedAreaId } =
+        JSON.parse(localStorage.getItem('selectedLocation') || '{}')
+
+      // Build payload
+      const payload = {
+        user_id: userId,
+        products: cart.map(item => ({
+          subproduct_id: item._id,
+          subProduct_img: item.image,
+          subProduct_name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          description: item.description || ''
+        })),
+
+        deliveryType: selectedMethod || '',
+        governateId: selectedGovernateId || '',
+        areaId: selectedAreaId || ''
+      }
+
+      const { data } = await ApiService.post('placeOrder', payload)
+
+      if (data.status) {
+        console.log('Order placed successfully — Server Response:', data)
+        alert('Order placed successfully!')
+        navigate('/myorders')
+      } else {
+        alert('Failed to place order.')
+      }
+    } catch (error) {
+      console.error('❌ Error in placing order:', error)
+    }
   }
 
   return (
@@ -77,7 +120,10 @@ const Placeorder = () => {
           </div>
 
           {/* Place Order Button */}
-          <button className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors text-center'>
+          <button
+            onClick={handlePlaceOrder}
+            className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors text-center'
+          >
             Place Order
           </button>
         </div>

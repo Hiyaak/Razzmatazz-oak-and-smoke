@@ -12,7 +12,7 @@ const Cart = lazy(() => import('./Pages/Oakandsomke/Cart'))
 const Subproducts = lazy(() => import('./Pages/Oakandsomke/Subproducts'))
 const Login = lazy(() => import('./Pages/Login/Login'))
 const Placeorder = lazy(() => import('./Pages/Placeorder/Placeorder'))
-
+const Myorders = lazy(() => import('./Pages/Placeorder/Myorders'))
 function App () {
   return (
     <>
@@ -28,6 +28,7 @@ function App () {
             <Route path='/cartitems' element={<Cart />} />
             <Route path='/login' element={<Login />} />
             <Route path='/placeorder' element={<Placeorder />} />
+            <Route path='/myorders' element={<Myorders />} />
           </Routes>
         </Suspense>
       </Router>

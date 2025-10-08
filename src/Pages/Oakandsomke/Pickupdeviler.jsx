@@ -20,7 +20,9 @@ const HeroSection = () => {
   const [showDropdown, setShowDropdown] = useState(false)
   const [governates, setGovernates] = useState([])
   const [areas, setAreas] = useState([])
-
+  const [selectedGovernateId, setSelectedGovernateId] = useState('')
+  const [selectedAreaId, setSelectedAreaId] = useState('')
+  
   // Fetch all governates for the brand
   const getAllGovernates = async () => {
     try {
@@ -69,6 +71,7 @@ const HeroSection = () => {
   // Handle governate selection
   const handleGovernateSelect = governate => {
     setSelectedGovernate(governate.governateName)
+    setSelectedGovernateId(governate._id)
     setSelectedArea('')
     setSearchQuery('')
     getAreasByGovernate(governate._id)
@@ -78,6 +81,7 @@ const HeroSection = () => {
   // Handle area selection
   const handleAreaSelect = area => {
     setSelectedArea(area.areaName)
+    setSelectedAreaId(area._id)
     setShowDropdown(false)
   }
 
@@ -88,12 +92,16 @@ const HeroSection = () => {
 
   const handleStartOrdering = () => {
     if (selectedArea || selectedGovernate) {
-      // Save selection to localStorage
       localStorage.setItem(
         'selectedLocation',
-        JSON.stringify({ selectedMethod, selectedGovernate, selectedArea })
+        JSON.stringify({
+          selectedMethod,
+          selectedGovernate,
+          selectedGovernateId,
+          selectedArea,
+          selectedAreaId
+        })
       )
-
       navigate('/')
     }
   }
