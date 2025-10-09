@@ -7,7 +7,7 @@ import ApiService from '../../Services/Apiservice'
 
 const Placeorder = () => {
   const navigate = useNavigate()
-  const { cart, updateQuantity, removeFromCart } = useCart()
+  const { cart } = useCart()
 
   const handleMenuClick = () => {
     navigate('/menu')
@@ -15,6 +15,10 @@ const Placeorder = () => {
 
   const handleshoopingcartClick = () => {
     navigate('/shoopingcart')
+  }
+
+  const handeleSearch = () => {
+    navigate('/search')
   }
 
   const handlePlaceOrder = async () => {
@@ -148,7 +152,7 @@ const Placeorder = () => {
                 <ShoppingBag className='w-6 h-6' />
               </button>
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search className='w-6 h-6' />
+                <Search onClick={handeleSearch} className='w-6 h-6' />
               </button>
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
                 <User className='w-6 h-6' />

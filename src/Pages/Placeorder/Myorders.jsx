@@ -36,6 +36,10 @@ const Myorders = () => {
   const handleshoopingcartClick = () => {
     navigate('/shoopingcart')
   }
+   const handeleSearch = () => {
+    navigate('/search')
+  }
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
@@ -136,7 +140,7 @@ const Myorders = () => {
                 <ShoppingBag className='w-6 h-6' />
               </button>
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search className='w-6 h-6' />
+                <Search onClick={handeleSearch} className='w-6 h-6' />
               </button>
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
                 <User className='w-6 h-6' />

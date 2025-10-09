@@ -89,6 +89,11 @@ const Menu = () => {
   const handleshoopingcartClick = () => {
     navigate('/shoopingcart')
   }
+
+  const handeleSearch = () => {
+    navigate('/search')
+  }
+
   const menuItems = [
     {
       icon: <ShoppingCart className='w-5 h-5 text-gray-600' />,
@@ -406,7 +411,7 @@ const Menu = () => {
                 <ShoppingBag className='w-6 h-6' />
               </button>
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search className='w-6 h-6' />
+                <Search onClick={handeleSearch} className='w-6 h-6' />
               </button>
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
                 <User className='w-6 h-6' />
