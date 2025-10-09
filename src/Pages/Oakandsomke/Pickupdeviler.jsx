@@ -258,7 +258,7 @@ const HeroSection = () => {
         <img
           src={heroImage}
           alt='Background'
-          className='w-full h-full object-cover'
+          className='w-full h-full object-fill'
         />
       </div>
     </div>
