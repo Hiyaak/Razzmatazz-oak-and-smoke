@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { ArrowLeft, MapPin, ChevronDown, ChevronUp, Search } from 'lucide-react'
+import {
+  ArrowLeft,
+  MapPin,
+  ChevronDown,
+  Search,
+  User,
+  ShoppingBag,
+  Menu
+} from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import ApiService from '../../Services/Apiservice'
@@ -22,7 +30,7 @@ const HeroSection = () => {
   const [areas, setAreas] = useState([])
   const [selectedGovernateId, setSelectedGovernateId] = useState('')
   const [selectedAreaId, setSelectedAreaId] = useState('')
-  
+
   // Fetch all governates for the brand
   const getAllGovernates = async () => {
     try {
@@ -104,6 +112,18 @@ const HeroSection = () => {
       )
       navigate('/')
     }
+  }
+
+  const handleMenuClick = () => {
+    navigate('/menu')
+  }
+
+  const handleshoopingcartClick = () => {
+    navigate('/shoopingcart')
+  }
+
+  const handeleSearch = () => {
+    navigate('/search')
   }
 
   return (
@@ -254,12 +274,45 @@ const HeroSection = () => {
       </div>
 
       {/* Right Panel */}
-      <div className='hidden md:block md:w-3/5 relative'>
+      <div className='flex-1 relative bg-black'>
+        {/* Top Navigation */}
+        <div className='absolute top-6 left-6 right-6 z-10'>
+          <div className='flex justify-between items-center'>
+            <div className='flex space-x-4'>
+              <button
+                onClick={handleMenuClick}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <Menu className='w-6 h-6' />
+              </button>
+              <button
+                onClick={handleshoopingcartClick}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <ShoppingBag className='w-6 h-6' />
+              </button>
+              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
+                <Search onClick={handeleSearch} className='w-6 h-6' />
+              </button>
+              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
+                <User className='w-6 h-6' />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Banner Image */}
         <img
           src={heroImage}
-          alt='Background'
+          alt='Hero Food'
           className='w-full h-full object-fill'
         />
+
+        <div className='absolute bottom-8 left-8 z-20'>
+          <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
+            IG
+          </div>
+        </div>
       </div>
     </div>
   )

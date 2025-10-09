@@ -47,6 +47,11 @@ const ShoppingCartPage = () => {
     navigate('/shoopingcart');
   };
 
+   const handeleSearch = () => {
+    navigate('/search')
+  }
+
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Sidebar (40% on desktop, full on mobile) */}
@@ -70,7 +75,7 @@ const ShoppingCartPage = () => {
         </div>
 
         {/* Promotions Section */}
-        <div className="bg-gray-200 p-4 border-b border-gray-200">
+        <div className=" p-4 border-b border-gray-200">
           <h2 className="text-base font-semibold text-gray-800 mb-3">
             Promotions
           </h2>
@@ -105,7 +110,7 @@ const ShoppingCartPage = () => {
         </div>
 
         {/* Items Section */}
-        <div className="flex-1 overflow-y-auto bg-gray-200">
+        <div className="flex-1 overflow-y-auto">
           <div className="bg-gray-200 p-4">
             <h2 className="text-base font-semibold text-gray-800">Items</h2>
           </div>
@@ -129,7 +134,7 @@ const ShoppingCartPage = () => {
             </div>
           ) : (
             // Cart Items List
-            <div className="space-y-4">
+            <div className="space-y-4 mt-2 px-2">
               {cart.map((item) => (
                 <div
                   key={item._id}
@@ -189,7 +194,7 @@ const ShoppingCartPage = () => {
 
         {/* Order Summary - Only show when cart has items */}
         <div
-          className="p-3 border-t border-gray-200 bg-gray-200"
+          className="p-3 border-t border-gray-200 "
           onClick={handleGotocheckout}
         >
           <button className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6">
@@ -233,7 +238,7 @@ const ShoppingCartPage = () => {
                 <ShoppingBag className="w-6 h-6" />
               </button>
               <button className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
-                <Search className="w-6 h-6" />
+                <Search onClick={handeleSearch} className="w-6 h-6" />
               </button>
               <button className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
                 <User className="w-6 h-6" />
