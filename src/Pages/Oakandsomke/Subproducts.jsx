@@ -83,7 +83,7 @@ const Subproducts = () => {
         </div>
 
         {/* Subproducts - Scrollable */}
-        <div className='flex-1 overflow-y-auto px-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+        <div className='flex-1  overflow-y-auto px-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
           <div className='grid grid-cols-2 gap-4 cursor-pointer mt-8 pb-4'>
             {subProductCategories.map(item => {
               const quantity = getProductQuantity(item._id)

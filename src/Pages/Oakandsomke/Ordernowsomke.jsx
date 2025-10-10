@@ -88,115 +88,113 @@ const FoodDeliveryApp = () => {
     navigate('/pickupdeviler', { state: { method } })
   }
 
-  const goToCart = () => {
-    navigate('/cartitems')
-  }
-
   return (
     <>
-      {/* Desktop layout (md and up) */}
+      {/* Desktop layout  */}
       <div className='hidden md:flex min-h-screen bg-gray-50'>
-        {/* Left Panel - 40% with fixed header and scrollable products */}
-        <div className='w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen overflow-hidden'>
-          {/* Header Section - Fixed */}
-          <div
-            onClick={handleBrandClick}
-            className='cursor-pointer transition-colors flex-shrink-0 border-b border-gray-200'
-          >
-            <div className='flex items-center justify-between px-6 py-4'>
-              {/* Logo and Brand text */}
-              <div className='flex items-center space-x-3'>
-                <img
-                  src={oak}
-                  alt='Logo'
-                  className='w-12 h-12 object-contain'
-                />
-                <div>
-                  <h1 className='text-lg font-bold text-gray-900'>
-                    Oak and Smoke
-                  </h1>
-                  <p className='text-xs text-gray-500'>Smoke Meat Everyday</p>
+        {/* Left Panel*/}
+        <div className='w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen'>
+          <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+            {/* Header Section */}
+            <div
+              onClick={handleBrandClick}
+              className='cursor-pointer transition-colors border-b border-gray-200'
+            >
+              <div className='flex items-center justify-between px-6 py-4'>
+                <div className='flex items-center space-x-3'>
+                  <img
+                    src={oak}
+                    alt='Logo'
+                    className='w-12 h-12 object-contain'
+                  />
+                  <div>
+                    <h1 className='text-lg font-bold text-gray-900'>
+                      Oak and Smoke
+                    </h1>
+                    <p className='text-xs text-gray-500'>Smoke Meat Everyday</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Delivery/Pickup Tabs */}
+              <div className='flex justify-center gap-24 px-6 py-4 border-t border-gray-300'>
+                <button
+                  onClick={e => {
+                    e.stopPropagation()
+                    setSelectedTab('Delivery')
+                    pickupdelivery('delivery')
+                  }}
+                  className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
+                    selectedTab === 'delivery'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'bg-white text-gray-700 border border-gray-400 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Delivery
+                </button>
+                <button
+                  onClick={e => {
+                    e.stopPropagation()
+                    setSelectedTab('Pickup')
+                    pickupdelivery('pickup')
+                  }}
+                  className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
+                    selectedTab === 'Pickup'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'bg-white text-gray-700 border border-gray-400 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  Pickup
+                </button>
+              </div>
+            </div>
+
+            {/* Location and Time Section */}
+            <div className='px-4 pb-4 space-y-4 mt-2 border-b border-gray-200'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <MapPin className='w-5 h-5 text-gray-400' />
+                  <p className='text-sm text-gray-600'>
+                    {selectedMethod === 'delivery'
+                      ? 'Deliver to'
+                      : 'Pickup from'}
+                  </p>
+                </div>
+
+                <div className='flex items-center gap-3'>
+                  {selectedGovernate && selectedArea ? (
+                    <>
+                      <p className='text-sm font-medium text-gray-900'>
+                        {selectedArea}
+                      </p>
+                      <button
+                        onClick={() => navigate('/pickupdeviler')}
+                        className='text-sm text-red-500 hover:text-red-600'
+                      >
+                        Edit
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => navigate('/pickupdeviler')}
+                      className='text-sm font-medium text-gray-900 hover:text-gray-700'
+                    >
+                      Choose location
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <Clock className='w-5 h-5 text-gray-400' />
+                  <p className='text-sm text-gray-600'>Earliest arrival</p>
                 </div>
               </div>
             </div>
 
-            {/* Delivery/Pickup Tabs */}
-            <div className='flex justify-between px-6 py-4 border-t border-gray-300'>
-              <button
-                onClick={e => {
-                  e.stopPropagation()
-                  setSelectedTab('Delivery')
-                  pickupdelivery('delivery')
-                }}
-                className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
-                  selectedTab === 'delivery'
-                    ? 'bg-red-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 border-2 border-gray-500 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Delivery
-              </button>
-              <button
-                onClick={e => {
-                  e.stopPropagation()
-                  setSelectedTab('Pickup')
-                  pickupdelivery('pickup')
-                }}
-                className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
-                  selectedTab === 'Pickup'
-                    ? 'bg-red-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 border-2 border-gray-500 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                Pickup
-              </button>
-            </div>
-          </div>
-
-          {/* Location and Time - Fixed */}
-          <div className='px-4 pb-4 space-y-4 mt-2 flex-shrink-0 border-b border-gray-200 '>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-3'>
-                <MapPin className='w-5 h-5 text-gray-400' />
-                <p className='text-sm text-gray-600'>
-                  {selectedMethod === 'delivery' ? 'Deliver to' : 'Pickup from'}
-                </p>
-              </div>
-              <div className='flex items-center gap-3'>
-                {selectedGovernate && selectedArea ? (
-                  <>
-                    <p className='text-sm font-medium text-gray-900'>
-                      {selectedArea}
-                    </p>
-                    <button
-                      onClick={() => navigate('/pickupdeviler')}
-                      className='text-sm text-red-500 hover:text-red-600'
-                    >
-                      Edit
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => navigate('/pickupdeviler')}
-                    className='text-sm font-medium text-gray-900 hover:text-gray-700'
-                  >
-                    Choose location
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-3'>
-                <Clock className='w-5 h-5 text-gray-400' />
-                <p className='text-sm text-gray-600'>Earliest arrival</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Food Categories - Scrollable */}
-          <div className='flex-1 overflow-y-auto px-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
-            <div className='grid grid-cols-2 gap-4 cursor-pointer'>
+            {/* Food Categories */}
+            <div className='px-4 pb-4 mt-6 grid grid-cols-2 gap-4 cursor-pointer'>
               {productCategories.map(item => (
                 <div
                   key={item._id}
@@ -218,7 +216,7 @@ const FoodDeliveryApp = () => {
             </div>
           </div>
 
-          {/* Select Location Button - Fixed at bottom */}
+          {/* Fixed Button at Bottom */}
           {!(selectedMethod && (selectedArea || selectedGovernate)) && (
             <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
               <button
@@ -353,16 +351,16 @@ const FoodDeliveryApp = () => {
           </button>
         </div>
 
-        {/* Location and Time Info - Fixed */}
+        {/* Location and Time Info */}
         <div className='px-4 pb-4 space-y-4 mt-2 flex-shrink-0'>
           <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-3'>
+            <div className='flex items-center gap-6'>
               <MapPin className='w-5 h-5 text-gray-400' />
               <p className='text-sm text-gray-600'>
                 {selectedMethod === 'delivery' ? 'Deliver to' : 'Pickup from'}
               </p>
             </div>
-            <div className='flex items-center gap-3'>
+            <div className='flex items-center gap-6'>
               {selectedGovernate && selectedArea ? (
                 <>
                   <p className='text-sm font-medium text-gray-900'>
@@ -386,11 +384,9 @@ const FoodDeliveryApp = () => {
             </div>
           </div>
 
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-3'>
-              <Clock className='w-5 h-5 text-gray-400' />
-              <p className='text-sm text-gray-600'>Earliest arrival</p>
-            </div>
+          <div className='flex items-center gap-6'>
+            <Clock className='w-5 h-5 text-gray-400' />
+            <p className='text-sm text-gray-600'>Earliest arrival</p>
           </div>
         </div>
 
