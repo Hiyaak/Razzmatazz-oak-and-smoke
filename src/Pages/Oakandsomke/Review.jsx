@@ -1,7 +1,7 @@
-import React from "react";
-import { ArrowLeft, Star, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import heroImage from "../../assets/concept.jpg";
+import React from 'react';
+import { ArrowLeft, Star, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import heroImage from '../../assets/concept.jpg';
 
 const Review = () => {
   const navigate = useNavigate();
@@ -10,10 +10,10 @@ const Review = () => {
   const reviews = [
     {
       id: 1,
-      name: "Ahmad Mohammad",
+      name: 'Ahmad Mohammad',
       rating: 5,
-      time: "More than a year ago",
-      comment: "it was perfect",
+      time: 'More than a year ago',
+      comment: 'it was perfect',
     },
   ];
 
@@ -24,7 +24,7 @@ const Review = () => {
           <Star
             key={i}
             className={`w-4 h-4 ${
-              i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+              i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
             }`}
           />
         ))}
@@ -40,7 +40,7 @@ const Review = () => {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center mb-4">
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
               className="p-2 hover:bg-gray-200 rounded-full transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -113,8 +113,13 @@ const Review = () => {
         <img
           src={heroImage}
           alt="Background"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-fill"
         />
+      </div>
+      <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
+        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          IG
+        </div>
       </div>
     </div>
   );
