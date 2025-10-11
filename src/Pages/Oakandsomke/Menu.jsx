@@ -236,7 +236,7 @@ const Menu = () => {
           </>
         ) : (
           /* ---------------- FORM VIEW ---------------- */
-          <div className='px-4 pb-8'>
+          <div className='px-4 pb-8 overflow-y-auto'>
             {/* Tab Navigation */}
             <div className='flex gap-3 mt-6 mb-8'>
               <button
@@ -393,7 +393,7 @@ const Menu = () => {
       </div>
 
       {/* Right Panel */}
-      <div className='flex-1 relative bg-black'>
+      <div className='flex-1 relative bg-black overflow-hidden'>
         {/* Top Navigation — hidden on mobile */}
         <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
           <div className='flex justify-between items-center'>
@@ -421,16 +421,16 @@ const Menu = () => {
         </div>
 
         {/* Hero Section — hidden on mobile */}
-        <div className='hidden md:block relative h-screen'>
+        <div className='hidden md:block relative h-screen overflow-hidden'>
           <img
             src={heroImage}
             alt='Hero Food'
-            className='w-full h-full object-cover'
+            className='w-full h-full object-fill'
           />
 
           {/* Bottom IG button */}
-          <div className='absolute bottom-8 left-8 z-20'>
-            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
+          <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
               IG
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   ArrowLeft,
   MapPin,
@@ -6,97 +6,97 @@ import {
   Search,
   User,
   ShoppingBag,
-  Menu
-} from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import heroImage from '../../assets/concept.jpg'
-import ApiService from '../../Services/Apiservice'
+  Menu,
+} from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import heroImage from '../../assets/concept.jpg';
+import ApiService from '../../Services/Apiservice';
 
 const HeroSection = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const brandId = localStorage.getItem('brandId')
+  const navigate = useNavigate();
+  const location = useLocation();
+  const brandId = localStorage.getItem('brandId');
 
   // Initial method from navigation or default
-  const methodFromState = location.state?.method || 'delivery'
+  const methodFromState = location.state?.method || 'delivery';
 
   // States
-  const [selectedMethod, setSelectedMethod] = useState(methodFromState)
-  const [selectedGovernate, setSelectedGovernate] = useState('')
-  const [selectedArea, setSelectedArea] = useState('')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [governates, setGovernates] = useState([])
-  const [areas, setAreas] = useState([])
-  const [selectedGovernateId, setSelectedGovernateId] = useState('')
-  const [selectedAreaId, setSelectedAreaId] = useState('')
+  const [selectedMethod, setSelectedMethod] = useState(methodFromState);
+  const [selectedGovernate, setSelectedGovernate] = useState('');
+  const [selectedArea, setSelectedArea] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [governates, setGovernates] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [selectedGovernateId, setSelectedGovernateId] = useState('');
+  const [selectedAreaId, setSelectedAreaId] = useState('');
 
   // Fetch all governates for the brand
   const getAllGovernates = async () => {
     try {
-      const { data } = await ApiService.get(`/getAllGovernate/${brandId}`)
+      const { data } = await ApiService.get(`/getAllGovernate/${brandId}`);
       if (data.status && data.governates) {
-        setGovernates(data.governates)
+        setGovernates(data.governates);
       } else {
-        setGovernates([])
+        setGovernates([]);
       }
     } catch (error) {
-      console.error('Error fetching governates:', error)
+      console.error('Error fetching governates:', error);
     }
-  }
+  };
 
   // Fetch all areas for a selected governate
-  const getAreasByGovernate = async governateId => {
+  const getAreasByGovernate = async (governateId) => {
     try {
       const { data } = await ApiService.get('/getAllArea', {
         governateId,
-        brandId
-      })
+        brandId,
+      });
       if (data.status && data.areas) {
-        setAreas(data.areas)
+        setAreas(data.areas);
       } else {
-        setAreas([])
+        setAreas([]);
       }
     } catch (error) {
-      console.error('Error fetching areas:', error)
+      console.error('Error fetching areas:', error);
     }
-  }
+  };
 
   useEffect(() => {
-    if (brandId) getAllGovernates()
-  }, [brandId])
+    if (brandId) getAllGovernates();
+  }, [brandId]);
 
   // Handle method change
-  const handleMethodChange = method => {
-    setSelectedMethod(method)
-    setSelectedGovernate('')
-    setSelectedArea('')
-    setAreas([])
-    setSearchQuery('')
-    setShowDropdown(false)
-  }
+  const handleMethodChange = (method) => {
+    setSelectedMethod(method);
+    setSelectedGovernate('');
+    setSelectedArea('');
+    setAreas([]);
+    setSearchQuery('');
+    setShowDropdown(false);
+  };
 
   // Handle governate selection
-  const handleGovernateSelect = governate => {
-    setSelectedGovernate(governate.governateName)
-    setSelectedGovernateId(governate._id)
-    setSelectedArea('')
-    setSearchQuery('')
-    getAreasByGovernate(governate._id)
-    setShowDropdown(true)
-  }
+  const handleGovernateSelect = (governate) => {
+    setSelectedGovernate(governate.governateName);
+    setSelectedGovernateId(governate._id);
+    setSelectedArea('');
+    setSearchQuery('');
+    getAreasByGovernate(governate._id);
+    setShowDropdown(true);
+  };
 
   // Handle area selection
-  const handleAreaSelect = area => {
-    setSelectedArea(area.areaName)
-    setSelectedAreaId(area._id)
-    setShowDropdown(false)
-  }
+  const handleAreaSelect = (area) => {
+    setSelectedArea(area.areaName);
+    setSelectedAreaId(area._id);
+    setShowDropdown(false);
+  };
 
   // Filter governates based on search query
-  const filteredGovernates = governates.filter(g =>
+  const filteredGovernates = governates.filter((g) =>
     g.governateName.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
   const handleStartOrdering = () => {
     if (selectedArea || selectedGovernate) {
@@ -107,110 +107,115 @@ const HeroSection = () => {
           selectedGovernate,
           selectedGovernateId,
           selectedArea,
-          selectedAreaId
+          selectedAreaId,
         })
-      )
-      navigate('/')
+      );
+      navigate('/');
     }
-  }
+  };
 
   const handleMenuClick = () => {
-    navigate('/menu')
-  }
+    navigate('/menu');
+  };
 
   const handleshoopingcartClick = () => {
-    navigate('/shoopingcart')
-  }
+    navigate('/shoopingcart');
+  };
 
   const handeleSearch = () => {
-    navigate('/search')
-  }
+    navigate('/search');
+  };
 
   return (
-    <div className='flex flex-col md:flex-row min-h-screen'>
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Panel */}
-      <div className='w-full md:w-2/5 bg-gray-50 min-h-screen border-r border-gray-200 flex flex-col'>
+      <div className="w-full md:w-2/5 min-h-screen border-r border-gray-200 flex flex-col">
         {/* Header */}
-        <div className='p-4 border-b border-gray-200'>
-          <div className='flex items-center mb-4'>
+        <div className="p-2 border-b border-gray-200 flex-shrink-0">
+          <div className="flex items-center">
             <button
               onClick={() => navigate('/')}
-              className='p-2 hover:bg-gray-200 rounded-full transition-colors'
+              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
             >
-              <ArrowLeft className='w-5 h-5 text-gray-600' />
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
+            <h1 className="text-2xl font-semibold text-gray-900 text-center flex-1">
+              Location
+            </h1>
+            <div className="w-9" />
           </div>
-          <h1 className='text-2xl font-semibold text-gray-900'>Order Now</h1>
         </div>
 
         {/* Method Selection */}
-        <div className='p-6 space-y-6 flex-1'>
-          <div className='flex space-x-4'>
-            <button
-              onClick={() => handleMethodChange('delivery')}
-              className={`flex-1 py-3 px-6 rounded-lg font-medium text-base transition-all ${
-                selectedMethod === 'delivery'
-                  ? 'bg-red-600 text-white shadow'
-                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              🚚 Delivery
-            </button>
-            <button
-              onClick={() => handleMethodChange('pickup')}
-              className={`flex-1 py-3 px-6 rounded-lg font-medium text-base transition-all ${
-                selectedMethod === 'pickup'
-                  ? 'bg-red-600 text-white shadow'
-                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              🏪 Pickup
-            </button>
+        <div className=" space-y-6 flex-1">
+          <div className="w-full border-b border-gray-300 px-6 py-6">
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleMethodChange('delivery')}
+                className={`flex-1 py-3 px-6 rounded-lg font-medium text-base transition-all ${
+                  selectedMethod === 'delivery'
+                    ? 'bg-red-600 text-white shadow'
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                🚚 Delivery
+              </button>
+              <button
+                onClick={() => handleMethodChange('pickup')}
+                className={`flex-1 py-3 px-6 rounded-lg font-medium text-base transition-all ${
+                  selectedMethod === 'pickup'
+                    ? 'bg-red-600 text-white shadow'
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                🏪 Pickup
+              </button>
+            </div>
           </div>
 
           {/* Governate / Area Selection */}
-          <div>
-            <div className='flex items-center space-x-2 mb-2'>
-              <MapPin className='w-5 h-5 text-red-600' />
-              <span className='text-gray-700 font-medium'>
+          <div className="px-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <MapPin className="w-5 h-5 text-red-600" />
+              <span className="text-gray-700 font-medium">
                 {selectedMethod === 'delivery' ? 'Deliver to' : 'Pickup from'}
               </span>
             </div>
 
             {/* Dropdown */}
-            <div className='relative'>
+            <div className="relative">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className='w-full p-3 border border-gray-300 bg-white rounded-lg flex items-center justify-between text-gray-700 hover:bg-gray-50 transition'
+                className="w-full p-3 border border-gray-300 bg-white rounded-lg flex items-center justify-between text-gray-700 hover:bg-gray-50 transition"
               >
                 <span>
                   {selectedArea || selectedGovernate || 'Select location'}
                 </span>
-                <ChevronDown className='w-5 h-5' />
+                <ChevronDown className="w-5 h-5" />
               </button>
 
               {showDropdown && (
-                <div className='absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto z-20'>
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto z-20">
                   {/* Search Bar */}
-                  <div className='p-3 border-b border-gray-200'>
-                    <div className='relative'>
-                      <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400' />
+                  <div className="p-3 border-b border-gray-200">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
-                        type='text'
-                        placeholder='Search...'
+                        type="text"
+                        placeholder="Search..."
                         value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent'
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                       />
                     </div>
                   </div>
 
                   {/* Governates / Areas List */}
-                  <div className='py-2 space-y-1'>
+                  <div className="py-2 space-y-1">
                     {/* If no governate selected, show governates */}
                     {!selectedGovernate &&
                       (filteredGovernates.length > 0 ? (
-                        filteredGovernates.map(g => (
+                        filteredGovernates.map((g) => (
                           <button
                             key={g._id}
                             onClick={() => handleGovernateSelect(g)}
@@ -224,7 +229,7 @@ const HeroSection = () => {
                           </button>
                         ))
                       ) : (
-                        <div className='p-4 text-gray-500 text-sm text-center'>
+                        <div className="p-4 text-gray-500 text-sm text-center">
                           No governates found
                         </div>
                       ))}
@@ -232,7 +237,7 @@ const HeroSection = () => {
                     {/* If governate selected, show areas */}
                     {selectedGovernate &&
                       (areas.length > 0 ? (
-                        areas.map(area => (
+                        areas.map((area) => (
                           <button
                             key={area._id}
                             onClick={() => handleAreaSelect(area)}
@@ -246,7 +251,7 @@ const HeroSection = () => {
                           </button>
                         ))
                       ) : (
-                        <div className='p-4 text-gray-500 text-sm text-center'>
+                        <div className="p-4 text-gray-500 text-sm text-center">
                           No areas found
                         </div>
                       ))}
@@ -258,44 +263,46 @@ const HeroSection = () => {
         </div>
 
         {/* Start Ordering Button */}
-        <button
-          onClick={handleStartOrdering}
-          className={`w-full py-4 text-white rounded-lg font-semibold text-lg transition ${
-            selectedArea || selectedGovernate
-              ? 'bg-red-600 hover:bg-red-700'
-              : 'bg-gray-400 cursor-not-allowed'
-          }`}
-          disabled={!selectedArea && !selectedGovernate}
-        >
-          {selectedArea || selectedGovernate
-            ? 'Start Ordering'
-            : 'Select your location'}
-        </button>
+        <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+          <button
+            onClick={handleStartOrdering}
+            className={`w-full py-3 text-white rounded-lg font-semibold text-lg transition ${
+              selectedArea || selectedGovernate
+                ? 'bg-red-600 hover:bg-red-700'
+                : 'bg-gray-400 cursor-not-allowed'
+            }`}
+            disabled={!selectedArea && !selectedGovernate}
+          >
+            {selectedArea || selectedGovernate
+              ? 'Start Ordering'
+              : 'Select your location'}
+          </button>
+        </div>
       </div>
 
       {/* Right Panel */}
-      <div className='flex-1 relative bg-black'>
+      <div className="flex-1 relative bg-black">
         {/* Top Navigation */}
-        <div className='absolute top-6 left-6 right-6 z-10'>
-          <div className='flex justify-between items-center'>
-            <div className='flex space-x-4'>
+        <div className="absolute top-6 left-6 right-6 z-10">
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-4">
               <button
                 onClick={handleMenuClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+                className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all"
               >
-                <Menu className='w-6 h-6' />
+                <Menu className="w-6 h-6" />
               </button>
               <button
                 onClick={handleshoopingcartClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+                className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all"
               >
-                <ShoppingBag className='w-6 h-6' />
+                <ShoppingBag className="w-6 h-6" />
               </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search onClick={handeleSearch} className='w-6 h-6' />
+              <button className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
+                <Search onClick={handeleSearch} className="w-6 h-6" />
               </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <User className='w-6 h-6' />
+              <button className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
+                <User className="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -304,18 +311,18 @@ const HeroSection = () => {
         {/* Hero Banner Image */}
         <img
           src={heroImage}
-          alt='Hero Food'
-          className='w-full h-full object-fill'
+          alt="Hero Food"
+          className="w-full h-full object-fill"
         />
 
-        <div className='absolute bottom-8 left-8 z-20'>
-          <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
+        <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
             IG
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HeroSection
+export default HeroSection;

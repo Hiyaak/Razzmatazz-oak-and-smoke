@@ -154,12 +154,12 @@ const Myorders = () => {
           <img
             src={heroImage}
             alt='Hero Food'
-            className='w-full h-full object-cover'
+            className='w-full h-full object-fill'
           />
 
           {/* Bottom IG button */}
-          <div className='absolute bottom-8 left-8 z-20'>
-            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
+          <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
               IG
             </div>
           </div>
