@@ -244,7 +244,7 @@ const MenuPage = () => {
           </>
         ) : (
           /* ---------------- FORM VIEW ---------------- */
-          <div className='px-4 pb-8 overflow-y-auto'>
+          <div className='px-4 pb-8 overflow-y-auto '>
             {/* Tab Navigation */}
             <div className='flex gap-3 mt-6 mb-8'>
               <button

@@ -216,7 +216,7 @@ const ShoppingCartPage = () => {
           <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
             <button
               onClick={() => navigate('/pickupdeviler')}
-              className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors'
+              className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors'
             >
               Select your location
             </button>
@@ -227,7 +227,7 @@ const ShoppingCartPage = () => {
             className='p-3 border-t border-gray-200 bg-white flex-shrink-0'
             onClick={handleGotocheckout}
           >
-            <button className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
+            <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
               {/* Left - Items Count */}
               <div className='flex items-center'>
                 <span className='bg-white/20 rounded-sm w-6 h-6 flex items-center justify-center text-sm'>
