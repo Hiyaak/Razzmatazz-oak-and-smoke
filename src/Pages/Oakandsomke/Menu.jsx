@@ -7,16 +7,17 @@ import {
   Mail,
   Eye,
   EyeOff,
-  Menu as MenuIcon,
+  Menu,
   ShoppingBag,
   Search,
-  User
+  User,
+  LogOut
 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import ApiService from '../../Services/Apiservice'
 
-const Menu = () => {
+const MenuPage = () => {
   const navigate = useNavigate()
   const [activeView, setActiveView] = useState('menu') // 'menu' | 'form'
   const [activeTab, setActiveTab] = useState('register')
@@ -92,6 +93,13 @@ const Menu = () => {
 
   const handeleSearch = () => {
     navigate('/search')
+  }
+  const handleLogout = () => {
+    localStorage.removeItem('guestUserId')
+    localStorage.removeItem('registredUserId')
+    localStorage.removeItem('selectedLocation')
+
+    navigate('/')
   }
 
   const menuItems = [
@@ -309,18 +317,6 @@ const Menu = () => {
                 </div>
               </div>
 
-              {/* Forgot Password Link */}
-              {activeTab === 'login' && (
-                <div className='text-right -mt-4'>
-                  <a
-                    href='#'
-                    className='text-sm text-cyan-500 hover:text-cyan-600 font-medium'
-                  >
-                    FORGOT PASSWORD?
-                  </a>
-                </div>
-              )}
-
               {/* Divider */}
               <div className='flex items-center gap-4 my-8'>
                 <div className='flex-1 h-px bg-gray-300'></div>
@@ -379,11 +375,12 @@ const Menu = () => {
               </div>
 
               {/* Submit Button */}
+
               <button
                 onClick={
                   activeTab === 'login' ? handleLoginUser : handleRegisterUser
                 }
-                className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-4 rounded-lg transition-colors mt-8 text-lg'
+                className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors mt-8 text-lg'
               >
                 {activeTab === 'login' ? 'Login' : 'Register'}
               </button>
@@ -393,16 +390,16 @@ const Menu = () => {
       </div>
 
       {/* Right Panel */}
-      <div className='flex-1 relative bg-black overflow-hidden'>
-        {/* Top Navigation — hidden on mobile */}
-        <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
+      <div className='hidden md:block fixed right-0 top-0 w-3/5 h-screen bg-black z-0'>
+        {/* Top Navigation */}
+        <div className='absolute top-6 left-6 right-6 z-10'>
           <div className='flex justify-between items-center'>
             <div className='flex space-x-4'>
               <button
                 onClick={handleMenuClick}
                 className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
               >
-                <MenuIcon className='w-6 h-6' />
+                <Menu className='w-6 h-6' />
               </button>
               <button
                 onClick={handleshoopingcartClick}
@@ -410,29 +407,34 @@ const Menu = () => {
               >
                 <ShoppingBag className='w-6 h-6' />
               </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search onClick={handeleSearch} className='w-6 h-6' />
+              <button
+                onClick={handeleSearch}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <Search className='w-6 h-6' />
               </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <User className='w-6 h-6' />
+              <button
+                onClick={handleLogout}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <LogOut className='w-6 h-6' />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Hero Section — hidden on mobile */}
-        <div className='hidden md:block relative h-screen overflow-hidden'>
-          <img
-            src={heroImage}
-            alt='Hero Food'
-            className='w-full h-full object-fill'
-          />
+        {/* Hero Banner Image */}
+        <img
+          loading='lazy'
+          src={heroImage}
+          alt='Hero Food'
+          className='w-full h-full object-cover'
+        />
 
-          {/* Bottom IG button */}
-          <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-              IG
-            </div>
+        {/* Floating Icon */}
+        <div className='absolute top-1/2 right-6 z-20 transform -translate-y-1/2'>
+          <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg'>
+            IG
           </div>
         </div>
       </div>
@@ -440,4 +442,4 @@ const Menu = () => {
   )
 }
 
-export default Menu
+export default MenuPage

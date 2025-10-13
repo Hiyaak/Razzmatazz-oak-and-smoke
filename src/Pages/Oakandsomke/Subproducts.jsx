@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import heroImage from '../../assets/concept.jpg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Menu, ShoppingBag, Search, User, ArrowLeft } from 'lucide-react'
+import { Menu, ShoppingBag, Search, User, ArrowLeft, LogOut } from 'lucide-react'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
 
@@ -59,6 +59,13 @@ const Subproducts = () => {
   const handeleSearch = () => {
     navigate('/search')
   }
+  const handleLogout = () => {
+    localStorage.removeItem('guestUserId')
+    localStorage.removeItem('registredUserId')
+    localStorage.removeItem('selectedLocation')
+
+    navigate('/') // if using react-router
+  }
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
@@ -108,7 +115,7 @@ const Subproducts = () => {
                   </div>
 
                   {/* Description */}
-                 <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
+                  <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
                     {item.description}
                   </p>
 
@@ -207,8 +214,11 @@ const Subproducts = () => {
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
                 <Search onClick={handeleSearch} className='w-6 h-6' />
               </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <User className='w-6 h-6' />
+              <button
+                onClick={handleLogout}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <LogOut className='w-6 h-6' />
               </button>
             </div>
           </div>
@@ -223,8 +233,8 @@ const Subproducts = () => {
           />
 
           {/* Bottom IG button */}
-          <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
+            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
               IG
             </div>
           </div>
