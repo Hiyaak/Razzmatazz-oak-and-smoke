@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import heroImage from '../../assets/concept.jpg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Menu, ShoppingBag, Search, User, ArrowLeft, LogOut } from 'lucide-react'
+import { Menu, ShoppingBag, Search, ArrowLeft, LogOut } from 'lucide-react'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
 
@@ -82,7 +82,7 @@ const Subproducts = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              {decodeURIComponent(name)}
+              {decodeURIComponent(name).toUpperCase()}
             </h1>
 
             <div className='w-9' />

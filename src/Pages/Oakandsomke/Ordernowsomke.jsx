@@ -128,7 +128,7 @@ const FoodDeliveryApp = () => {
 
                 {/* Right side - centered FiAlertCircle */}
                 <div className='flex items-center justify-center'>
-                  <AlertCircle className='w-6 h-6 text-gray-600' />
+                  <AlertCircle className='w-5 h-5 text-gray-600' />
                 </div>
               </div>
 
@@ -210,11 +210,11 @@ const FoodDeliveryApp = () => {
             </div>
 
             {/* Food Categories */}
-            <div className='px-4 pb-4 mt-6 grid grid-cols-2 gap-4 cursor-pointer'>
+            <div className='px-2 pt-8 pb-4 bg-gray-100 grid grid-cols-2 gap-2 cursor-pointer'>
               {productCategories.map(item => (
                 <div
                   key={item._id}
-                  className='relative rounded-lg overflow-hidden shadow group'
+                  className='relative rounded-lg overflow-hidden shadow'
                   onClick={() => handleProduct(item._id, item.productName)}
                 >
                   <img
@@ -222,9 +222,9 @@ const FoodDeliveryApp = () => {
                     alt={item.productName}
                     className='w-full h-56 object-cover'
                   />
-                  <div className='absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition'>
-                    <h3 className='text-white font-bold text-lg text-center'>
-                      {item.productName}
+                  <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                    <h3 className='text-gray-100 font-bold text-lg text-center'>
+                      {item.productName.toUpperCase()}
                     </h3>
                   </div>
                 </div>

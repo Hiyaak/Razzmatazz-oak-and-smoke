@@ -140,7 +140,7 @@ const HeroSection = () => {
               <ArrowLeft className='w-5 h-5 text-gray-600' />
             </button>
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              Location
+              Method
             </h1>
             <div className='w-9' />
           </div>
@@ -149,7 +149,7 @@ const HeroSection = () => {
         {/* Scrollable Content */}
         <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
           {/* Method Selection */}
-          <div className='space-y-6 px-6 py-6'>
+          <div className='space-y-6 px-6 py-6 border-b border-gray-200'>
             <div className='flex space-x-4'>
               <button
                 onClick={() => handleMethodChange('delivery')}
@@ -175,7 +175,7 @@ const HeroSection = () => {
           </div>
 
           {/* Governate / Area Selection */}
-          <div className='px-4 pb-6'>
+          <div className='px-4 pb-6 mt-4'>
             <div className='flex items-center space-x-2 mb-3'>
               <MapPin className='w-5 h-5 text-red-600' />
               <span className='text-gray-700 font-medium'>
