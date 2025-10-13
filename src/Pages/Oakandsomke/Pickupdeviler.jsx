@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import {
   ArrowLeft,
-  MapPin,
   ChevronDown,
   Search,
-  User,
   ShoppingBag,
   Menu,
   LogOut
@@ -175,11 +173,10 @@ const HeroSection = () => {
           </div>
 
           {/* Governate / Area Selection */}
-          <div className='px-4 pb-6 mt-4'>
-            <div className='flex items-center space-x-2 mb-3'>
-              <MapPin className='w-5 h-5 text-red-600' />
+          <div className='pb-6   '>
+            <div className='flex items-center bg-gray-100 space-x-2 mb-3 border-b border-gray-300 py-4 px-6 w-full'>
               <span className='text-gray-700 font-medium'>
-                {selectedMethod === 'delivery' ? 'Deliver to' : 'Pickup from'}
+                {selectedMethod === 'delivery' ? 'Location' : 'Choose a store'}
               </span>
             </div>
 

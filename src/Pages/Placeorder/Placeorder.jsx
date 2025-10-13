@@ -142,7 +142,7 @@ const Placeorder = () => {
           {/* Place Order Button */}
           <button
             onClick={handlePlaceOrder}
-            className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors text-center'
+            className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors text-center'
           >
             Place Order
           </button>

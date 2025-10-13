@@ -237,7 +237,7 @@ const FoodDeliveryApp = () => {
             <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
               <button
                 onClick={() => navigate('/pickupdeviler')}
-                className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors'
+                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors'
               >
                 Select your location
               </button>

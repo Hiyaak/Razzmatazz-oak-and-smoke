@@ -64,7 +64,7 @@ const Subproducts = () => {
     localStorage.removeItem('registredUserId')
     localStorage.removeItem('selectedLocation')
 
-    navigate('/') // if using react-router
+    navigate('/') 
   }
 
   return (
@@ -162,12 +162,12 @@ const Subproducts = () => {
             </button>
           </div>
         ) : (
-          // ✅ Location selected — show "Review Order"
+          // Location selected — show "Review Order"
           <div
             className='p-3 border-t border-gray-200 bg-white flex-shrink-0'
             onClick={handleReviewOrder}
           >
-            <button className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
+            <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
               {/* Left - Items Count */}
               <div className='flex items-center'>
                 <span className='bg-white/20 rounded-sm w-6 h-6 flex items-center justify-center text-sm'>
@@ -229,7 +229,7 @@ const Subproducts = () => {
           <img
             src={heroImage}
             alt='Hero Food'
-            className='w-full h-full object-fill'
+            className='w-full h-full object-cover'
           />
 
           {/* Bottom IG button */}
