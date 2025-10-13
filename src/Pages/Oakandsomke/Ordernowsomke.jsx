@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   Clock,
   MapPin,
@@ -7,122 +7,131 @@ import {
   Search,
   User,
   Leaf,
-} from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import heroImage from '../../assets/concept.jpg';
+  LogOut
+} from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import heroImage from '../../assets/concept.jpg'
 
-import oak from '../../assets/oaklogo1.png';
-import ApiService, { ImagePath } from '../../Services/Apiservice';
+import oak from '../../assets/oaklogo1.png'
+import ApiService, { ImagePath } from '../../Services/Apiservice'
 
 const FoodDeliveryApp = () => {
-  const [productCategories, setproductCategories] = useState([]);
-  const [selectedTab, setSelectedTab] = useState('Delivery');
-  const [brandId, setBrandId] = useState(null);
-  const navigate = useNavigate();
+  const [productCategories, setproductCategories] = useState([])
+  const [selectedTab, setSelectedTab] = useState('Delivery')
+  const [brandId, setBrandId] = useState(null)
+  const navigate = useNavigate()
 
   const {
     selectedMethod,
     selectedGovernate,
     selectedGovernateId,
     selectedArea,
-    selectedAreaId,
-  } = JSON.parse(localStorage.getItem('selectedLocation') || '{}');
+    selectedAreaId
+  } = JSON.parse(localStorage.getItem('selectedLocation') || '{}')
 
   console.log('Full selectedLocation:', {
     selectedMethod,
     selectedGovernate,
     selectedGovernateId,
     selectedArea,
-    selectedAreaId,
-  });
+    selectedAreaId
+  })
 
   const getProductCategories = async () => {
     try {
       const { data } = await ApiService.get(
         `getAllProductByBrandName/Oak and Smoke`
-      );
+      )
       if (data.status) {
-        setproductCategories(data.products);
+        setproductCategories(data.products)
 
         if (data.products.length > 0) {
-          const brandIdFromApi = data.products[0].brand_id;
-          setBrandId(brandIdFromApi);
+          const brandIdFromApi = data.products[0].brand_id
+          setBrandId(brandIdFromApi)
 
-          localStorage.setItem('brandId', brandIdFromApi);
+          localStorage.setItem('brandId', brandIdFromApi)
         }
 
         // console.log('brand products:', data.products)
       }
     } catch (error) {
-      console.log('error ', error);
+      console.log('error ', error)
     }
-  };
+  }
 
   useEffect(() => {
-    getProductCategories();
-  }, []);
+    getProductCategories()
+  }, [])
 
   const handleProduct = (productId, productName) => {
     navigate(
       `/subproduct/${encodeURIComponent(productName)}?productId=${productId}`
-    );
-  };
+    )
+  }
 
   const handleMenuClick = () => {
-    navigate('/menu');
-  };
+    navigate('/menu')
+  }
 
   const handleshoopingcartClick = () => {
-    navigate('/shoopingcart');
-  };
+    navigate('/shoopingcart')
+  }
 
   const handeleSearch = () => {
-    navigate('/search');
-  };
+    navigate('/search')
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('guestUserId')
+    localStorage.removeItem('registredUserId')
+    localStorage.removeItem('selectedLocation')
+
+    navigate('/')
+  }
 
   const handleBrandClick = () => {
-    navigate('/review');
-  };
+    navigate('/contact')
+  }
 
-  const pickupdelivery = (method) => {
-    navigate('/pickupdeviler', { state: { method } });
-  };
+  const pickupdelivery = method => {
+    navigate('/pickupdeviler', { state: { method } })
+  }
 
   return (
     <>
       {/* Desktop layout  */}
-      <div className="hidden md:flex min-h-screen bg-gray-50">
+      <div className='hidden md:flex min-h-screen bg-gray-50'>
         {/* Left Panel*/}
-        <div className="w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen">
-          <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className='w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen'>
+          <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
             {/* Header Section */}
             <div
               onClick={handleBrandClick}
-              className="cursor-pointer transition-colors border-b border-gray-200"
+              className='cursor-pointer transition-colors border-b border-gray-200'
             >
-              <div className="flex items-center justify-between px-6 py-4">
-                <div className="flex items-center space-x-3">
+              <div className='flex items-center justify-between px-6 py-4'>
+                <div className='flex items-center space-x-3'>
                   <img
                     src={oak}
-                    alt="Logo"
-                    className="w-16 h-16 object-contain"
+                    alt='Logo'
+                    className='w-16 h-16 object-contain'
                   />
                   <div>
-                    <h1 className="text-lg font-bold text-gray-900">
+                    <h1 className='text-lg font-bold text-gray-900'>
                       Oak and Smoke
                     </h1>
-                    <p className="text-xs text-gray-500">Smoke Meat Everyday</p>
+                    <p className='text-xs text-gray-500'>Smoke Meat Everyday</p>
                   </div>
                 </div>
               </div>
 
               {/* Delivery/Pickup Tabs */}
-              <div className="flex justify-center gap-24 px-6 py-4 border-t border-gray-300">
+              <div className='flex justify-center gap-24 px-6 py-4 border-t border-gray-300'>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedTab('Delivery');
-                    pickupdelivery('delivery');
+                  onClick={e => {
+                    e.stopPropagation()
+                    setSelectedTab('Delivery')
+                    pickupdelivery('delivery')
                   }}
                   className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
                     selectedTab === 'delivery'
@@ -133,10 +142,10 @@ const FoodDeliveryApp = () => {
                   Delivery
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedTab('Pickup');
-                    pickupdelivery('pickup');
+                  onClick={e => {
+                    e.stopPropagation()
+                    setSelectedTab('Pickup')
+                    pickupdelivery('pickup')
                   }}
                   className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
                     selectedTab === 'Pickup'
@@ -150,26 +159,26 @@ const FoodDeliveryApp = () => {
             </div>
 
             {/* Location and Time Section */}
-            <div className="px-4 pb-4 space-y-4 mt-2 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-gray-400" />
-                  <p className="text-sm text-gray-600">
+            <div className='px-4 pb-4 space-y-4 mt-2 border-b border-gray-200'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <MapPin className='w-5 h-5 text-gray-400' />
+                  <p className='text-sm text-gray-600'>
                     {selectedMethod === 'delivery'
                       ? 'Deliver to'
                       : 'Pickup from'}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className='flex items-center gap-3'>
                   {selectedGovernate && selectedArea ? (
                     <>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className='text-sm font-medium text-gray-900'>
                         {selectedArea}
                       </p>
                       <button
                         onClick={() => navigate('/pickupdeviler')}
-                        className="text-sm text-red-500 hover:text-red-600"
+                        className='text-sm text-red-500 hover:text-red-600'
                       >
                         Edit
                       </button>
@@ -177,7 +186,7 @@ const FoodDeliveryApp = () => {
                   ) : (
                     <button
                       onClick={() => navigate('/pickupdeviler')}
-                      className="text-sm font-medium text-gray-900 hover:text-gray-700"
+                      className='text-sm font-medium text-gray-900 hover:text-gray-700'
                     >
                       Choose location
                     </button>
@@ -185,29 +194,29 @@ const FoodDeliveryApp = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-gray-400" />
-                  <p className="text-sm text-gray-600">Earliest arrival</p>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <Clock className='w-5 h-5 text-gray-400' />
+                  <p className='text-sm text-gray-600'>Earliest arrival</p>
                 </div>
               </div>
             </div>
 
             {/* Food Categories */}
-            <div className="px-4 pb-4 mt-6 grid grid-cols-2 gap-4 cursor-pointer">
-              {productCategories.map((item) => (
+            <div className='px-4 pb-4 mt-6 grid grid-cols-2 gap-4 cursor-pointer'>
+              {productCategories.map(item => (
                 <div
                   key={item._id}
-                  className="relative rounded-lg overflow-hidden shadow group"
+                  className='relative rounded-lg overflow-hidden shadow group'
                   onClick={() => handleProduct(item._id, item.productName)}
                 >
                   <img
                     src={`${ImagePath}${item.product_img[0]}`}
                     alt={item.productName}
-                    className="w-full h-56 object-cover"
+                    className='w-full h-56 object-cover'
                   />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                    <h3 className="text-white font-bold text-lg text-center">
+                  <div className='absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition'>
+                    <h3 className='text-white font-bold text-lg text-center'>
                       {item.productName}
                     </h3>
                   </div>
@@ -218,10 +227,10 @@ const FoodDeliveryApp = () => {
 
           {/* Fixed Button at Bottom */}
           {!(selectedMethod && (selectedArea || selectedGovernate)) && (
-            <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+            <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
               <button
                 onClick={() => navigate('/pickupdeviler')}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors"
+                className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors'
               >
                 Select your location
               </button>
@@ -230,28 +239,31 @@ const FoodDeliveryApp = () => {
         </div>
 
         {/* Right Panel - 60% - No Scroll */}
-        <div className="flex-1 relative bg-black">
+        <div className='flex-1 relative bg-black'>
           {/* Top Navigation */}
-          <div className="absolute top-6 left-6 right-6 z-10">
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-4">
+          <div className='absolute top-6 left-6 right-6 z-10'>
+            <div className='flex justify-between items-center'>
+              <div className='flex space-x-4'>
                 <button
                   onClick={handleMenuClick}
-                  className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all"
+                  className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
                 >
-                  <Menu className="w-6 h-6" />
+                  <Menu className='w-6 h-6' />
                 </button>
                 <button
                   onClick={handleshoopingcartClick}
-                  className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all"
+                  className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
                 >
-                  <ShoppingBag className="w-6 h-6" />
+                  <ShoppingBag className='w-6 h-6' />
                 </button>
-                <button className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
-                  <Search onClick={handeleSearch} className="w-6 h-6" />
+                <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
+                  <Search onClick={handeleSearch} className='w-6 h-6' />
                 </button>
-                <button className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all">
-                  <User className="w-6 h-6" />
+                <button
+                  onClick={handleLogout}
+                  className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+                >
+                  <LogOut className='w-6 h-6' />
                 </button>
               </div>
             </div>
@@ -260,12 +272,12 @@ const FoodDeliveryApp = () => {
           {/* Hero Banner Image */}
           <img
             src={heroImage}
-            alt="Hero Food"
-            className="w-full h-full object-fill"
+            alt='Hero Food'
+            className='w-full h-full object-cover'
           />
 
-          <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
+            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
               IG
             </div>
           </div>
@@ -273,64 +285,64 @@ const FoodDeliveryApp = () => {
       </div>
 
       {/* Mobile layout (below md) */}
-      <div className="block md:hidden flex flex-col h-screen bg-gray-50">
-        <div className="flex flex-col h-full">
+      <div className='block md:hidden flex flex-col h-screen bg-gray-50'>
+        <div className='flex flex-col h-full'>
           {/* Header Section - Fixed */}
-          <nav className="w-full flex items-center justify-between px-4 py-3 bg-white shadow-sm flex-shrink-0">
-            <div className="flex items-center space-x-2">
-              <button onClick={handleMenuClick} className="p-2">
-                <Menu className="w-6 h-6 text-gray-700" />
+          <nav className='w-full flex items-center justify-between px-4 py-3 bg-white shadow-sm flex-shrink-0'>
+            <div className='flex items-center space-x-2'>
+              <button onClick={handleMenuClick} className='p-2'>
+                <Menu className='w-6 h-6 text-gray-700' />
               </button>
             </div>
             <div
               onClick={handleBrandClick}
-              className="flex items-center space-x-2 cursor-pointer"
+              className='flex items-center space-x-2 cursor-pointer'
             >
-              <div className="flex items-center justify-center w-8 h-8 bg-red-100 rounded-full">
-                <Leaf className="w-4 h-4 text-red-600" />
+              <div className='flex items-center justify-center w-8 h-8 bg-red-100 rounded-full'>
+                <Leaf className='w-4 h-4 text-red-600' />
               </div>
-              <div className="font-bold text-xl text-red-600">Oak & Smoke</div>
+              <div className='font-bold text-xl text-red-600'>Oak & Smoke</div>
             </div>
-            <div className="flex items-center space-x-2">
-              <button onClick={handleshoopingcartClick} className="p-2">
-                <ShoppingBag className="w-6 h-6 text-gray-700" />
+            <div className='flex items-center space-x-2'>
+              <button onClick={handleshoopingcartClick} className='p-2'>
+                <ShoppingBag className='w-6 h-6 text-gray-700' />
               </button>
-              <button className="p-2">
+              <button className='p-2'>
                 <Search
                   onClick={handeleSearch}
-                  className="w-6 h-6 text-gray-700"
+                  className='w-6 h-6 text-gray-700'
                 />
               </button>
-              <button className="p-2">
-                <User className="w-6 h-6 text-gray-700" />
+              <button className='p-2'>
+                <User className='w-6 h-6 text-gray-700' />
               </button>
             </div>
           </nav>
           {/* Instagram Floating Button */}
-          <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
+            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
               IG
             </div>
           </div>
 
           {/* Scrollable Content Below Header */}
-          <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
             {/* Hero Image */}
-            <div className="w-full relative">
+            <div className='w-full relative'>
               <img
                 src={heroImage}
-                alt="Hero Food"
-                className="w-full h-48 object-fill"
+                alt='Hero Food'
+                className='w-full h-48 object-fill'
               />
             </div>
 
             {/* Delivery/Pickup Tabs */}
-            <div className="flex justify-center gap-24 px-6 py-4 border-t border-gray-300">
+            <div className='flex justify-center gap-24 px-6 py-4 border-t border-gray-300'>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedTab('Delivery');
-                  pickupdelivery('delivery');
+                onClick={e => {
+                  e.stopPropagation()
+                  setSelectedTab('Delivery')
+                  pickupdelivery('delivery')
                 }}
                 className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
                   selectedTab === 'delivery'
@@ -341,10 +353,10 @@ const FoodDeliveryApp = () => {
                 Delivery
               </button>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedTab('Pickup');
-                  pickupdelivery('pickup');
+                onClick={e => {
+                  e.stopPropagation()
+                  setSelectedTab('Pickup')
+                  pickupdelivery('pickup')
                 }}
                 className={`px-6 py-2.5 rounded-md font-medium transition-all duration-200 ${
                   selectedTab === 'Pickup'
@@ -357,25 +369,25 @@ const FoodDeliveryApp = () => {
             </div>
 
             {/* Location and Time Info */}
-            <div className="px-4 pb-4 space-y-4 mt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                  <MapPin className="w-5 h-5 text-gray-400" />
-                  <p className="text-sm text-gray-600">
+            <div className='px-4 pb-4 space-y-4 mt-2'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-6'>
+                  <MapPin className='w-5 h-5 text-gray-400' />
+                  <p className='text-sm text-gray-600'>
                     {selectedMethod === 'delivery'
                       ? 'Deliver to'
                       : 'Pickup from'}
                   </p>
                 </div>
-                <div className="flex items-center gap-6">
+                <div className='flex items-center gap-6'>
                   {selectedGovernate && selectedArea ? (
                     <>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className='text-sm font-medium text-gray-900'>
                         {selectedArea}
                       </p>
                       <button
                         onClick={() => navigate('/pickupdeviler')}
-                        className="text-sm text-red-500 hover:text-red-600"
+                        className='text-sm text-red-500 hover:text-red-600'
                       >
                         Edit
                       </button>
@@ -383,7 +395,7 @@ const FoodDeliveryApp = () => {
                   ) : (
                     <button
                       onClick={() => navigate('/pickupdeviler')}
-                      className="text-sm font-medium text-gray-900 hover:text-gray-700"
+                      className='text-sm font-medium text-gray-900 hover:text-gray-700'
                     >
                       Choose location
                     </button>
@@ -391,28 +403,28 @@ const FoodDeliveryApp = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-6">
-                <Clock className="w-5 h-5 text-gray-400" />
-                <p className="text-sm text-gray-600">Earliest arrival</p>
+              <div className='flex items-center gap-6'>
+                <Clock className='w-5 h-5 text-gray-400' />
+                <p className='text-sm text-gray-600'>Earliest arrival</p>
               </div>
             </div>
 
             {/* Product Grid Section - Scrollable */}
-            <div className="px-4 pb-4">
-              <div className="grid grid-cols-2 gap-4">
-                {productCategories.map((item) => (
+            <div className='px-4 pb-4'>
+              <div className='grid grid-cols-2 gap-4'>
+                {productCategories.map(item => (
                   <div
                     key={item._id}
-                    className="relative rounded-lg overflow-hidden shadow group"
+                    className='relative rounded-lg overflow-hidden shadow group'
                     onClick={() => handleProduct(item._id, item.productName)}
                   >
                     <img
                       src={`${ImagePath}${item.product_img[0]}`}
                       alt={item.productName}
-                      className="w-full h-56 object-cover"
+                      className='w-full h-56 object-cover'
                     />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                      <h3 className="text-white font-bold text-lg text-center">
+                    <div className='absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition'>
+                      <h3 className='text-white font-bold text-lg text-center'>
                         {item.productName}
                       </h3>
                     </div>
@@ -425,10 +437,10 @@ const FoodDeliveryApp = () => {
 
         {/* Select Location Button - Fixed at bottom */}
         {!(selectedMethod && (selectedArea || selectedGovernate)) && (
-          <div className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+          <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
             <button
               onClick={() => navigate('/pickupdeviler')}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors"
+              className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors'
             >
               Select your location
             </button>
@@ -436,7 +448,7 @@ const FoodDeliveryApp = () => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default FoodDeliveryApp;
+export default FoodDeliveryApp

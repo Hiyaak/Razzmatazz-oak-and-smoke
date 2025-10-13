@@ -6,7 +6,7 @@ import Loader from './Components/Loader/Loader'
 const Oakandsomke = lazy(() => import('./Pages/Oakandsomke/Ordernowsomke'))
 const Menu = lazy(() => import('./Pages/Oakandsomke/Menu'))
 const Shoopingcart = lazy(() => import('./Pages/Oakandsomke/Shoopingcart'))
-const Review = lazy(() => import('./Pages/Oakandsomke/Review'))
+const Contact = lazy(() => import('./Pages/Contact/Contact'))
 const Pickupdeviler = lazy(() => import('./Pages/Oakandsomke/Pickupdeviler'))
 const Subproducts = lazy(() => import('./Pages/Oakandsomke/Subproducts'))
 const Login = lazy(() => import('./Pages/Login/Login'))
@@ -23,7 +23,7 @@ function App () {
             <Route path='/menu' element={<Menu />} />
             <Route path='/subproduct/:name' element={<Subproducts />} />
             <Route path='/shoopingcart' element={<Shoopingcart />} />
-            <Route path='/review' element={<Review />} />
+            <Route path='/contact' element={<Contact />} />
             <Route path='/pickupdeviler' element={<Pickupdeviler />} />
             <Route path='/login' element={<Login />} />
             <Route path='/placeorder' element={<Placeorder />} />
