@@ -12,6 +12,7 @@ import {
 import heroImage from '../../assets/concept.jpg'
 import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
 
 const ContactInfoForm = () => {
   const [showGuestForm, setShowGuestForm] = useState(false)
@@ -44,12 +45,12 @@ const ContactInfoForm = () => {
       const { data } = await ApiService.post('guestUser', payload)
       if (data.status) {
         localStorage.setItem('guestUserId', data.user._id)
-        alert('Guest login successful ')
+        toast.success('Guest login successful!')
         navigate('/shoopingcart')
       } else {
       }
     } catch (error) {
-      console.log('error ', error)
+      toast.error('Something went wrong during login. Please try again.')
     }
   }
 

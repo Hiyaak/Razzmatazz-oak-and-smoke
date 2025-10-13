@@ -1,9 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
-import { ArrowLeft, Menu, Search, User, ShoppingBag } from 'lucide-react'
+import {
+  ArrowLeft,
+  Menu,
+  Search,
+  User,
+  ShoppingBag,
+  LogOut
+} from 'lucide-react'
 
 import { useCart } from '../../Context/CartContext'
 import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
 
 const Placeorder = () => {
   const navigate = useNavigate()
@@ -19,6 +27,14 @@ const Placeorder = () => {
 
   const handeleSearch = () => {
     navigate('/search')
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('guestUserId')
+    localStorage.removeItem('registredUserId')
+    localStorage.removeItem('selectedLocation')
+
+    navigate('/') // if using react-router
   }
 
   const handlePlaceOrder = async () => {
@@ -53,13 +69,13 @@ const Placeorder = () => {
 
       if (data.status) {
         console.log('Order placed successfully — Server Response:', data)
-        alert('Order placed successfully!')
+        toast.success('Order placed successfully!')
         navigate('/myorders')
       } else {
-        alert('Failed to place order.')
+        toast.error('Failed to place order. Please try again.')
       }
     } catch (error) {
-      console.error('❌ Error in placing order:', error)
+      toast.error('Something went wrong while placing your order.')
     }
   }
 
@@ -154,8 +170,11 @@ const Placeorder = () => {
               <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
                 <Search onClick={handeleSearch} className='w-6 h-6' />
               </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <User className='w-6 h-6' />
+              <button
+                onClick={handleLogout}
+                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              >
+                <LogOut className='w-6 h-6' />
               </button>
             </div>
           </div>
@@ -170,8 +189,8 @@ const Placeorder = () => {
           />
 
           {/* Bottom IG button */}
-           <div className="absolute top-1/2 right-0 z-20 transform -translate-y-1/2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
+            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
               IG
             </div>
           </div>
