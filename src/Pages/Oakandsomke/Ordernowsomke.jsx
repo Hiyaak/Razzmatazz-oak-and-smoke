@@ -7,7 +7,8 @@ import {
   Search,
   User,
   Leaf,
-  LogOut
+  LogOut,
+  AlertCircle
 } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
@@ -110,6 +111,7 @@ const FoodDeliveryApp = () => {
               className='cursor-pointer transition-colors border-b border-gray-200'
             >
               <div className='flex items-center justify-between px-6 py-4'>
+                {/* Left side - logo and text */}
                 <div className='flex items-center space-x-3'>
                   <img
                     src={oak}
@@ -120,8 +122,13 @@ const FoodDeliveryApp = () => {
                     <h1 className='text-lg font-bold text-gray-900'>
                       Oak and Smoke
                     </h1>
-                    <p className='text-xs text-gray-500'>Smoke Meat Everyday</p>
+                    <p className='text-sm text-gray-500'>Smoke Meat Everyday</p>
                   </div>
+                </div>
+
+                {/* Right side - centered FiAlertCircle */}
+                <div className='flex items-center justify-center'>
+                  <AlertCircle className='w-6 h-6 text-gray-600' />
                 </div>
               </div>
 
