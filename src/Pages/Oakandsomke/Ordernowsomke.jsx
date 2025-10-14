@@ -417,8 +417,8 @@ const FoodDeliveryApp = () => {
             </div>
 
             {/* Product Grid Section - Scrollable */}
-            <div className='px-4 pb-4'>
-              <div className='grid grid-cols-2 gap-4'>
+            <div className='px-4 py-4'>
+              <div className='grid grid-cols-2 gap-2'>
                 {productCategories.map(item => (
                   <div
                     key={item._id}
@@ -428,7 +428,7 @@ const FoodDeliveryApp = () => {
                     <img
                       src={`${ImagePath}${item.product_img[0]}`}
                       alt={item.productName}
-                      className='w-full h-56 object-cover'
+                      className='w-full h-48 object-cover'
                     />
                     <div className='absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition'>
                       <h3 className='text-white font-bold text-lg text-center'>

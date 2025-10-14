@@ -17,6 +17,10 @@ const Login = lazy(() => import('./Pages/Login/Login'))
 const Placeorder = lazy(() => import('./Pages/Placeorder/Placeorder'))
 const Myorders = lazy(() => import('./Pages/Placeorder/Myorders'))
 const Search = lazy(() => import('./Pages/Search/Search'))
+const BrandDetails = lazy(() =>
+  import('./Pages/Contact/BrandDetails/BrabdDetails')
+)
+
 function App () {
   return (
     <>
@@ -33,6 +37,7 @@ function App () {
             <Route path='/placeorder' element={<Placeorder />} />
             <Route path='/myorders' element={<Myorders />} />
             <Route path='/search' element={<Search />} />
+            <Route path='/branddetails' element={<BrandDetails />} />
           </Routes>
         </Suspense>
       </Router>
