@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ArrowLeft,
   Menu,
@@ -11,91 +11,106 @@ import {
   Send,
   Instagram,
   Phone,
-  Mail
+  Mail,
+  ChevronLeft
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
+import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
 
 const Contact = () => {
   const navigate = useNavigate()
   const [showFeedbackForm, setShowFeedbackForm] = useState(false)
   const [showReviews, setShowReviews] = useState(false)
   const [selectedRating, setSelectedRating] = useState(0)
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [comment, setComment] = useState('')
+  const [feedback, setFeedback] = useState({
+    name: '',
+    phone: '',
+    comment: '',
+    rating: 0
+  })
 
-  const reviews = [
-    {
-      name: 'Ahmad Mohammad',
-      rating: 5,
-      date: 'More than a year ago',
-      comment: 'it was perfect'
-    },
-    {
-      name: 'Tiffany',
-      rating: 5,
-      date: 'More than a year ago',
-      comment:
-        "I'm from Houston Texas and I will say this is some of the BEST smoked BBQ I've ever had. I love the food. Thank You for all time and devotion placed into making such great BBQ. Delicious"
-    },
-    {
-      name: 'Khadeejah alsharqawi',
-      rating: 5,
-      date: 'More than a year ago',
-      comment: '.'
-    },
-    {
-      name: 'Lolwah',
-      rating: 5,
-      date: 'More than a year ago',
-      comment:
-        'Winnie is great service with beautiful smile Thank you Winnie 💕'
-    },
-    {
-      name: 'Khaled Alhattab',
-      rating: 5,
-      date: 'More than a year ago',
-      comment: ''
+  const [reviews, setReviews] = useState([])
+  const brandId = localStorage.getItem('brandId')
+
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  const getReviews = async () => {
+    try {
+      const { data } = await ApiService.get(`getFeedbacksByBrand/${brandId}`)
+      if (data.status) {
+        setReviews(data.feedbacks)
+        console.log('reviews', data.feedbacks)
+      }
+    } catch (error) {
+      console.log(error)
     }
-  ]
+  }
 
-  const handleSendFeedback = () => {
-    // Handle feedback submission
-    console.log({ name, phone, comment, rating: selectedRating })
-    // Reset form
-    setName('')
-    setPhone('')
-    setComment('')
-    setSelectedRating(0)
-    setShowFeedbackForm(false)
+  useEffect(() => {
+    getReviews()
+  }, [])
+
+  // Handle input changes
+  const handleInputChange = e => {
+    const { name, value } = e.target
+    setFeedback(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  // Handle rating (emoji click)
+  const handleRatingChange = value => {
+    setFeedback(prev => ({
+      ...prev,
+      rating: value
+    }))
+  }
+
+  // Submit feedback
+  const handleSendFeedback = async () => {
+    if (!feedback.comment.trim()) {
+      toast.error('Please enter your feedback comment.')
+      return
+    }
+
+    try {
+      const payload = {
+        name: feedback.name || 'Anonymous',
+        phone: feedback.phone,
+        comment: feedback.comment,
+        rating: feedback.rating,
+        brandId
+      }
+
+      const { data } = await ApiService.post('/createFeedback', payload)
+
+      if (data.status) {
+        toast.success('Thank you for your feedback!')
+        setShowFeedbackForm(false)
+        setFeedback({ name: '', phone: '', comment: '', rating: 0 })
+        getReviews()
+      } else {
+        toast.error('Failed to submit feedback.')
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error)
+      toast.error('Something went wrong.')
+    }
   }
 
   const renderStars = rating => {
-    return Array(5)
-      .fill(0)
-      .map((_, i) => (
-        <span key={i} className='text-yellow-400'>
-          ★
-        </span>
-      ))
-  }
-
-  const renderRatingEmoji = index => {
-    const emojis = ['😞', '😕', '😐', '🙂', '😊']
-    return (
-      <button
-        key={index}
-        onClick={() => setSelectedRating(index + 1)}
-        className={`text-3xl transition-all ${
-          selectedRating === index + 1
-            ? 'scale-125'
-            : 'opacity-50 hover:opacity-100'
-        }`}
+    const total = 5
+    return [...Array(total)].map((_, i) => (
+      <span
+        key={i}
+        className={i < rating ? 'text-yellow-500' : 'text-gray-300'}
       >
-        {emojis[index]}
-      </button>
-    )
+        ★
+      </span>
+    ))
   }
 
   const handleMenuClick = () => {
@@ -116,6 +131,24 @@ const Contact = () => {
     localStorage.removeItem('selectedLocation')
 
     navigate('/')
+  }
+
+  const timeAgo = date => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000)
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60
+    }
+    for (const [unit, value] of Object.entries(intervals)) {
+      const count = Math.floor(seconds / value)
+      if (count > 1) return `${count} ${unit}s ago`
+      if (count === 1) return `1 ${unit} ago`
+    }
+    return 'Just now'
   }
 
   return (
@@ -147,7 +180,10 @@ const Contact = () => {
             <div className='border-b border-gray-200'>
               <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer'>
                 <span className='text-gray-800'>Shuwaikh</span>
-                <button className='p-2 text-gray-400 hover:text-gray-600'>
+                <button
+                  onClick={() => navigate('/branddetails')}
+                  className='p-2 text-gray-400 hover:text-gray-600'
+                >
                   <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
                     <span className='text-xs'>?</span>
                   </div>
@@ -187,6 +223,7 @@ const Contact = () => {
           </div>
 
           {/* Customer Reviews Section */}
+
           <div className='border-b border-gray-200'>
             <div className='px-4 py-3 flex items-center justify-between bg-gray-50'>
               <h2 className='text-sm font-medium text-gray-700'>
@@ -200,35 +237,98 @@ const Contact = () => {
               </button>
             </div>
 
-            {/* Single Review Preview */}
-            <div className='px-4 py-4 border-b border-gray-200'>
-              <div className='flex items-start justify-between'>
-                <div className='flex-1'>
-                  <h3 className='font-medium text-gray-900 mb-1'>
-                    Ahmad Mohammad
-                  </h3>
-                  <div className='flex items-center gap-2 mb-2'>
-                    <div className='flex'>{renderStars(5)}</div>
-                    <span className='text-xs text-gray-500'>
-                      More than a year ago
-                    </span>
+            {/* Slideshow Container */}
+            <div className='relative overflow-hidden'>
+              {reviews.length > 0 ? (
+                <>
+                  {/* Slides */}
+                  <div
+                    className='flex transition-transform duration-500'
+                    style={{
+                      transform: `translateX(-${currentSlide * 100}%)`
+                    }}
+                  >
+                    {reviews.slice(0, 5).map(review => (
+                      <div
+                        key={review._id}
+                        className='min-w-full px-4 py-4 border-b border-gray-200'
+                      >
+                        <div className='flex items-start justify-between px-10'>
+                          <div className='flex-1'>
+                            <h3 className='font-medium text-gray-900 mb-1'>
+                              {review.name || 'Anonymous'}
+                            </h3>
+                            <div className='flex items-center gap-2 mb-2'>
+                              <div className='flex'>
+                                {renderStars(Number(review.rating))}
+                              </div>
+                              <span className='text-xs text-gray-500'>
+                                {timeAgo(review.createdAt)}
+                              </span>
+                            </div>
+                            <p className='text-sm text-gray-700'>
+                              {review.comment || 'No comment provided.'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <p className='text-sm text-gray-700'>it was perfect</p>
-                </div>
-                <button className='ml-4 p-2 text-red-500 hover:bg-red-50 rounded-full'>
-                  <ChevronRight className='w-5 h-5' />
-                </button>
-              </div>
+
+                  {/* Navigation Arrows */}
+                  {reviews.length > 1 && (
+                    <>
+                      {/* Left Arrow */}
+                      {currentSlide > 0 && (
+                        <button
+                          onClick={() => setCurrentSlide(prev => prev - 1)}
+                          className='absolute left-0 ml-2 top-1/2 transform -translate-y-1/2 bg-[#FA0303] hover:bg-[#AF0202] text-white rounded-full p-2 shadow transition'
+                        >
+                          <ChevronLeft className='w-4 h-4' />
+                        </button>
+                      )}
+
+                      {/* Right Arrow */}
+                      {currentSlide < Math.min(4, reviews.length - 1) && (
+                        <button
+                          onClick={() =>
+                            setCurrentSlide(prev =>
+                              prev === Math.min(4, reviews.length - 1)
+                                ? prev
+                                : prev + 1
+                            )
+                          }
+                          className='absolute mr-2 right-0 top-1/2 transform -translate-y-1/2 bg-[#FA0303] hover:bg-[#AF0202] text-white rounded-full p-2 shadow transition'
+                        >
+                          <ChevronRight className='w-4 h-4' />
+                        </button>
+                      )}
+                    </>
+                  )}
+                </>
+              ) : (
+                <p className='text-center text-gray-500 py-4'>
+                  No reviews available
+                </p>
+              )}
             </div>
 
             {/* Pagination Dots */}
-            <div className='flex justify-center gap-2 py-4'>
-              <div className='w-2 h-2 rounded-full bg-gray-800'></div>
-              <div className='w-2 h-2 rounded-full bg-gray-300'></div>
-              <div className='w-2 h-2 rounded-full bg-gray-300'></div>
-              <div className='w-2 h-2 rounded-full bg-gray-300'></div>
-              <div className='w-2 h-2 rounded-full bg-gray-300'></div>
-            </div>
+            {reviews.length > 1 && (
+              <div className='flex justify-center gap-2 py-4'>
+                {reviews.slice(0, 5).map((_, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2 h-2 rounded-full cursor-pointer transition-all ${
+                      index === currentSlide
+                        ? 'bg-gray-800 scale-110'
+                        : 'bg-gray-300'
+                    }`}
+                  ></div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Connect With Us Section */}
@@ -282,7 +382,17 @@ const Contact = () => {
             <div className='flex-1 p-6 overflow-y-auto md:overflow-hidden'>
               {/* Rating Emojis */}
               <div className='flex justify-center gap-4 mb-6'>
-                {[0, 1, 2, 3, 4].map(renderRatingEmoji)}
+                {[1, 2, 3, 4, 5].map(value => (
+                  <button
+                    key={value}
+                    onClick={() => handleRatingChange(value)}
+                    className={`text-3xl ${
+                      feedback.rating >= value ? 'opacity-100' : 'opacity-50'
+                    }`}
+                  >
+                    😊
+                  </button>
+                ))}
               </div>
 
               {/* Name and Phone side by side */}
@@ -290,12 +400,13 @@ const Contact = () => {
                 {/* Name Input */}
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-2'>
-                    Name (Optional)
+                    Name
                   </label>
                   <input
                     type='text'
-                    value={name}
-                    onChange={e => setName(e.target.value)}
+                    name='name'
+                    value={feedback.name}
+                    onChange={handleInputChange}
                     className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
                   />
                 </div>
@@ -308,9 +419,10 @@ const Contact = () => {
                   <div className='flex gap-2'>
                     <input
                       type='tel'
-                      value={phone}
-                      onChange={e => setPhone(e.target.value)}
-                      placeholder='+96591787948'
+                      name='phone'
+                      value={feedback.phone}
+                      onChange={handleInputChange}
+                      maxLength={8}
                       className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
                     />
                   </div>
@@ -323,8 +435,9 @@ const Contact = () => {
                   Leave us a comment
                 </label>
                 <textarea
-                  value={comment}
-                  onChange={e => setComment(e.target.value)}
+                  name='comment'
+                  value={feedback.comment}
+                  onChange={handleInputChange}
                   rows='1'
                   className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
                 />
@@ -358,28 +471,37 @@ const Contact = () => {
             </div>
 
             <div className='flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
-              {reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className='border-b border-gray-200 pb-4 mb-4 last:border-0'
-                >
-                  <h3 className='font-medium text-gray-900 mb-1'>
-                    {review.name}
-                  </h3>
-                  <div className='flex items-center gap-2 mb-2'>
-                    <div className='flex'>{renderStars(review.rating)}</div>
-                    <span className='text-xs text-gray-500'>{review.date}</span>
+              {reviews.length > 0 ? (
+                reviews.map(review => (
+                  <div
+                    key={review._id}
+                    className='border-b border-gray-200 pb-4 mb-4 last:border-0'
+                  >
+                    <h3 className='font-medium text-gray-900 mb-1'>
+                      {review.name || 'Anonymous'}
+                    </h3>
+                    <div className='flex items-center gap-2 mb-2'>
+                      <div className='flex'>
+                        {renderStars(Number(review.rating))}
+                      </div>
+                      <span className='text-xs text-gray-500'>
+                        {timeAgo(review.createdAt)}
+                      </span>
+                    </div>
+                    {review.comment && (
+                      <p className='text-sm text-gray-700'>{review.comment}</p>
+                    )}
                   </div>
-                  {review.comment && (
-                    <p className='text-sm text-gray-700'>{review.comment}</p>
-                  )}
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className='text-center text-gray-500 py-4'>
+                  No reviews available
+                </p>
+              )}
             </div>
           </div>
         </div>
       )}
-
       {/* Right Panel - Fixed, No Scroll */}
       <div className='flex-1 relative bg-black h-screen overflow-hidden'>
         {/* Top Navigation — hidden on mobile */}

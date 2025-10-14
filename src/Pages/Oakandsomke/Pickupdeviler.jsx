@@ -27,10 +27,23 @@ const HeroSection = () => {
   const [selectedGovernateId, setSelectedGovernateId] = useState('')
   const [selectedAreaId, setSelectedAreaId] = useState('')
 
-  // Fetch all governates for the brand
+  // Fetch all governates for the brand based on selected method
   const getAllGovernates = async () => {
     try {
-      const { data } = await ApiService.get(`/getAllGovernate/${brandId}`)
+      let response
+
+      if (selectedMethod === 'pickup') {
+        // Pickup method → different API
+        response = await ApiService.get(
+          `/getAllPickUpGovernateByBrandId/${brandId}`
+        )
+      } else {
+        // Delivery method → default API
+        response = await ApiService.get(`/getAllGovernate/${brandId}`)
+      }
+
+      const { data } = response
+
       if (data.status && data.governates) {
         setGovernates(data.governates)
       } else {
@@ -38,24 +51,43 @@ const HeroSection = () => {
       }
     } catch (error) {
       console.error('Error fetching governates:', error)
+      setGovernates([])
     }
   }
 
-  // Fetch areas for a given governate (only when expanded)
+  // Fetch areas for a given governate based on selected method
   const getAreasByGovernate = async governateId => {
     if (areasByGovernate[governateId]) return // already loaded
+
     try {
-      const { data } = await ApiService.get('/getAllArea', {
-        governateId,
-        brandId
-      })
+      let response
+
+      if (selectedMethod === 'pickup') {
+        // Pickup method → different API
+        response = await ApiService.get('/getAllPickUPArea', {
+          governateId,
+          brandId
+        })
+      } else {
+        // Delivery method → default API
+        response = await ApiService.get('/getAllArea', {
+          governateId,
+          brandId
+        })
+      }
+
+      const { data } = response
+
       if (data.status && data.areas) {
         setAreasByGovernate(prev => ({
           ...prev,
           [governateId]: data.areas
         }))
       } else {
-        setAreasByGovernate(prev => ({ ...prev, [governateId]: [] }))
+        setAreasByGovernate(prev => ({
+          ...prev,
+          [governateId]: []
+        }))
       }
     } catch (error) {
       console.error('Error fetching areas:', error)
@@ -63,8 +95,12 @@ const HeroSection = () => {
   }
 
   useEffect(() => {
-    if (brandId) getAllGovernates()
-  }, [brandId])
+    if (brandId) {
+      setGovernates([])
+      setAreasByGovernate({})
+      getAllGovernates()
+    }
+  }, [brandId, selectedMethod])
 
   const handleMethodChange = method => {
     setSelectedMethod(method)
