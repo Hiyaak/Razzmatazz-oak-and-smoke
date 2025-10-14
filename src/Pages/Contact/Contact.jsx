@@ -23,7 +23,6 @@ const Contact = () => {
   const navigate = useNavigate()
   const [showFeedbackForm, setShowFeedbackForm] = useState(false)
   const [showReviews, setShowReviews] = useState(false)
-  const [selectedRating, setSelectedRating] = useState(0)
   const [feedback, setFeedback] = useState({
     name: '',
     phone: '',
@@ -159,12 +158,11 @@ const Contact = () => {
         <div className='p-4 border-b border-gray-200 flex-shrink-0'>
           <div className='flex items-center justify-between'>
             <button
-              onClick={() => window.history.back()}
+              onClick={() => navigate('/')}
               className='p-2 hover:bg-gray-100 rounded-full transition-colors'
             >
               <ArrowLeft className='w-5 h-5 text-gray-600' />
             </button>
-            <h1 className='text-xl font-semibold text-gray-900'>Contact</h1>
             <div className='w-9' />
           </div>
         </div>
@@ -177,13 +175,13 @@ const Contact = () => {
               Our branches
             </h2>
 
-            <div className='border-b border-gray-200'>
+            <div
+              onClick={() => navigate('/branddetails')}
+              className='border-b border-gray-200'
+            >
               <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer'>
                 <span className='text-gray-800'>Shuwaikh</span>
-                <button
-                  onClick={() => navigate('/branddetails')}
-                  className='p-2 text-gray-400 hover:text-gray-600'
-                >
+                <button className='p-2 text-gray-400 hover:text-gray-600'>
                   <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
                     <span className='text-xs'>?</span>
                   </div>
@@ -191,7 +189,7 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className='border-b border-gray-200'>
+            <div className=''>
               <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer'>
                 <span className='text-gray-800'>Al Khiran</span>
                 <button className='p-2 text-gray-400 hover:text-gray-600'>

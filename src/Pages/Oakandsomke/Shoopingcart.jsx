@@ -210,47 +210,48 @@ const ShoppingCartPage = () => {
         </div>
 
         {/* Order Summary - Fixed at Bottom (No Scroll) */}
-        {/* Bottom Section */}
-        {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
-          // ❌ Location not selected — show "Select your location"
-          <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
-            <button
-              onClick={() => navigate('/pickupdeviler')}
-              className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors'
+        {/* ✅ Bottom Section - Only show if cart has items */}
+        {cart.length > 0 &&
+          (!(selectedMethod && (selectedArea || selectedGovernate)) ? (
+            // ❌ Location not selected — show "Select your location"
+            <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
+              <button
+                onClick={() => navigate('/pickupdeviler')}
+                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors'
+              >
+                Select your location
+              </button>
+            </div>
+          ) : (
+            // ✅ Location selected — show "Go to checkout"
+            <div
+              className='p-3 border-t border-gray-200 bg-white flex-shrink-0'
+              onClick={handleGotocheckout}
             >
-              Select your location
-            </button>
-          </div>
-        ) : (
-          // ✅ Location selected — show "Go to checkout"
-          <div
-            className='p-3 border-t border-gray-200 bg-white flex-shrink-0'
-            onClick={handleGotocheckout}
-          >
-            <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
-              {/* Left - Items Count */}
-              <div className='flex items-center'>
-                <span className='bg-white/20 rounded-sm w-6 h-6 flex items-center justify-center text-sm'>
-                  {cart.length}
+              <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
+                {/* Left - Items Count */}
+                <div className='flex items-center'>
+                  <span className='bg-white/20 rounded-sm w-6 h-6 flex items-center justify-center text-sm'>
+                    {cart.length}
+                  </span>
+                </div>
+
+                {/* Center - Checkout Text */}
+                <span>Go to checkout</span>
+
+                {/* Right - Total Price */}
+                <span>
+                  {cart
+                    .reduce(
+                      (total, item) => total + item.price * item.quantity,
+                      0
+                    )
+                    .toFixed(3)}{' '}
+                  KD
                 </span>
-              </div>
-
-              {/* Center - Checkout Text */}
-              <span>Go to checkout</span>
-
-              {/* Right - Total Price */}
-              <span>
-                {cart
-                  .reduce(
-                    (total, item) => total + item.price * item.quantity,
-                    0
-                  )
-                  .toFixed(3)}{' '}
-                KD
-              </span>
-            </button>
-          </div>
-        )}
+              </button>
+            </div>
+          ))}
       </div>
 
       {/* Right Panel - Fixed, No Scroll */}
