@@ -11,9 +11,10 @@ const Subproducts = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { cart, addToCart, updateQuantity } = useCart()
+  const brandId = localStorage.getItem('brandId')
 
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
-    localStorage.getItem('selectedLocation') || '{}'
+    localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
 
   const [subProductCategories, setSubProductCategories] = useState([])
@@ -59,12 +60,12 @@ const Subproducts = () => {
   const handeleSearch = () => {
     navigate('/search')
   }
+
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
-    navigate('/') 
+    localStorage.removeItem(`selectedLocation_${brandId}`)
+    navigate('/')
   }
 
   return (

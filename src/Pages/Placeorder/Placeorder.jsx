@@ -32,21 +32,31 @@ const Placeorder = () => {
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
-    navigate('/') // if using react-router
+    localStorage.removeItem(`selectedLocation_${brandId}`)
+    navigate('/')
   }
 
   const handlePlaceOrder = async () => {
     try {
-      // Get user ID (guest or registered)
-      const userId =
-        localStorage.getItem('guestUserId') ||
-        localStorage.getItem('registredUserId')
+      const storedBrandId = localStorage.getItem('brandId')
+      if (!storedBrandId) return toast.error('No brand selected')
 
-      // Get location details from localStorage
+      // Get user ID for this brand
+      const userId =
+        sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+        localStorage.getItem(`registredUserId_${storedBrandId}`)
+
+      if (!userId) return toast.error('Please login or continue as guest')
+
+      // Get location for this brand
+      const locationData = JSON.parse(
+        localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+      )
       const { selectedMethod, selectedGovernateId, selectedAreaId } =
-        JSON.parse(localStorage.getItem('selectedLocation') || '{}')
+        locationData
+
+      if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+        return toast.error('Please select your location')
 
       // Build payload
       const payload = {
@@ -59,10 +69,9 @@ const Placeorder = () => {
           quantity: item.quantity,
           description: item.description || ''
         })),
-
-        deliveryType: selectedMethod || '',
-        governateId: selectedGovernateId || '',
-        areaId: selectedAreaId || ''
+        deliveryType: selectedMethod,
+        governateId: selectedGovernateId,
+        areaId: selectedAreaId
       }
 
       const { data } = await ApiService.post('placeOrder', payload)
@@ -75,6 +84,7 @@ const Placeorder = () => {
         toast.error('Failed to place order. Please try again.')
       }
     } catch (error) {
+      console.error('Place order error:', error)
       toast.error('Something went wrong while placing your order.')
     }
   }

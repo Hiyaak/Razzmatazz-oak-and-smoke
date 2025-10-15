@@ -21,8 +21,10 @@ const ShoppingCartPage = () => {
   const navigate = useNavigate()
   const { cart, updateQuantity, removeFromCart } = useCart()
 
+  const brandId = localStorage.getItem('brandId')
+
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
-    localStorage.getItem('selectedLocation') || '{}'
+    localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
 
   const handleQuantityChange = (productId, newQuantity) => {
@@ -34,8 +36,17 @@ const ShoppingCartPage = () => {
   }
 
   const handleGotocheckout = () => {
-    const guestUserId = localStorage.getItem('guestUserId')
-    const registredUserId = localStorage.getItem('registredUserId')
+    const storedBrandId = localStorage.getItem('brandId')
+    if (!storedBrandId) {
+      toast.error('No brand selected')
+      return
+    }
+
+    // Get user IDs for this brand
+    const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
+    const registredUserId = localStorage.getItem(
+      `registredUserId_${storedBrandId}`
+    )
 
     if (guestUserId || registredUserId) {
       navigate('/placeorder')
@@ -59,11 +70,10 @@ const ShoppingCartPage = () => {
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
-    navigate('/') // if using react-router
+    localStorage.removeItem(`selectedLocation_${brandId}`)
+    navigate('/')
   }
-
+  
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar (40% on desktop, full on mobile) */}

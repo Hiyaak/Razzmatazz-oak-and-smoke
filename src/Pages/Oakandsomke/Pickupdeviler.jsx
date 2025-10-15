@@ -153,9 +153,8 @@ const HeroSection = () => {
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
-    navigate('/') // if using react-router
+    localStorage.removeItem(`selectedLocation_${brandId}`)
+    navigate('/')
   }
 
   const handleMenuClick = () => navigate('/menu')
