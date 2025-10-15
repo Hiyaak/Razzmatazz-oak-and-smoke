@@ -20,23 +20,8 @@ const FoodDeliveryApp = () => {
   const [productCategories, setproductCategories] = useState([])
   const [selectedTab, setSelectedTab] = useState('Delivery')
   const [brandId, setBrandId] = useState(null)
+  const [selectedLocation, setSelectedLocation] = useState({})
   const navigate = useNavigate()
-
-  const {
-    selectedMethod,
-    selectedGovernate,
-    selectedGovernateId,
-    selectedArea,
-    selectedAreaId
-  } = JSON.parse(localStorage.getItem('selectedLocation') || '{}')
-
-  console.log('Full selectedLocation:', {
-    selectedMethod,
-    selectedGovernate,
-    selectedGovernateId,
-    selectedArea,
-    selectedAreaId
-  })
 
   const getProductCategories = async () => {
     try {
@@ -49,20 +34,46 @@ const FoodDeliveryApp = () => {
         if (data.products.length > 0) {
           const brandIdFromApi = data.products[0].brand_id
           setBrandId(brandIdFromApi)
-
           localStorage.setItem('brandId', brandIdFromApi)
         }
-
-        // console.log('brand products:', data.products)
       }
     } catch (error) {
-      console.log('error ', error)
+      console.error('Error fetching product categories:', error)
     }
   }
 
   useEffect(() => {
+    if (brandId) {
+      const locationData = localStorage.getItem(`selectedLocation_${brandId}`)
+      if (locationData) {
+        try {
+          setSelectedLocation(JSON.parse(locationData))
+        } catch (err) {
+          console.error('Invalid JSON in location storage:', err)
+        }
+      }
+    }
+  }, [brandId])
+
+  useEffect(() => {
     getProductCategories()
   }, [])
+
+  const {
+    selectedMethod,
+    selectedGovernate,
+    selectedGovernateId,
+    selectedArea,
+    selectedAreaId
+  } = selectedLocation || {}
+
+  console.log('Full selectedLocation:', {
+    selectedMethod,
+    selectedGovernate,
+    selectedGovernateId,
+    selectedArea,
+    selectedAreaId
+  })
 
   const handleProduct = (productId, productName) => {
     navigate(
@@ -85,11 +96,10 @@ const FoodDeliveryApp = () => {
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
+    localStorage.removeItem(`selectedLocation_${brandId}`)
     navigate('/')
   }
-
+  
   const handleBrandClick = () => {
     navigate('/contact')
   }

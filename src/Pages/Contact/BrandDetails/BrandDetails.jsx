@@ -98,13 +98,13 @@ const BrabdDetails = () => {
                 Details
               </h2>
 
-              <div className='bg-white p-3 border-t border-gray-100 '>
+              <div className='bg-white p-3 border-t  border-gray-200 '>
                 <h1 className='text-md font-semibold text-[#FA0303] mb-3'>
                   Shuwaikh
                 </h1>
 
                 {/* Call Section */}
-                <div className='flex items-center justify-between py-2  border-gray-100'>
+                <div className='flex items-center justify-between py-2'>
                   <span className='text-gray-900 font-semibold'>Call</span>
                   <button
                     onClick={handleCall}
@@ -134,7 +134,7 @@ const BrabdDetails = () => {
 
           {/* Address Section with White Background */}
           <div className=' bg-white p-3'>
-            <div className='bg-gray-100 p-3  -mx-3 -mt-3 mb-3'>
+            <div className='bg-gray-100 p-3  -mx-3 -mt-3 mb-3 border-b'>
               <h2 className='text-base font-semibold text-gray-500'>Address</h2>
             </div>
             <div className='flex items-start'>
@@ -152,8 +152,8 @@ const BrabdDetails = () => {
           </div>
 
           {/* Hours Section*/}
-          <div className='mb-6 bg-white p-3 border-t border-gray-200'>
-            <div className='bg-gray-100 p-4 rounded-md -mx-3 -mt-3 mb-3'>
+          <div className='mb-6 bg-white p-3 border-t  border-gray-200'>
+            <div className='bg-gray-100 p-4 rounded-md -mx-3 -mt-3 mb-3 border-b'>
               <h2 className='text-base font-semibold text-gray-500'>Hours</h2>
             </div>
 
