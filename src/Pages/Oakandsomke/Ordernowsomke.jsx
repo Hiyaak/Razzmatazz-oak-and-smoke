@@ -99,7 +99,7 @@ const FoodDeliveryApp = () => {
     localStorage.removeItem(`selectedLocation_${brandId}`)
     navigate('/')
   }
-  
+
   const handleBrandClick = () => {
     navigate('/contact')
   }
@@ -113,7 +113,7 @@ const FoodDeliveryApp = () => {
       {/* Desktop layout  */}
       <div className='hidden md:flex min-h-screen bg-gray-50'>
         {/* Left Panel*/}
-        <div className='w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen'>
+        <div className='w-1/2 bg-white border-r border-gray-100 flex flex-col h-screen'>
           <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
             {/* Header Section */}
             <div

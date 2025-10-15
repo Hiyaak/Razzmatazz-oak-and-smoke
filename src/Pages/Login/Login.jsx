@@ -44,7 +44,7 @@ const ContactInfoForm = () => {
       }
       const { data } = await ApiService.post('guestUser', payload)
       if (data.status) {
-        localStorage.setItem('guestUserId', data.user._id)
+        sessionStorage.setItem(`guestUserId_${storedBrandId}`, data.user._id)
         toast.success('Guest login successful!')
         navigate('/shoopingcart')
       } else {
@@ -71,8 +71,7 @@ const ContactInfoForm = () => {
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
+    localStorage.removeItem(`selectedLocation_${brandId}`)
     navigate('/')
   }
 
@@ -159,7 +158,7 @@ const ContactInfoForm = () => {
                 <div className='flex justify-center mb-6'>
                   <button
                     onClick={handleSignUp}
-                    className='w-2/3 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm'
+                    className='w-1/2 bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3 rounded-lg transition-colors shadow-sm'
                   >
                     SIGN UP
                   </button>

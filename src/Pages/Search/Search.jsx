@@ -60,11 +60,11 @@ const Search = () => {
 
   const handleMenuClick = () => navigate('/menu')
   const handleShoppingCartClick = () => navigate('/shoopingcart')
+
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
+    localStorage.removeItem(`selectedLocation_${brandId}`)
     navigate('/')
   }
 

@@ -72,7 +72,7 @@ const MenuPage = () => {
 
       if (data.status) {
         // Save user ID
-        localStorage.setItem('registredUserId', data.user._id)
+        localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id)
         toast.success('Login successful!')
         navigate('/shoopingcart') // go to cart after login
       } else {
@@ -80,7 +80,7 @@ const MenuPage = () => {
       }
     } catch (error) {
       console.error('Login error:', error)
-      alert('Something went wrong')
+      toast.error('Something went wrong')
     }
   }
 
@@ -95,11 +95,11 @@ const MenuPage = () => {
   const handeleSearch = () => {
     navigate('/search')
   }
+
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
+    localStorage.removeItem(`selectedLocation_${brandId}`)
     navigate('/')
   }
 
@@ -381,7 +381,7 @@ const MenuPage = () => {
                 onClick={
                   activeTab === 'login' ? handleLoginUser : handleRegisterUser
                 }
-                className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors mt-8 text-lg'
+                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors mt-8 text-lg'
               >
                 {activeTab === 'login' ? 'Login' : 'Register'}
               </button>

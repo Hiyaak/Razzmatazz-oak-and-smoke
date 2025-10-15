@@ -17,9 +17,14 @@ const Myorders = () => {
 
   const getOrders = async () => {
     try {
+      const storedBrandId = localStorage.getItem('brandId')
+      if (!storedBrandId) return // no brand selected
+
       const userId =
-        localStorage.getItem('guestUserId') ||
-        localStorage.getItem('registredUserId')
+        sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+        localStorage.getItem(`registredUserId_${storedBrandId}`)
+
+      if (!userId) return // no user logged in
 
       const { data } = await ApiService.get(`getOrdersByUserId/${userId}`)
 
@@ -49,10 +54,10 @@ const Myorders = () => {
   const handleLogout = () => {
     localStorage.removeItem('guestUserId')
     localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
+    localStorage.removeItem(`selectedLocation_${brandId}`)
     navigate('/')
   }
+
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>

@@ -23,6 +23,7 @@ const Contact = () => {
   const navigate = useNavigate()
   const [showFeedbackForm, setShowFeedbackForm] = useState(false)
   const [showReviews, setShowReviews] = useState(false)
+  const [branchDetails, setBranchDetails] = useState([])
   const [feedback, setFeedback] = useState({
     name: '',
     phone: '',
@@ -34,6 +35,14 @@ const Contact = () => {
   const brandId = localStorage.getItem('brandId')
 
   const [currentSlide, setCurrentSlide] = useState(0)
+
+  const getBranchDetails = async () => {
+    try {
+      const { data } = ApiService.get(`/${brandId}`)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getReviews = async () => {
     try {
@@ -48,6 +57,7 @@ const Contact = () => {
   }
 
   useEffect(() => {
+    getBranchDetails()
     getReviews()
   }, [])
 
