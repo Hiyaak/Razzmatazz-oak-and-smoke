@@ -16,6 +16,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
 
 const MenuPage = () => {
   const navigate = useNavigate()
@@ -40,7 +41,7 @@ const MenuPage = () => {
       const { data } = await ApiService.post('registerWithEmail', payload)
 
       if (data.status) {
-        alert('User Registered successfully. Please login now.')
+        toast.success('User Registered successfully. Please login now.')
 
         // Clear form fields if you want
         setFormData({ email: '', password: '' })
@@ -51,11 +52,11 @@ const MenuPage = () => {
         // Optionally switch view to 'form' if not already
         setActiveView('form')
       } else {
-        alert(data.message || 'Registration failed')
+        toast.error(data.message || 'Registration failed')
       }
     } catch (error) {
       console.log('error ', error)
-      alert('Something went wrong during registration')
+      toast.error('Something went wrong during registration')
     }
   }
 
@@ -72,10 +73,10 @@ const MenuPage = () => {
       if (data.status) {
         // Save user ID
         localStorage.setItem('registredUserId', data.user._id)
-        alert(data.message) // "Login successful"
+        toast.success('Login successful!')
         navigate('/shoopingcart') // go to cart after login
       } else {
-        alert(data.message || 'Login failed')
+        toast.error(data.message || 'Login failed')
       }
     } catch (error) {
       console.error('Login error:', error)

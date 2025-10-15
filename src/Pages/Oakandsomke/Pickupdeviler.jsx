@@ -129,7 +129,7 @@ const HeroSection = () => {
   const handleStartOrdering = () => {
     if (selectedArea || selectedGovernate) {
       localStorage.setItem(
-        'selectedLocation',
+        `selectedLocation_${brandId}`,
         JSON.stringify({
           selectedMethod,
           selectedGovernate,

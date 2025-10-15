@@ -171,15 +171,15 @@ const Contact = () => {
         <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
           {/* Our Branches Section */}
           <div className='border-b border-gray-200'>
-            <h2 className='px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50'>
+            <h2 className='px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100'>
               Our branches
             </h2>
 
             <div
               onClick={() => navigate('/branddetails')}
-              className='border-b border-gray-200'
+              className='border-b border-t border-gray-200'
             >
-              <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer'>
+              <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-100 cursor-pointer'>
                 <span className='text-gray-800'>Shuwaikh</span>
                 <button className='p-2 text-gray-400 hover:text-gray-600'>
                   <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
@@ -190,7 +190,7 @@ const Contact = () => {
             </div>
 
             <div className=''>
-              <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer'>
+              <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-100 cursor-pointer'>
                 <span className='text-gray-800'>Al Khiran</span>
                 <button className='p-2 text-gray-400 hover:text-gray-600'>
                   <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
@@ -203,11 +203,11 @@ const Contact = () => {
 
           {/* Your Opinion Matters Section */}
           <div className='border-b border-gray-200'>
-            <h2 className='px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50'>
+            <h2 className='px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100'>
               Your opinion matters
             </h2>
 
-            <div className='px-4 py-6 flex justify-center'>
+            <div className='px-4 py-6 flex justify-center border-t'>
               <button
                 onClick={() => setShowFeedbackForm(true)}
                 className='flex items-center gap-2 text-red-500 font-medium hover:text-red-600 transition-colors'
@@ -223,7 +223,7 @@ const Contact = () => {
           {/* Customer Reviews Section */}
 
           <div className='border-b border-gray-200'>
-            <div className='px-4 py-3 flex items-center justify-between bg-gray-50'>
+            <div className='px-4 py-3 flex items-center justify-between bg-gray-100'>
               <h2 className='text-sm font-medium text-gray-700'>
                 Customer reviews
               </h2>
@@ -249,7 +249,7 @@ const Contact = () => {
                     {reviews.slice(0, 5).map(review => (
                       <div
                         key={review._id}
-                        className='min-w-full px-4 py-4 border-b border-gray-200'
+                        className='min-w-full px-4 py-4 border-t border-gray-200'
                       >
                         <div className='flex items-start justify-between px-10'>
                           <div className='flex-1'>
@@ -313,7 +313,7 @@ const Contact = () => {
 
             {/* Pagination Dots */}
             {reviews.length > 1 && (
-              <div className='flex justify-center gap-2 py-4'>
+              <div className='flex justify-center gap-2 py-4 bg-gray-50'>
                 {reviews.slice(0, 5).map((_, index) => (
                   <div
                     key={index}
@@ -331,11 +331,10 @@ const Contact = () => {
 
           {/* Connect With Us Section */}
           <div>
-            <h2 className='px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50'>
+            <h2 className='px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100'>
               Connect with us
             </h2>
-
-            <div className='px-4 py-6 flex justify-center gap-8'>
+            <div className='px-4 py-6 flex justify-center gap-16 md:gap-16 lg:gap-28 border-t border-b'>
               <button className='p-3 hover:bg-gray-50 rounded-lg transition-colors'>
                 <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center'>
                   <Instagram className='w-6 h-6 text-white' />

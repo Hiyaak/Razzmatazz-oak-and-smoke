@@ -18,7 +18,7 @@ const Placeorder = lazy(() => import('./Pages/Placeorder/Placeorder'))
 const Myorders = lazy(() => import('./Pages/Placeorder/Myorders'))
 const Search = lazy(() => import('./Pages/Search/Search'))
 const BrandDetails = lazy(() =>
-  import('./Pages/Contact/BrandDetails/BrabdDetails')
+  import('./Pages/Contact/BrandDetails/BrandDetails')
 )
 
 function App () {
