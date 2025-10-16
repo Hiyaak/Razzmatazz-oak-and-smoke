@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import heroImage from '../../assets/concept.jpg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Menu, ShoppingBag, Search, ArrowLeft, LogOut } from 'lucide-react'
+import { AlarmClock, ArrowLeft, Clock } from 'lucide-react'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
 
 const Subproducts = () => {
   const { name } = useParams()
@@ -49,25 +49,6 @@ const Subproducts = () => {
     return cartItem ? cartItem.quantity : 0
   }
 
-  const handleMenuClick = () => {
-    navigate('/menu')
-  }
-
-  const handleshoopingcartClick = () => {
-    navigate('/shoopingcart')
-  }
-
-  const handeleSearch = () => {
-    navigate('/search')
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('guestUserId')
-    localStorage.removeItem('registredUserId')
-    localStorage.removeItem(`selectedLocation_${brandId}`)
-    navigate('/')
-  }
-
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
@@ -101,11 +82,23 @@ const Subproducts = () => {
                   className='relative rounded-md overflow-hidden p-4 flex flex-col'
                 >
                   {/* Image */}
-                  <img
-                    src={`${ImagePath}${item.image}`}
-                    alt={item.name}
-                    className='w-full h-48 object-cover rounded-md mb-4'
-                  />
+                  <div className='w-full h-56 mb-2 overflow-hidden rounded-sm relative'>
+                    <img
+                      src={`${ImagePath}${item.image}`}
+                      alt={item.name}
+                      className='w-full h-full object-cover'
+                    />
+
+                    {/* Light gray strip at the bottom of image for timeToPrepare */}
+                    {item.timeToPrepare && (
+                      <div className='absolute bottom-0 w-full bg-[#F4ECD9]/80 p-1 flex justify-center items-center gap-1'>
+                        <AlarmClock  className='w-4 h-4 text-red-500' />
+                        <span className='text-red-500 text-sm font-medium'>
+                          {item.timeToPrepare}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Name & Price */}
                   <div className='flex justify-between items-center mb-2'>
@@ -195,52 +188,7 @@ const Subproducts = () => {
       </div>
 
       {/* Right Panel - Fixed, No Scroll */}
-      <div className='flex-1 relative bg-black h-screen overflow-hidden'>
-        {/* Top Navigation — hidden on mobile */}
-        <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
-          <div className='flex justify-between items-center'>
-            <div className='flex space-x-4'>
-              <button
-                onClick={handleMenuClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <Menu className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleshoopingcartClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <ShoppingBag className='w-6 h-6' />
-              </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search onClick={handeleSearch} className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleLogout}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <LogOut className='w-6 h-6' />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Section — hidden on mobile */}
-        <div className='hidden md:block relative h-full'>
-          <img
-            src={heroImage}
-            alt='Hero Food'
-            className='w-full h-full object-cover'
-          />
-
-          {/* Bottom IG button */}
-          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
-            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
-              IG
-            </div>
-          </div>
-        </div>
-      </div>
+      <RightPanelLayout />
     </div>
   )
 }

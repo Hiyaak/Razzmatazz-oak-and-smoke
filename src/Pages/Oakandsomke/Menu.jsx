@@ -6,17 +6,12 @@ import {
   Clock,
   Mail,
   Eye,
-  EyeOff,
-  Menu,
-  ShoppingBag,
-  Search,
-  User,
-  LogOut
+  EyeOff
 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import heroImage from '../../assets/concept.jpg'
 import ApiService from '../../Services/Apiservice'
 import { toast } from 'react-toastify'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
 
 const MenuPage = () => {
   const navigate = useNavigate()
@@ -82,25 +77,6 @@ const MenuPage = () => {
       console.error('Login error:', error)
       toast.error('Something went wrong')
     }
-  }
-
-  const handleMenuClick = () => {
-    navigate('/menu')
-  }
-
-  const handleshoopingcartClick = () => {
-    navigate('/shoopingcart')
-  }
-
-  const handeleSearch = () => {
-    navigate('/search')
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('guestUserId')
-    localStorage.removeItem('registredUserId')
-    localStorage.removeItem(`selectedLocation_${brandId}`)
-    navigate('/')
   }
 
   const menuItems = [
@@ -391,54 +367,7 @@ const MenuPage = () => {
       </div>
 
       {/* Right Panel */}
-      <div className='hidden md:block fixed right-0 top-0 w-3/5 h-screen bg-black z-0'>
-        {/* Top Navigation */}
-        <div className='absolute top-6 left-6 right-6 z-10'>
-          <div className='flex justify-between items-center'>
-            <div className='flex space-x-4'>
-              <button
-                onClick={handleMenuClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <Menu className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleshoopingcartClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <ShoppingBag className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handeleSearch}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <Search className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleLogout}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <LogOut className='w-6 h-6' />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Banner Image */}
-        <img
-          loading='lazy'
-          src={heroImage}
-          alt='Hero Food'
-          className='w-full h-full object-cover'
-        />
-
-        {/* Floating Icon */}
-        <div className='absolute top-1/2 right-6 z-20 transform -translate-y-1/2'>
-          <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg'>
-            IG
-          </div>
-        </div>
-      </div>
+      <RightPanelLayout />
     </div>
   )
 }

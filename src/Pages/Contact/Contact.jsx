@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
   ArrowLeft,
-  Menu,
-  ShoppingBag,
-  Search,
-  LogOut,
   ThumbsUp,
   ChevronRight,
   X,
@@ -15,14 +11,16 @@ import {
   ChevronLeft
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import heroImage from '../../assets/concept.jpg'
+
 import ApiService from '../../Services/Apiservice'
 import { toast } from 'react-toastify'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
 
 const Contact = () => {
   const navigate = useNavigate()
   const [showFeedbackForm, setShowFeedbackForm] = useState(false)
   const [showReviews, setShowReviews] = useState(false)
+  const [locations, setLocations] = useState([])
   const [branchDetails, setBranchDetails] = useState([])
   const [feedback, setFeedback] = useState({
     name: '',
@@ -35,6 +33,22 @@ const Contact = () => {
   const brandId = localStorage.getItem('brandId')
 
   const [currentSlide, setCurrentSlide] = useState(0)
+
+  const getLocations = async () => {
+    try {
+      const { data } = await ApiService.get(
+        'getLocationsByBrand?brandName=Oak and Smoke'
+      )
+      if (data.status && data.locations) {
+        setLocations(data.locations)
+        console.log('locations data', data.locations)
+      } else {
+        console.log('No locations found')
+      }
+    } catch (error) {
+      console.log('Error fetching locations:', error)
+    }
+  }
 
   const getBranchDetails = async () => {
     try {
@@ -57,6 +71,7 @@ const Contact = () => {
   }
 
   useEffect(() => {
+    getLocations()
     getBranchDetails()
     getReviews()
   }, [])
@@ -122,26 +137,6 @@ const Contact = () => {
     ))
   }
 
-  const handleMenuClick = () => {
-    navigate('/menu')
-  }
-
-  const handleshoopingcartClick = () => {
-    navigate('/shoopingcart')
-  }
-
-  const handeleSearch = () => {
-    navigate('/search')
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('guestUserId')
-    localStorage.removeItem('registredUserId')
-    localStorage.removeItem('selectedLocation')
-
-    navigate('/')
-  }
-
   const timeAgo = date => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000)
     const intervals = {
@@ -185,30 +180,35 @@ const Contact = () => {
               Our branches
             </h2>
 
-            <div
-              onClick={() => navigate('/branddetails')}
-              className='border-b border-t border-gray-200'
-            >
-              <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-100 cursor-pointer'>
-                <span className='text-gray-800'>Shuwaikh</span>
-                <button className='p-2 text-gray-400 hover:text-gray-600'>
-                  <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
-                    <span className='text-xs'>?</span>
+            {locations && locations.length > 0 ? (
+              locations.map(loc => (
+                <div
+                  key={loc._id}
+                  onClick={() =>
+                    navigate('/branddetails', {
+                      state: {
+                        brandId: brandId,
+                        locationName: loc.locname
+                      }
+                    })
+                  }
+                  className=' border-t border-gray-200'
+                >
+                  <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-100 cursor-pointer'>
+                    <span className='text-gray-800'>{loc.locname}</span>
+                    <button className='p-2 text-gray-400 hover:text-gray-600'>
+                      <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
+                        <span className='text-xs'>?</span>
+                      </div>
+                    </button>
                   </div>
-                </button>
+                </div>
+              ))
+            ) : (
+              <div className='px-4 py-4 text-gray-500 text-sm'>
+                No branches available
               </div>
-            </div>
-
-            <div className=''>
-              <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-100 cursor-pointer'>
-                <span className='text-gray-800'>Al Khiran</span>
-                <button className='p-2 text-gray-400 hover:text-gray-600'>
-                  <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
-                    <span className='text-xs'>?</span>
-                  </div>
-                </button>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Your Opinion Matters Section */}
@@ -510,52 +510,7 @@ const Contact = () => {
         </div>
       )}
       {/* Right Panel - Fixed, No Scroll */}
-      <div className='flex-1 relative bg-black h-screen overflow-hidden'>
-        {/* Top Navigation — hidden on mobile */}
-        <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
-          <div className='flex justify-between items-center'>
-            <div className='flex space-x-4'>
-              <button
-                onClick={handleMenuClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <Menu className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleshoopingcartClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <ShoppingBag className='w-6 h-6' />
-              </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search onClick={handeleSearch} className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleLogout}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <LogOut className='w-6 h-6' />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Section — hidden on mobile */}
-        <div className='hidden md:block relative h-full'>
-          <img
-            src={heroImage}
-            alt='Hero Food'
-            className='w-full h-full object-cover'
-          />
-
-          {/* Bottom IG button */}
-          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
-            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
-              IG
-            </div>
-          </div>
-        </div>
-      </div>
+      <RightPanelLayout />
     </div>
   )
 }
