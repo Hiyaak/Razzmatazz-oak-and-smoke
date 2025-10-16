@@ -15,6 +15,7 @@ import heroImage from '../../assets/concept.jpg'
 
 import oak from '../../assets/oaklogo1.png'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
 
 const FoodDeliveryApp = () => {
   const [productCategories, setproductCategories] = useState([])
@@ -93,13 +94,6 @@ const FoodDeliveryApp = () => {
     navigate('/search')
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('guestUserId')
-    localStorage.removeItem('registredUserId')
-    localStorage.removeItem(`selectedLocation_${brandId}`)
-    navigate('/')
-  }
-
   const handleBrandClick = () => {
     navigate('/contact')
   }
@@ -113,7 +107,7 @@ const FoodDeliveryApp = () => {
       {/* Desktop layout  */}
       <div className='hidden md:flex min-h-screen bg-gray-50'>
         {/* Left Panel*/}
-        <div className='w-1/2 bg-white border-r border-gray-100 flex flex-col h-screen'>
+        <div className='w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen'>
           <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
             {/* Header Section */}
             <div
@@ -244,10 +238,10 @@ const FoodDeliveryApp = () => {
 
           {/* Fixed Button at Bottom */}
           {!(selectedMethod && (selectedArea || selectedGovernate)) && (
-            <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
+            <div className='p-2 border-t border-gray-200 bg-white flex-shrink-0'>
               <button
                 onClick={() => navigate('/pickupdeviler')}
-                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors'
+                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white py-3 rounded-lg transition-colors'
               >
                 Select your location
               </button>
@@ -256,49 +250,7 @@ const FoodDeliveryApp = () => {
         </div>
 
         {/* Right Panel - 60% - No Scroll */}
-        <div className='flex-1 relative bg-black'>
-          {/* Top Navigation */}
-          <div className='absolute top-6 left-6 right-6 z-10'>
-            <div className='flex justify-between items-center'>
-              <div className='flex space-x-4'>
-                <button
-                  onClick={handleMenuClick}
-                  className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-                >
-                  <Menu className='w-6 h-6' />
-                </button>
-                <button
-                  onClick={handleshoopingcartClick}
-                  className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-                >
-                  <ShoppingBag className='w-6 h-6' />
-                </button>
-                <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                  <Search onClick={handeleSearch} className='w-6 h-6' />
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-                >
-                  <LogOut className='w-6 h-6' />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Hero Banner Image */}
-          <img
-            src={heroImage}
-            alt='Hero Food'
-            className='w-full h-full object-cover'
-          />
-
-          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
-            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
-              IG
-            </div>
-          </div>
-        </div>
+        <RightPanelLayout />
       </div>
 
       {/* Mobile layout (below md) */}
@@ -469,3 +421,5 @@ const FoodDeliveryApp = () => {
 }
 
 export default FoodDeliveryApp
+
+

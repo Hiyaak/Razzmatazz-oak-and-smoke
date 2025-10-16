@@ -20,6 +20,7 @@ const Search = lazy(() => import('./Pages/Search/Search'))
 const BrandDetails = lazy(() =>
   import('./Pages/Contact/BrandDetails/BrandDetails')
 )
+const Adress = lazy(() => import('./Pages/Oakandsomke/Adress'))
 
 function App () {
   return (
@@ -31,6 +32,7 @@ function App () {
             <Route path='/menu' element={<Menu />} />
             <Route path='/subproduct/:name' element={<Subproducts />} />
             <Route path='/shoopingcart' element={<Shoopingcart />} />
+            <Route path='/adress' element={<Adress />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/pickupdeviler' element={<Pickupdeviler />} />
             <Route path='/login' element={<Login />} />

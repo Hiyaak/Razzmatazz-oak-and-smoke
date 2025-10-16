@@ -5,17 +5,13 @@ import {
   Plus,
   Minus,
   Trash2,
-  Menu,
-  ShoppingBag,
-  Search,
-  User,
-  LogOut
+  MessageSquareText,
+  PenLine
 } from 'lucide-react'
-
 import { useNavigate } from 'react-router-dom'
-import heroImage from '../../assets/concept.jpg'
 import { useCart } from '../../Context/CartContext'
 import { ImagePath } from '../../Services/Apiservice'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
 
 const ShoppingCartPage = () => {
   const navigate = useNavigate()
@@ -55,25 +51,6 @@ const ShoppingCartPage = () => {
     }
   }
 
-  const handleMenuClick = () => {
-    navigate('/menu')
-  }
-
-  const handleshoopingcartClick = () => {
-    navigate('/shoopingcart')
-  }
-
-  const handeleSearch = () => {
-    navigate('/search')
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('guestUserId')
-    localStorage.removeItem('registredUserId')
-    localStorage.removeItem(`selectedLocation_${brandId}`)
-    navigate('/')
-  }
-  
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar (40% on desktop, full on mobile) */}
@@ -110,25 +87,36 @@ const ShoppingCartPage = () => {
             <div className='bg-white p-5 border-gray-300'>
               <div className='flex items-center'>
                 {/* Tag Icon */}
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth='1.5'
-                  stroke='currentColor'
-                  className='w-6 h-6 text-gray-500 mr-3'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M9 13.5V6a1.5 1.5 0 0 1 1.5-1.5h7.379a1.5 1.5 0 0 1 1.06.44l3.121 3.121a1.5 1.5 0 0 1 .44 1.06V18A1.5 1.5 0 0 1 21 19.5H12a1.5 1.5 0 0 1-1.5-1.5v-1.5m0 0H3m6 0v-3'
-                  />
-                </svg>
+                <PenLine className='w-5 h-5 text-gray-500 mr-3' />
 
                 {/* Input Field */}
                 <input
                   type='text'
                   placeholder='Enter promotion code'
+                  className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Special Remarks Section */}
+          <div>
+            <div className='bg-gray-100 p-4'>
+              <h2 className='text-base font-semibold text-gray-800'>
+                Special Remarks
+              </h2>
+            </div>
+
+            {/* White Box Container */}
+            <div className='bg-white p-5 border-gray-300'>
+              <div className='flex items-center'>
+                {/* Message Icon */}
+                <MessageSquareText className='w-5 h-5 text-gray-500 mr-3' />
+
+                {/* Input Field */}
+                <input
+                  type='text'
+                  placeholder='Enter Your Special Remarks'
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
                 />
               </div>
@@ -220,7 +208,6 @@ const ShoppingCartPage = () => {
         </div>
 
         {/* Order Summary - Fixed at Bottom (No Scroll) */}
-        {/* ✅ Bottom Section - Only show if cart has items */}
         {cart.length > 0 &&
           (!(selectedMethod && (selectedArea || selectedGovernate)) ? (
             // ❌ Location not selected — show "Select your location"
@@ -265,52 +252,7 @@ const ShoppingCartPage = () => {
       </div>
 
       {/* Right Panel - Fixed, No Scroll */}
-      <div className='flex-1 relative bg-black h-screen overflow-hidden'>
-        {/* Top Navigation — hidden on mobile */}
-        <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
-          <div className='flex justify-between items-center'>
-            <div className='flex space-x-4'>
-              <button
-                onClick={handleMenuClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <Menu className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleshoopingcartClick}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <ShoppingBag className='w-6 h-6' />
-              </button>
-              <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-                <Search onClick={handeleSearch} className='w-6 h-6' />
-              </button>
-              <button
-                onClick={handleLogout}
-                className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
-              >
-                <LogOut className='w-6 h-6' />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Hero Section — hidden on mobile */}
-        <div className='hidden md:block relative h-full'>
-          <img
-            src={heroImage}
-            alt='Hero Food'
-            className='w-full h-full object-cover'
-          />
-
-          {/* Bottom IG button */}
-          <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
-            <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
-              IG
-            </div>
-          </div>
-        </div>
-      </div>
+      <RightPanelLayout />
     </div>
   )
 }
