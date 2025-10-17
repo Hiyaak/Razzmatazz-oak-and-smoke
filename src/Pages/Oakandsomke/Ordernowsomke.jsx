@@ -16,6 +16,7 @@ import heroImage from '../../assets/concept.jpg'
 import oak from '../../assets/oaklogo1.png'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { LuBike } from 'react-icons/lu'
 
 const FoodDeliveryApp = () => {
   const [productCategories, setproductCategories] = useState([])
@@ -114,7 +115,7 @@ const FoodDeliveryApp = () => {
               onClick={handleBrandClick}
               className='cursor-pointer transition-colors border-b border-gray-200'
             >
-              <div className='flex items-center justify-between px-6 py-4'>
+              <div className='flex items-center justify-between px-6 py-4 hover:bg-gray-100'>
                 {/* Left side - logo and text */}
                 <div className='flex items-center space-x-3'>
                   <img
@@ -172,8 +173,8 @@ const FoodDeliveryApp = () => {
             {/* Location and Time Section */}
             <div className='px-4 pb-4 space-y-4 mt-2 border-b border-gray-200'>
               <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-3'>
-                  <MapPin className='w-5 h-5 text-gray-400' />
+                <div className='flex items-center gap-10 pl-4'>
+                  <LuBike className='w-5 h-5 text-gray-400' />
                   <p className='text-sm text-gray-600'>
                     {selectedMethod === 'delivery'
                       ? 'Deliver to'
@@ -206,7 +207,7 @@ const FoodDeliveryApp = () => {
               </div>
 
               <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-10 pl-4'>
                   <Clock className='w-5 h-5 text-gray-400' />
                   <p className='text-sm text-gray-600'>Earliest arrival</p>
                 </div>
@@ -421,5 +422,3 @@ const FoodDeliveryApp = () => {
 }
 
 export default FoodDeliveryApp
-
-
