@@ -8,7 +8,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 const Oakandsomke = lazy(() => import('./Pages/Oakandsomke/Ordernowsomke'))
-const Menu = lazy(() => import('./Pages/Oakandsomke/Menu'))
+const Profile = lazy(() => import('./Pages/Profile/Profile'))
 const Shoopingcart = lazy(() => import('./Pages/Oakandsomke/Shoopingcart'))
 const Contact = lazy(() => import('./Pages/Contact/Contact'))
 const Pickupdeviler = lazy(() => import('./Pages/Oakandsomke/Pickupdeviler'))
@@ -21,6 +21,7 @@ const BrandDetails = lazy(() =>
   import('./Pages/Contact/BrandDetails/BrandDetails')
 )
 const Adress = lazy(() => import('./Pages/Oakandsomke/Adress'))
+const Otpverification = lazy(() => import('./Pages/Profile/Otpverification'))
 
 function App () {
   return (
@@ -29,7 +30,8 @@ function App () {
         <Suspense fallback={<Loader />}>
           <Routes>
             <Route path='/' element={<Oakandsomke />} />
-            <Route path='/menu' element={<Menu />} />
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/otpverification' element={<Otpverification />} />
             <Route path='/subproduct/:name' element={<Subproducts />} />
             <Route path='/shoopingcart' element={<Shoopingcart />} />
             <Route path='/adress' element={<Adress />} />

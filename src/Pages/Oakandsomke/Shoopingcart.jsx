@@ -45,7 +45,7 @@ const ShoppingCartPage = () => {
     )
 
     if (guestUserId || registredUserId) {
-      navigate('/placeorder')
+      navigate('/adress')
     } else {
       navigate('/login')
     }

@@ -55,14 +55,14 @@ const ContactInfoForm = () => {
   }
 
   const handleSignUp = () => {
-    navigate('/menu')
+    navigate('/profile')
   }
 
   const handleContinueAsGuest = () => {
     setShowGuestForm(true)
   }
   const handleMenuClick = () => {
-    navigate('/menu')
+    navigate('/profile')
   }
 
   const handleshoopingcartClick = () => {

@@ -6,7 +6,7 @@ import heroImage from '../assets/concept.jpg'
 const RightPanelLayout = () => {
   const navigate = useNavigate()
 
-  const handleMenuClick = () => navigate('/menu')
+  const handleMenuClick = () => navigate('/profile')
   const handleShopingCartClick = () => navigate('/shoopingcart')
   const handleSearch = () => navigate('/search')
 

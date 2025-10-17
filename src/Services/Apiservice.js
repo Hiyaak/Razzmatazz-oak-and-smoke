@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export const ImagePath =
-  'https://nyroca.s3.ap-south-1.amazonaws.com/attachments/'
+  'https://recessbucket.s3.ap-south-1.amazonaws.com/images/'
 
 const API_URL = import.meta.env.VITE_API_URL
 

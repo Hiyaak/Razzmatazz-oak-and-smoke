@@ -15,6 +15,8 @@ import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
 import { toast } from 'react-toastify'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { IoSendSharp } from 'react-icons/io5'
+import { IoMdThumbsUp } from 'react-icons/io'
 
 const Contact = () => {
   const navigate = useNavigate()
@@ -192,11 +194,16 @@ const Contact = () => {
                       }
                     })
                   }
-                  className=' border-t border-gray-200'
+                  className='border-t border-gray-200'
                 >
-                  <div className='px-4 py-4 flex items-center justify-between hover:bg-gray-100 cursor-pointer'>
-                    <span className='text-gray-800'>{loc.locname}</span>
-                    <button className='p-2 text-gray-400 hover:text-gray-600'>
+                  <div className='px-4 py-4 flex items-center justify-between cursor-pointer group relative'>
+                    {/* background hover except top border */}
+                    <div className='absolute inset-0 bg-gray-100 opacity-0 group-hover:opacity-100 transition-all duration-200 top-[14px] bottom-[10px]'></div>
+
+                    <span className='text-gray-800 relative z-10'>
+                      {loc.locname}
+                    </span>
+                    <button className='p-2 text-gray-400 hover:text-gray-600 relative z-10'>
                       <div className='w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center'>
                         <span className='text-xs'>?</span>
                       </div>
@@ -220,12 +227,12 @@ const Contact = () => {
             <div className='px-4 py-6 flex justify-center border-t'>
               <button
                 onClick={() => setShowFeedbackForm(true)}
-                className='flex items-center gap-2 text-red-500 font-medium hover:text-red-600 transition-colors'
+                className='flex items-center gap-2 text-[#FA0303] font-medium hover:text-red-600 hover:bg-red-50 transition-colors'
               >
                 <span className='uppercase text-sm tracking-wide'>
                   Leave Feedback
                 </span>
-                <ThumbsUp className='w-5 h-5' />
+                <IoMdThumbsUp className='w-5 h-5' />
               </button>
             </div>
           </div>
@@ -234,15 +241,17 @@ const Contact = () => {
 
           <div className='border-b border-gray-200'>
             <div className='px-4 py-3 flex items-center justify-between bg-gray-100'>
-              <h2 className='text-sm font-medium text-gray-700'>
-                Customer reviews
-              </h2>
-              <button
-                onClick={() => setShowReviews(true)}
-                className='text-red-500 text-sm font-medium hover:text-red-600'
-              >
-                View more
-              </button>
+              <div className='flex items-center gap-2'>
+                <h2 className='text-sm font-medium text-gray-700'>
+                  Customer reviews
+                </h2>
+                <button
+                  onClick={() => setShowReviews(true)}
+                  className='text-[#FA0303] text-sm font-medium underline hover:text-red-600'
+                >
+                  View more
+                </button>
+              </div>
             </div>
 
             {/* Slideshow Container */}
@@ -375,7 +384,7 @@ const Contact = () => {
           ></div>
 
           {/* Modal Content */}
-          <div className='relative rounded-t-lg w-full md:w-2/5 bg-white md:h-auto md:max-h-[90vh] md:shadow-xl flex flex-col self-end md:self-auto md:absolute md:bottom-0 md:left-0  overflow-hidden'>
+          <div className='absolute bottom-0 left-0 w-full md:w-2/5 bg-white max-h-[60vh] md:max-h-[70vh] rounded-t-lg md:rounded-lg shadow-xl flex flex-col overflow-hidden'>
             <div className='p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0'>
               <h2 className='text-xl font-semibold'>Leave feedback</h2>
               <button
@@ -393,7 +402,7 @@ const Contact = () => {
                   <button
                     key={value}
                     onClick={() => handleRatingChange(value)}
-                    className={`text-3xl ${
+                    className={`text-3xl transition-transform duration-200 hover:scale-110 hover:opacity-100 ${
                       feedback.rating >= value ? 'opacity-100' : 'opacity-50'
                     }`}
                   >
@@ -406,7 +415,7 @@ const Contact = () => {
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-6'>
                 {/* Name Input */}
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className='block text-sm font-medium text-gray-800 mb-2'>
                     Name
                   </label>
                   <input
@@ -414,13 +423,13 @@ const Contact = () => {
                     name='name'
                     value={feedback.name}
                     onChange={handleInputChange}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
+                    className='w-full px-3 py-2 border border-gray-300 hover:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
                   />
                 </div>
 
                 {/* Phone Input */}
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className='block text-sm font-medium text-gray-800 mb-2'>
                     Phone (Optional)
                   </label>
                   <div className='flex gap-2'>
@@ -430,7 +439,7 @@ const Contact = () => {
                       value={feedback.phone}
                       onChange={handleInputChange}
                       maxLength={8}
-                      className='flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
+                      className='flex-1 px-3 py-2 border border-gray-300 hover:border-gray-500  rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white'
                     />
                   </div>
                 </div>
@@ -438,7 +447,7 @@ const Contact = () => {
 
               {/* Comment Textarea */}
               <div className='mb-6'>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <label className='block text-sm font-medium text-gray-800 mb-2'>
                   Leave us a comment
                 </label>
                 <textarea
@@ -446,17 +455,17 @@ const Contact = () => {
                   value={feedback.comment}
                   onChange={handleInputChange}
                   rows='1'
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+                  className='w-full px-3 py-2 border border-gray-300 hover:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none bg-white [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
                 />
               </div>
 
               {/* Send Button */}
               <button
                 onClick={handleSendFeedback}
-                className='w-full bg-red-500 text-white py-2 rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center justify-center gap-2'
+                className='w-full bg-[#FA0303] text-white py-2 rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center justify-center gap-2'
               >
                 <span>SEND</span>
-                <Send className='w-4 h-4' />
+                <IoSendSharp className='w-4 h-4' />
               </button>
             </div>
           </div>
@@ -466,9 +475,9 @@ const Contact = () => {
       {/* Reviews Modal - Center Overlay */}
       {showReviews && (
         <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4'>
-          <div className='bg-white rounded-lg max-w-2xl w-full max-h-[80vh] flex flex-col'>
-            <div className='p-4 border-b border-gray-200 flex items-center justify-between'>
-              <h2 className='text-xl font-semibold'>Customer reviews</h2>
+          <div className='bg-white rounded-lg border border-gray-300 shadow-lg w-[550px] max-h-[90vh] flex flex-col'>
+            <div className='p-6 border-b border-gray-200 flex items-center justify-between'>
+              <h2 className='text-2xl font-bold flex-1'>Customer reviews</h2>
               <button
                 onClick={() => setShowReviews(false)}
                 className='p-2 hover:bg-gray-100 rounded-full'
@@ -477,12 +486,12 @@ const Contact = () => {
               </button>
             </div>
 
-            <div className='flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+            <div className='flex-1 overflow-y-auto p-4 space-y-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
               {reviews.length > 0 ? (
                 reviews.map(review => (
                   <div
                     key={review._id}
-                    className='border-b border-gray-200 pb-4 mb-4 last:border-0'
+                    className='border border-gray-200 rounded-lg p-3'
                   >
                     <h3 className='font-medium text-gray-900 mb-1'>
                       {review.name || 'Anonymous'}
@@ -509,6 +518,7 @@ const Contact = () => {
           </div>
         </div>
       )}
+
       {/* Right Panel - Fixed, No Scroll */}
       <RightPanelLayout />
     </div>

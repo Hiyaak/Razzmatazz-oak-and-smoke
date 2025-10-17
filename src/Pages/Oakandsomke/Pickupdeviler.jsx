@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ArrowLeft, ChevronDown, Search, CarFront, Store } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { FaCarSide, FaWalking } from 'react-icons/fa'
 
 import ApiService from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
@@ -23,7 +24,7 @@ const HeroSection = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [manuallyExpanded, setManuallyExpanded] = useState(new Set())
 
-  // ✅ Enhanced filter logic
+  // ✅ Enhanced filter logic - Search only areas, not governates
   const filteredGovernates = governates
     .map(gov => {
       const filteredAreas =
@@ -31,14 +32,17 @@ const HeroSection = () => {
           area.areaName.toLowerCase().includes(searchQuery.toLowerCase())
         ) || []
 
-      const shouldShowGovernate =
-        gov.governateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        filteredAreas.length > 0
+      // Show all governates when no search, only matching ones during search
+      const shouldShowGovernate = searchQuery
+        ? filteredAreas.length > 0 // During search: only show if has matching areas
+        : true // No search: show all governates
 
       if (shouldShowGovernate) {
         return {
           ...gov,
-          filteredAreas
+          filteredAreas: searchQuery
+            ? filteredAreas
+            : areasByGovernate[gov._id] || []
         }
       }
       return null
@@ -194,7 +198,11 @@ const HeroSection = () => {
       searchQuery && gov.filteredAreas && gov.filteredAreas.length > 0
     const isManuallyExpanded = manuallyExpanded.has(gov._id)
 
-    return isManuallyExpanded || (hasSearchMatches && !manuallyExpanded.size)
+    return (
+      isManuallyExpanded ||
+      hasSearchMatches ||
+      (!searchQuery && expandedGovernateId === gov._id)
+    )
   }
 
   return (
@@ -231,11 +239,11 @@ const HeroSection = () => {
                       : `text-gray-700 border-gray-300 ${
                           selectedMethod === 'pickup'
                             ? ''
-                            : 'hover:text-red-600 hover:border-red-600'
+                            : 'hover:bg-[#AF0303] hover:border-red-600'
                         }`
                   }`}
                 >
-                 
+                  <FaCarSide className='w-5 h-5' />
                   Delivery
                 </button>
                 <button
@@ -250,7 +258,7 @@ const HeroSection = () => {
                         }`
                   }`}
                 >
-                  <Store className='w-6 h-6 mb-1' />
+                  <FaWalking className='w-5 h-5' />
                   Pickup
                 </button>
               </div>
@@ -311,7 +319,7 @@ const HeroSection = () => {
                                 onClick={() => handleAreaSelect(gov, area)}
                                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors duration-200 ${
                                   selectedAreaId === area._id
-                                    ? 'bg-red-500 text-white font-semibold'
+                                    ? 'bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold'
                                     : 'hover:bg-gray-100 text-gray-700'
                                 }`}
                               >

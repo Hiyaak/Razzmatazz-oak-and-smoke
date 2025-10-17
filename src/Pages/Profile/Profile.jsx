@@ -18,6 +18,7 @@ const MenuPage = () => {
   const [activeView, setActiveView] = useState('menu') // 'menu' | 'form'
   const [activeTab, setActiveTab] = useState('register')
   const [showPassword, setShowPassword] = useState(false)
+  const [otp, setOtp] = useState('')
   const [formData, setFormData] = useState({ email: '', password: '' })
 
   const handleInputChange = e => {
@@ -26,6 +27,11 @@ const MenuPage = () => {
   const storedBrandId = localStorage.getItem('brandId')
 
   const handleRegisterUser = async () => {
+    if (!formData.email || !formData.password) {
+      toast.error('Please enter email and password')
+      return
+    }
+
     try {
       const payload = {
         email: formData.email,
@@ -36,21 +42,21 @@ const MenuPage = () => {
       const { data } = await ApiService.post('registerWithEmail', payload)
 
       if (data.status) {
-        toast.success('User Registered successfully. Please login now.')
+        // toast.success('Registration successful! Please verify OTP.')
 
-        // Clear form fields if you want
-        setFormData({ email: '', password: '' })
+        sessionStorage.setItem('pendingEmail', formData.email)
 
-        // Switch tab to Login
-        setActiveTab('login')
+        if (data.otp) {
+          sessionStorage.setItem('pendingOtp', data.otp)
+          console.log('📩 OTP from backend:', data.otp)
+        }
 
-        // Optionally switch view to 'form' if not already
-        setActiveView('form')
+        navigate('/otpverification') 
       } else {
         toast.error(data.message || 'Registration failed')
       }
     } catch (error) {
-      console.log('error ', error)
+      console.error('Registration error:', error)
       toast.error('Something went wrong during registration')
     }
   }
@@ -67,7 +73,7 @@ const MenuPage = () => {
 
       if (data.status) {
         // Save user ID
-        localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id)
+        // localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id)
         toast.success('Login successful!')
         navigate('/shoopingcart') // go to cart after login
       } else {
@@ -226,20 +232,20 @@ const MenuPage = () => {
             <div className='flex gap-3 mt-6 mb-8'>
               <button
                 onClick={() => setActiveTab('login')}
-                className={`flex-1 py-3 rounded-lg font-medium transition-all ${
+                className={`flex-1 py-2 rounded-md font-medium transition-all ${
                   activeTab === 'login'
-                    ? 'bg-cyan-500 text-white'
-                    : 'bg-white text-cyan-500 border-2 border-cyan-500'
+                    ? 'bg-[#0099CC] text-white'
+                    : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
                 }`}
               >
                 Login
               </button>
               <button
                 onClick={() => setActiveTab('register')}
-                className={`flex-1 py-3 rounded-lg font-medium transition-all ${
+                className={`flex-1 py-2 rounded-md font-medium transition-all ${
                   activeTab === 'register'
-                    ? 'bg-cyan-500 text-white'
-                    : 'bg-white text-cyan-500 border-2 border-cyan-500'
+                    ? 'bg-[#0099CC] text-white'
+                    : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
                 }`}
               >
                 Register
