@@ -6,7 +6,19 @@ import heroImage from '../assets/concept.jpg'
 const RightPanelLayout = () => {
   const navigate = useNavigate()
 
-  const handleMenuClick = () => navigate('/profile')
+  const handleMenuClick = () => {
+    const storedBrandId = localStorage.getItem('brandId')
+    const registredUserId = localStorage.getItem(
+      `registredUserId_${storedBrandId}`
+    )
+
+    if (registredUserId) {
+      navigate('/userprofile')
+    } else {
+      navigate('/profile')
+    }
+  }
+
   const handleShopingCartClick = () => navigate('/shoopingcart')
   const handleSearch = () => navigate('/search')
 
