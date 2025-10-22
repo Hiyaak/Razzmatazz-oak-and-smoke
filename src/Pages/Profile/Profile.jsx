@@ -70,10 +70,9 @@ const MenuPage = () => {
       const { data } = await ApiService.post('loginWithEmail', payload)
 
       if (data.status) {
-        // Save user ID
-        // localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id)
+        localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id)
         toast.success('Login successful!')
-        navigate('/shoopingcart') // go to cart after login
+        navigate('/')
       } else {
         toast.error(data.message || 'Login failed')
       }
