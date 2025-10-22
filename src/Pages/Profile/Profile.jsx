@@ -42,8 +42,6 @@ const MenuPage = () => {
       const { data } = await ApiService.post('registerWithEmail', payload)
 
       if (data.status) {
-        // toast.success('Registration successful! Please verify OTP.')
-
         sessionStorage.setItem('pendingEmail', formData.email)
 
         if (data.otp) {
@@ -51,7 +49,7 @@ const MenuPage = () => {
           console.log('📩 OTP from backend:', data.otp)
         }
 
-        navigate('/otpverification') 
+        navigate('/otpverification')
       } else {
         toast.error(data.message || 'Registration failed')
       }
