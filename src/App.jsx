@@ -23,6 +23,7 @@ const BrandDetails = lazy(() =>
 const Adress = lazy(() => import('./Pages/Oakandsomke/Adress'))
 const Otpverification = lazy(() => import('./Pages/Profile/Otpverification'))
 const Userprofile = lazy(() => import('./Pages/Profile/Userprofile'))
+const Usercheckout = lazy(() => import('./Pages/Profile/Usercheckout'))
 
 function App () {
   return (
@@ -44,6 +45,7 @@ function App () {
             <Route path='/search' element={<Search />} />
             <Route path='/branddetails' element={<BrandDetails />} />
             <Route path='/userprofile' element={<Userprofile />} />
+            <Route path='/usercheckout' element={<Usercheckout />} />
           </Routes>
         </Suspense>
       </Router>
