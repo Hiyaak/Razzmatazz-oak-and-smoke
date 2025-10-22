@@ -10,9 +10,11 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
 
 const Userprofile = () => {
   const [profile, setProfile] = useState(null)
+  const [userAdress, setUserAdress] = useState([])
 
   const navigate = useNavigate()
   const storedBrandId = localStorage.getItem('brandId')
@@ -30,7 +32,7 @@ const Userprofile = () => {
       const payload = { id: registredUserId }
       const { data } = await ApiService.post('getProfileById', payload)
       if (data.status) {
-        console.log('Profile API response:', data)
+        // console.log('Profile API response:', data)
         setProfile(data.profile)
       } else {
         toast.error(data.message || 'Failed to load profile.')
@@ -41,16 +43,39 @@ const Userprofile = () => {
     }
   }
 
+  const fetchAdress = async () => {
+    try {
+      const { data } = await ApiService.get(
+        `getAddressesByUser/${registredUserId}`
+      )
+      if (data.status) {
+        console.log('adress API response:', data)
+        setUserAdress(data.addresses)
+      } else {
+        toast.error('Failed to load adress')
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error)
+      toast.error('Something went wrong while loading your profile.')
+    }
+  }
+
   useEffect(() => {
     fetchProfile()
+    fetchAdress()
   }, [])
 
   const handleSignOut = () => {
-    console.log('Sign out clicked')
+    const storedBrandId = localStorage.getItem('brandId')
+    if (storedBrandId) {
+      localStorage.removeItem(`registredUserId_${storedBrandId}`)
+    }
+
+    navigate('/')
   }
 
   const handleEditProfile = () => {
-    navigate('/usercheckout')
+    navigate('/usercheckout', { state: { profile } })
   }
 
   const handleDeleteAccount = () => {
@@ -132,15 +157,15 @@ const Userprofile = () => {
 
             {/* Profile Info */}
             <div className='flex-1'>
-              <h2 className='text-base font-normal text-gray-900 mb-1'>
+              <h2 className='text-base font-semibold text-gray-900 mb-1'>
                 {profile?.firstName || profile?.lastName
                   ? `${profile.firstName} ${profile.lastName}`
                   : ''}
               </h2>
               <p className='text-sm text-gray-600 mb-0.5'>{profile?.email}</p>
               {profile?.mobileNumber && (
-                <p className='text-sm text-gray-600 mb-2'>
-                  +{profile.mobileNumber}
+                <p className='text-sm text-gray-600 mb-1'>
+                  +965{profile.mobileNumber}
                 </p>
               )}
               <button
@@ -158,14 +183,13 @@ const Userprofile = () => {
           <h1 className='text-xl font-semibold text-gray-700'>Menu</h1>
         </div>
 
-        {/* Menu Items */}
         <div className='flex-1'>
           {menuItems.map((item, i) => (
             <button
               key={i}
               onClick={item.onClick || (() => navigate(item.path))}
               className={`w-full px-6 py-3 flex items-center gap-4 text-left hover:bg-gray-50 transition border-b border-gray-200 ${
-                item.isDelete ? '' : 'text-gray-700'
+                item.isDelete ? 'text-[#FA0303] font-semibold' : 'text-gray-700'
               }`}
             >
               {item.icon}
