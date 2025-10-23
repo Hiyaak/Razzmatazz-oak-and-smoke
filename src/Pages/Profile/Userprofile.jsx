@@ -6,7 +6,8 @@ import {
   FileText,
   Clock,
   MapPin,
-  Trash2
+  Trash2,
+  X
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
@@ -15,6 +16,7 @@ import { toast } from 'react-toastify'
 const Userprofile = () => {
   const [profile, setProfile] = useState(null)
   const [userAdress, setUserAdress] = useState([])
+  const [showAddressModal, setShowAddressModal] = useState(false)
 
   const navigate = useNavigate()
   const storedBrandId = localStorage.getItem('brandId')
@@ -32,7 +34,6 @@ const Userprofile = () => {
       const payload = { id: registredUserId }
       const { data } = await ApiService.post('getProfileById', payload)
       if (data.status) {
-        // console.log('Profile API response:', data)
         setProfile(data.profile)
       } else {
         toast.error(data.message || 'Failed to load profile.')
@@ -70,7 +71,6 @@ const Userprofile = () => {
     if (storedBrandId) {
       localStorage.removeItem(`registredUserId_${storedBrandId}`)
     }
-
     navigate('/')
   }
 
@@ -80,6 +80,10 @@ const Userprofile = () => {
 
   const handleDeleteAccount = () => {
     console.log('Delete account clicked')
+  }
+
+  const handleAddressClick = () => {
+    setShowAddressModal(true)
   }
 
   const menuItems = [
@@ -100,7 +104,8 @@ const Userprofile = () => {
     },
     {
       icon: <MapPin className='w-5 h-5 text-gray-600' />,
-      label: 'Delivery addresses'
+      label: 'Delivery addresses',
+      onClick: handleAddressClick
     },
     {
       icon: <Trash2 className='w-5 h-5 text-[#FA0303]' />,
@@ -113,7 +118,7 @@ const Userprofile = () => {
   return (
     <div className='flex flex-col md:flex-row min-h-screen bg-white overflow-hidden'>
       {/* Left Sidebar */}
-      <div className='w-full md:w-2/5 h-screen border-r border-gray-200 flex flex-col'>
+      <div className='w-full md:w-2/5 h-screen border-r border-gray-200 flex flex-col relative'>
         {/* Header */}
         <div className='p-2 border-b border-gray-200 flex-shrink-0'>
           <div className='flex items-center justify-between mb-1'>
@@ -183,7 +188,7 @@ const Userprofile = () => {
           <h1 className='text-xl font-semibold text-gray-700'>Menu</h1>
         </div>
 
-        <div className='flex-1'>
+        <div className='flex-1 overflow-y-auto'>
           {menuItems.map((item, i) => (
             <button
               key={i}
@@ -197,10 +202,90 @@ const Userprofile = () => {
             </button>
           ))}
         </div>
+
+        {/* Address Modal */}
+        {showAddressModal && (
+          <div className='absolute inset-0 bg-black bg-opacity-50 z-50 flex items-end'>
+            <div className='bg-white w-full max-h-[80vh] flex flex-col animate-slide-up'>
+              {/* Modal Content */}
+              <div className='flex-1 overflow-y-auto p-4'>
+                {userAdress && userAdress.length > 0 ? (
+                  <div className='space-y-2'>
+                    {userAdress.map((address, index) => (
+                      <div
+                        key={index}
+                        className='p-4 border border-gray-200  hover:border-[#FA0303] transition-colors cursor-pointer'
+                      >
+                        <div className='flex items-start justify-between'>
+                          <div className='flex-1'>
+                            <h3 className='font-semibold text-gray-900 mb-1'>
+                              {address.addressType || 'Address'}
+                            </h3>
+                            <p className='text-sm text-gray-600 mb-1'>
+                              {address.street || ''}
+                            </p>
+                            <p className='text-sm text-gray-600 mb-1'>
+                              {address.building &&
+                                `Building: ${address.building}`}
+                              {address.floor && `, Floor: ${address.floor}`}
+                              {address.apartment &&
+                                `, Apt: ${address.apartment}`}
+                            </p>
+                            <p className='text-sm text-gray-600'>
+                              {address.area && `${address.area}, `}
+                              {address.city || ''}
+                            </p>
+                            {address.additionalDirection && (
+                              <p className='text-xs text-gray-500 mt-2'>
+                                Note: {address.additionalDirection}
+                              </p>
+                            )}
+                          </div>
+                          <MapPin className='w-5 h-5 text-[#FA0303] flex-shrink-0 ml-2' />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className='flex flex-col items-center justify-center py-4'>
+                    <p className='text-center font-semibold text-base'>
+                      You don't have saved addresses
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer - Further Reduced Height */}
+              <div className='px-3 py-2 flex-shrink-0'>
+                <button
+                  onClick={() => setShowAddressModal(false)}
+                  className='w-full bg-[#FA0303] text-white py-2 rounded font-medium hover:bg-red-600 transition-colors text-base'
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right Panel */}
       <RightPanelLayout />
+
+      {/* CSS for animation */}
+      <style jsx>{`
+        @keyframes slide-up {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+        .animate-slide-up {
+          animation: slide-up 0.3s ease-out;
+        }
+      `}</style>
     </div>
   )
 }
