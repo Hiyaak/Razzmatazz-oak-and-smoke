@@ -33,9 +33,12 @@ const Adress = () => {
   )
   const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
 
-  const userId = registredUserId || guestUserId
+   // Get location for this brand
+  const locationData = JSON.parse(
+    localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+  )
 
-  console.log('Fetched userId:', userId)
+  const userId = registredUserId || guestUserId
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -127,6 +130,16 @@ const Adress = () => {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Delivery Area & Location */}
+          <div>
+            <div className='bg-gray-100 p-4 border-b'>
+              <h2 className='text-base font-semibold text-gray-800'>
+                Delivery Area & Location
+              </h2>
+            </div>
+            <div className='bg-white p-5 border-gray-300'></div>
           </div>
 
           {/* Address Details Section */}
