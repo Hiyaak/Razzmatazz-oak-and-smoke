@@ -4,6 +4,7 @@ import { AlarmClock, ArrowLeft, Clock } from 'lucide-react'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { Minus, Plus } from 'lucide-react'
 
 const Subproducts = () => {
   const { name } = useParams()
@@ -125,18 +126,18 @@ const Subproducts = () => {
                     <div className='flex items-center justify-between rounded-md px-2 py-1'>
                       <button
                         onClick={() => updateQuantity(item._id, quantity - 1)}
-                        className='w-8 h-8 flex items-center justify-center bg-white text-[#FA0303] border border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
+                        className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
                       >
-                        −
+                        <Minus className='w-3 h-3' />
                       </button>
-                      <span className='font-semibold text-center w-8'>
+                      <span className='px-3 py-0.5 text-center font-medium text-red-500 text-sm border border-gray-200 rounded'>
                         {quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item._id, quantity + 1)}
-                        className='w-8 h-8 flex items-center justify-center bg-white text-[#FA0303] border border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
+                        className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
                       >
-                        +
+                        <Plus className='w-3 h-3' />
                       </button>
                     </div>
                   )}
