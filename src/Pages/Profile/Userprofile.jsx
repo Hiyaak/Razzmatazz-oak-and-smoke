@@ -7,7 +7,7 @@ import {
   Clock,
   MapPin,
   Trash2,
-  X
+  Trash
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
@@ -50,8 +50,8 @@ const Userprofile = () => {
         `getAddressesByUser/${registredUserId}`
       )
       if (data.status) {
-        console.log('adress API response:', data)
         setUserAdress(data.addresses)
+        console.log('adress API response:', data.addresses)
       } else {
         toast.error('Failed to load adress')
       }
@@ -78,8 +78,18 @@ const Userprofile = () => {
     navigate('/usercheckout', { state: { profile } })
   }
 
-  const handleDeleteAccount = () => {
-    console.log('Delete account clicked')
+  const handleDeleteadress = async id => {
+    try {
+      const { data } = await ApiService.delete(`deleteAddress`, {
+        address_id: id
+      })
+      if (data.status) {
+        setUserAdress(prev => prev.filter(addr => addr._id !== id))
+        toast.success('Address deleted successfully!')
+      }
+    } catch (error) {
+      console.error('Error in delete:', error)
+    }
   }
 
   const handleAddressClick = () => {
@@ -110,8 +120,7 @@ const Userprofile = () => {
     {
       icon: <Trash2 className='w-5 h-5 text-[#FA0303]' />,
       label: 'Delete account',
-      isDelete: true,
-      onClick: handleDeleteAccount
+      isDelete: true
     }
   ]
 
@@ -219,29 +228,34 @@ const Userprofile = () => {
                         <div className='flex items-start justify-between'>
                           <div className='flex-1'>
                             <h3 className='font-semibold text-gray-900 mb-1'>
-                              {address.addressType || 'Address'}
+                              {address.type || ''}
                             </h3>
                             <p className='text-sm text-gray-600 mb-1'>
-                              {address.street || ''}
+                              {address.Street || ''}
                             </p>
                             <p className='text-sm text-gray-600 mb-1'>
-                              {address.building &&
-                                `Building: ${address.building}`}
+                              {address.Building &&
+                                `Building: ${address.Building}`}
                               {address.floor && `, Floor: ${address.floor}`}
-                              {address.apartment &&
-                                `, Apt: ${address.apartment}`}
+                              {address.Apartment &&
+                                `, Apt: ${address.Apartment}`}
                             </p>
                             <p className='text-sm text-gray-600'>
                               {address.area && `${address.area}, `}
                               {address.city || ''}
                             </p>
-                            {address.additionalDirection && (
+                            {address.additional && (
                               <p className='text-xs text-gray-500 mt-2'>
-                                Note: {address.additionalDirection}
+                                Note: {address.additional}
                               </p>
                             )}
                           </div>
-                          <MapPin className='w-5 h-5 text-[#FA0303] flex-shrink-0 ml-2' />
+                          <button
+                            onClick={() => handleDeleteadress(address._id)}
+                            className='text-gray-400 hover:text-red-500 transition-colors'
+                          >
+                            <Trash2 className='w-5 h-5' />
+                          </button>
                         </div>
                       </div>
                     ))}
