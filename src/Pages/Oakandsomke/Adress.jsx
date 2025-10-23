@@ -7,9 +7,12 @@ import {
   FaWalking,
   FaHome,
   FaBuilding,
-  FaBriefcase
+  FaBriefcase,
+  FaGreaterThan
 } from 'react-icons/fa'
 import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
+import { TbMathGreater } from 'react-icons/tb'
 
 const Adress = () => {
   const [selectedType, setSelectedType] = useState('Home')
@@ -78,8 +81,7 @@ const Adress = () => {
 
     try {
       const { data } = await ApiService.post('/createAddress', payload)
-      console.log('Address Created:', data)
-      alert('Address created successfully!')
+
       setFormData({
         Block: '',
         Street: '',
@@ -165,7 +167,7 @@ const Adress = () => {
                 <div className='flex items-center justify-between'>
                   {/* Left side - selected info */}
                   <div>
-                    <p className='text-sm font-semibold'>
+                    <p className='text-[#FA0303] text-sm font-medium  hover:text-red-700'>
                       {locationData?.selectedArea
                         ? `${locationData.selectedArea}`
                         : 'No area selected'}
@@ -175,9 +177,10 @@ const Adress = () => {
                   {/* Right side - Change button */}
                   <button
                     onClick={() => navigate('/pickupdeviler')}
-                    className='text-[#FA0303] text-sm font-medium  hover:text-red-700'
+                    className='text-sm font-semibold text-gray-700 flex items-center justify-center gap-1'
                   >
-                    Change
+                    <span>Change</span>
+                    {/* <FaGreaterThan /> */}
                   </button>
                 </div>
               ) : (

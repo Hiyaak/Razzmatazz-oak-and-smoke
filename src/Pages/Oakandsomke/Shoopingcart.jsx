@@ -139,7 +139,7 @@ const ShoppingCartPage = () => {
 
           {/* Items Section */}
           <div>
-            <div className='bg-gray-100 p-4'>
+            <div className='bg-gray-100 p-4 border-b border-gray-200'>
               <h2 className='text-base font-semibold text-gray-800'>Items</h2>
             </div>
 
@@ -155,64 +155,78 @@ const ShoppingCartPage = () => {
                 </p>
                 <button
                   onClick={() => navigate('/')}
-                  className='px-6 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1 mx-auto'
+                  className='px-6 py-2 border border-[#FA0303] text-[#FA0303] rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1 mx-auto'
                 >
                   <span>Start Shopping</span>
                 </button>
               </div>
             ) : (
               // Cart Items List
-              <div className='space-y-4 mt-4 px-4 pb-4'>
+              <div className='space-y-4 mt-1 px-4 border-b border-gray-200'>
                 {cart.map(item => (
                   <div
                     key={item._id}
-                    className='flex items-center justify-between border-b border-gray-200 pb-4 last:border-b-0'
+                    className='border-b border-gray-200 pb-4 last:border-b-0'
                   >
-                    {/* Product Image */}
-                    <img
-                      src={`${ImagePath}${item.image}`}
-                      alt={item.name}
-                      className='w-20 h-20 object-cover rounded-md'
-                    />
+                    {/* Edit Button */}
+                    <button className='text-[#FA0303] text-sm font-medium mb-2'>
+                      edit
+                    </button>
 
-                    {/* Name & Price */}
-                    <div className='flex-1 flex flex-col justify-center px-4'>
-                      <h2 className='text-lg font-semibold'>{item.name}</h2>
-                      <span className='text-red-500 font-bold'>
-                        {item.price} KD
-                      </span>
-                    </div>
+                    <div className='flex items-center justify-between'>
+                      {/* Product Image */}
+                      <img
+                        src={`${ImagePath}${item.image}`}
+                        alt={item.name}
+                        className='w-16 h-16 object-cover rounded-md'
+                      />
 
-                    {/* Quantity Controls */}
-                    <div className='flex items-center border border-gray-300 rounded-lg'>
-                      <button
-                        onClick={() =>
-                          handleQuantityChange(item._id, item.quantity - 1)
-                        }
-                        className='p-2 hover:bg-gray-100 transition-colors'
-                      >
-                        <Minus className='w-4 h-4' />
-                      </button>
-                      <span className='px-3 py-1 min-w-8 text-center'>
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() =>
-                          handleQuantityChange(item._id, item.quantity + 1)
-                        }
-                        className='p-2 hover:bg-gray-100 transition-colors'
-                      >
-                        <Plus className='w-4 h-4' />
-                      </button>
+                      {/* Name */}
+                      <div className='flex-1 px-4 mb-9'>
+                        <h2 className='text-lg font-semibold'>{item.name}</h2>
+                      </div>
+
+                      {/* Price - Top Right */}
+                      <div className='flex flex-col items-end'>
+                        <span className='text-[#FA0303] font-medium mb-5'>
+                          KD {(item.price * item.quantity).toFixed(3)}
+                        </span>
+
+                        {/* Quantity Controls - Circular Buttons */}
+                        <div className='flex items-center gap-2'>
+                          <button
+                            onClick={() =>
+                              handleQuantityChange(item._id, item.quantity - 1)
+                            }
+                            className={`w-4 h-4 flex items-center justify-center border-2 rounded-full hover:bg-gray-100 transition-colors ${
+                              item.quantity > 1
+                                ? 'border-[#FA0303] text-[#FA0303]'
+                                : 'border-gray-300 text-gray-300'
+                            }`}
+                          >
+                            <Minus className='w-3 h-3' />
+                          </button>
+                          <span className='px-4 py-0.5 text-center font-medium text-[#FA0303] text-sm border border-gray-300 rounded'>
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              handleQuantityChange(item._id, item.quantity + 1)
+                            }
+                            className='w-4 h-4 flex items-center justify-center border-2 border-[#FA0303] rounded-full text-[#FA0303] hover:bg-red-50 transition-colors'
+                          >
+                            <Plus className='w-3 h-3' />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Remove Button */}
                     <button
                       onClick={() => removeFromCart(item._id)}
-                      className='p-2 rounded-full hover:bg-red-100 transition-colors ml-4'
-                      title='Remove item'
+                      className='text-[#f34f4f] text-sm font-medium'
                     >
-                      <Trash2 className='w-4 h-4 text-red-500' />
+                      remove
                     </button>
                   </div>
                 ))}
