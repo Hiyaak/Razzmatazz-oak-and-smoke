@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../Context/CartContext'
-import { ImagePath } from '../../Services/Apiservice'
+import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 
 const ShoppingCartPage = () => {
@@ -31,23 +31,37 @@ const ShoppingCartPage = () => {
     }
   }
 
-  const handleGotocheckout = () => {
+  const handleGotocheckout = async () => {
     const storedBrandId = localStorage.getItem('brandId')
+
     if (!storedBrandId) {
       toast.error('No brand selected')
       return
     }
 
-    // Get user IDs for this brand
     const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
     const registredUserId = localStorage.getItem(
       `registredUserId_${storedBrandId}`
     )
 
-    if (guestUserId || registredUserId) {
-      navigate('/adress')
-    } else {
+    if (!guestUserId && !registredUserId) {
+      // User not logged in
       navigate('/login')
+      return
+    }
+
+    const userId = registredUserId || guestUserId
+
+    try {
+      const { data } = await ApiService.get(`getAddressesByUser/${userId}`)
+      if (data.status && data.addresses.length > 0) {
+        navigate('/placeorder')
+      } else {
+        navigate('/adress')
+      }
+    } catch (error) {
+      console.error('Error fetching addresses:', error)
+      toast.error('Something went wrong while fetching your addresses.')
     }
   }
 
@@ -222,7 +236,7 @@ const ShoppingCartPage = () => {
           ) : (
             // ✅ Location selected — show "Go to checkout"
             <div
-              className='p-3 border-t border-gray-200 bg-white flex-shrink-0'
+              className='p-3  bg-white flex-shrink-0'
               onClick={handleGotocheckout}
             >
               <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>

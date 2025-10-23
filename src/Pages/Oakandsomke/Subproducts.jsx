@@ -92,47 +92,49 @@ const Subproducts = () => {
                     {/* Light gray strip at the bottom of image for timeToPrepare */}
                     {item.timeToPrepare && (
                       <div className='absolute bottom-0 w-full bg-[#F4ECD9]/80 p-1 flex justify-center items-center gap-1'>
-                        <AlarmClock  className='w-4 h-4 text-red-500' />
-                        <span className='text-red-500 text-sm font-medium'>
+                        <AlarmClock className='w-4 h-4 text-[#FA0303]' />
+                        <span className='text-[#FA0303] text-sm font-medium'>
                           {item.timeToPrepare}
                         </span>
                       </div>
                     )}
                   </div>
 
-                  {/* Name & Price */}
-                  <div className='flex justify-between items-center mb-2'>
-                    <h2 className='text-lg font-semibold'>{item.name}</h2>
-                    <span className='text-red-500 font-bold'>
-                      {item.price} KD
-                    </span>
-                  </div>
+                  {/* Name */}
+                  <h2 className='text-lg font-semibold mb-3'>{item.name}</h2>
 
                   {/* Description */}
-                  <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
+                  <p className='text-gray-600 text-sm mb-2 line-clamp-2'>
                     {item.description}
                   </p>
+
+                  {/* Price moved here (just above Add button) */}
+                  <div className='text-[#FA0303] font-bold text-right mb-3'>
+                    {item.price} KD
+                  </div>
 
                   {/* Add to Cart / Quantity Controls */}
                   {quantity === 0 ? (
                     <button
                       onClick={() => addToCart(item)}
-                      className='border border-red-500 text-red-500 py-2 px-4 rounded hover:bg-red-50 transition-colors font-medium'
+                      className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                     >
-                      Add to Cart
+                      + Add
                     </button>
                   ) : (
-                    <div className='flex items-center justify-between border border-red-500 rounded-md overflow-hidden'>
+                    <div className='flex items-center justify-between rounded-md px-2 py-1'>
                       <button
                         onClick={() => updateQuantity(item._id, quantity - 1)}
-                        className='bg-red-500 text-white py-2 px-4 hover:bg-red-600 transition-colors'
+                        className='w-8 h-8 flex items-center justify-center bg-white text-[#FA0303] border border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
                       >
-                        -
+                        −
                       </button>
-                      <span className='font-semibold px-4'>{quantity}</span>
+                      <span className='font-semibold text-center w-8'>
+                        {quantity}
+                      </span>
                       <button
                         onClick={() => updateQuantity(item._id, quantity + 1)}
-                        className='bg-red-500 text-white py-2 px-4 hover:bg-red-600 transition-colors'
+                        className='w-8 h-8 flex items-center justify-center bg-white text-[#FA0303] border border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
                       >
                         +
                       </button>
@@ -147,10 +149,10 @@ const Subproducts = () => {
         {/* Bottom Section */}
         {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
           // ❌ Location not selected — show "Select your location"
-          <div className='p-3 border-t border-gray-200 bg-white flex-shrink-0'>
+          <div className='p-3  border-gray-200 bg-white flex-shrink-0'>
             <button
               onClick={() => navigate('/pickupdeviler')}
-              className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors'
+              className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-2 rounded-lg transition-colors'
             >
               Select your location
             </button>
@@ -158,7 +160,7 @@ const Subproducts = () => {
         ) : (
           // Location selected — show "Review Order"
           <div
-            className='p-3 border-t border-gray-200 bg-white flex-shrink-0'
+            className='p-3 bg-white flex-shrink-0'
             onClick={handleReviewOrder}
           >
             <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
