@@ -208,7 +208,7 @@ const HeroSection = () => {
   return (
     <div className='flex flex-col md:flex-row h-screen overflow-hidden'>
       {/* Left Panel */}
-      <div className='w-full md:w-2/5 h-screen border-r border-gray-200 flex flex-col overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+      <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
         {/* Header */}
         <div className='p-2 border-b border-gray-200 flex-shrink-0 sticky top-0 bg-white z-10'>
           <div className='flex items-center'>

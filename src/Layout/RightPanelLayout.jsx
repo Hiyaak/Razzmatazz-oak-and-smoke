@@ -1,7 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu, ShoppingBag, Search, LogOut } from 'lucide-react'
-import heroImage from '../assets/concept.jpg'
+import heroImage from '../assets/oak.jpg'
+import instagram from "../assets/instagram_logo.png"
+import arabic from '../assets/arabic.png'
 
 const RightPanelLayout = () => {
   const navigate = useNavigate()
@@ -31,30 +33,34 @@ const RightPanelLayout = () => {
   return (
     <div className='flex-1 relative bg-black h-screen overflow-hidden'>
       {/* Top Navigation — hidden on mobile */}
-      <div className='hidden md:absolute md:top-6 md:left-6 md:right-6 md:z-10 md:block'>
+      <div className='hidden md:absolute md:top-4 md:left-6 md:right-6 md:z-10 md:block'>
         <div className='flex justify-between items-center'>
-          <div className='flex space-x-4'>
+          <div className='flex space-x-6'>
             <button
               onClick={handleMenuClick}
-              className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              className='w-10 h-10 bg-white text-black backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
             >
-              <Menu className='w-6 h-6' />
+              <Menu className='w-5 h-5' />
             </button>
             <button
               onClick={handleShopingCartClick}
-              className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              className='w-10 h-10 bg-white text-black backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
             >
-              <ShoppingBag className='w-6 h-6' />
-            </button>
-            <button className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'>
-              <Search onClick={handleSearch} className='w-6 h-6' />
+              <ShoppingBag className='w-5 h-5' />
             </button>
             <button
-              onClick={handleLogout}
-              className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-all'
+              onClick={handleSearch}
+              className='w-10 h-10 bg-white text-black backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
             >
-              <LogOut className='w-6 h-6' />
+              <Search className='w-5 h-5' />
             </button>
+            {/* <button className='w-10 h-10 bg-white text-black backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'>
+              <img
+                src={arabic}
+                alt='Arabic'
+                className='w-10 h-10 rounded-full te'
+              />
+            </button> */}
           </div>
         </div>
       </div>
