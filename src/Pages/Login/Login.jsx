@@ -78,7 +78,7 @@ const ContactInfoForm = () => {
   return (
     <div className='flex flex-col md:flex-row min-h-screen bg-white'>
       {/* Left Sidebar */}
-      <div className='w-full md:w-2/5 min-h-screen border-r border-gray-200 flex flex-col'>
+      <div className='w-full md:w-[42%] min-h-screen border-r border-gray-200 flex flex-col'>
         {/* Header */}
         <div className='p-4 border-b border-gray-200'>
           <div className='flex items-center justify-between'>

@@ -102,7 +102,7 @@ const MenuPage = () => {
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
-      <div className='w-full md:w-2/5 min-h-screen border-r border-gray-200 flex flex-col'>
+      <div className='w-full md:w-[42%] min-h-screen border-r border-gray-200 flex flex-col'>
         {/* Header */}
         <div className='p-2 border-b border-gray-200'>
           <div className='flex items-center justify-between mb-1'>
@@ -224,143 +224,149 @@ const MenuPage = () => {
           </>
         ) : (
           /* ---------------- FORM VIEW ---------------- */
-          <div className='px-4 pb-8 overflow-y-auto '>
-            {/* Tab Navigation */}
-            <div className='flex gap-3 mt-6 mb-8'>
-              <button
-                onClick={() => setActiveTab('login')}
-                className={`flex-1 py-2 rounded-md font-medium transition-all ${
-                  activeTab === 'login'
-                    ? 'bg-[#0099CC] text-white'
-                    : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
-                }`}
-              >
-                Login
-              </button>
-              <button
-                onClick={() => setActiveTab('register')}
-                className={`flex-1 py-2 rounded-md font-medium transition-all ${
-                  activeTab === 'register'
-                    ? 'bg-[#0099CC] text-white'
-                    : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
-                }`}
-              >
-                Register
-              </button>
+          <div className='flex flex-col h-full relative'>
+            {/* Scrollable content */}
+            <div className='px-4 pb-24 overflow-y-auto'>
+              {/* Tab Navigation */}
+              <div className='flex gap-3 mt-6 mb-8'>
+                <button
+                  onClick={() => setActiveTab('login')}
+                  className={`flex-1 py-2 rounded-md font-medium transition-all ${
+                    activeTab === 'login'
+                      ? 'bg-[#0099CC] text-white'
+                      : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
+                  }`}
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => setActiveTab('register')}
+                  className={`flex-1 py-2 rounded-md font-medium transition-all ${
+                    activeTab === 'register'
+                      ? 'bg-[#0099CC] text-white'
+                      : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
+                  }`}
+                >
+                  Register
+                </button>
+              </div>
+
+              {/* Title */}
+              <h2 className='text-2xl font-bold text-gray-700 mb-8'>
+                {activeTab === 'login' ? 'Login' : 'Register'}
+              </h2>
+
+              {/* Form Fields */}
+              <div className='space-y-4'>
+                {/* Email Field */}
+                <div>
+                  <label className='block text-sm text-gray-500 mb-2'>
+                    Email *
+                  </label>
+                  <input
+                    type='email'
+                    name='email'
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
+                  />
+                </div>
+
+                {/* Password Field */}
+                <div>
+                  <label className='block text-sm text-gray-500 mb-2'>
+                    Password *
+                  </label>
+                  <div className='relative'>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      name='password'
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className='w-full pr-10 text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
+                    />
+                    <button
+                      type='button'
+                      onClick={() => setShowPassword(!showPassword)}
+                      className='absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
+                    >
+                      {showPassword ? (
+                        <EyeOff className='w-5 h-5' />
+                      ) : (
+                        <Eye className='w-5 h-5' />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className='flex items-center gap-4 my-8'>
+                  <div className='flex-1 h-px bg-gray-300'></div>
+                  <span className='text-gray-400 text-sm font-medium'>OR</span>
+                  <div className='flex-1 h-px bg-gray-300'></div>
+                </div>
+
+                {/* Social Login */}
+                <div>
+                  <h3 className='text-lg font-bold text-gray-700 mb-4'>
+                    Login with
+                  </h3>
+                  <div className='space-y-4'>
+                    {/* Apple Button */}
+                    <button
+                      type='button'
+                      className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+                    >
+                      <svg className='w-6 h-6' viewBox='0 0 24 24'>
+                        <path
+                          d='M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z'
+                          fill='currentColor'
+                        />
+                      </svg>
+                      <span className='flex-1 text-left text-gray-700 font-medium'>
+                        Apple
+                      </span>
+                    </button>
+
+                    {/* Google Button */}
+                    <button
+                      type='button'
+                      className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+                    >
+                      <svg className='w-6 h-6' viewBox='0 0 24 24'>
+                        <path
+                          fill='#4285F4'
+                          d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'
+                        />
+                        <path
+                          fill='#34A853'
+                          d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'
+                        />
+                        <path
+                          fill='#FBBC05'
+                          d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'
+                        />
+                        <path
+                          fill='#EA4335'
+                          d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'
+                        />
+                      </svg>
+                      <span className='flex-1 text-left text-gray-700 font-medium'>
+                        Google
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Title */}
-            <h2 className='text-2xl font-bold text-gray-700 mb-8'>
-              {activeTab === 'login' ? 'Login' : 'Register'}
-            </h2>
-
-            {/* Form Fields */}
-            <div className='space-y-4'>
-              {/* Email Field */}
-              <div>
-                <label className='block text-sm text-gray-500 mb-2'>
-                  Email *
-                </label>
-                <input
-                  type='email'
-                  name='email'
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
-                />
-              </div>
-
-              {/* Password Field */}
-              <div>
-                <label className='block text-sm text-gray-500 mb-2'>
-                  Password *
-                </label>
-                <div className='relative'>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name='password'
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className='w-full pr-10 text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
-                  />
-                  <button
-                    type='button'
-                    onClick={() => setShowPassword(!showPassword)}
-                    className='absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
-                  >
-                    {showPassword ? (
-                      <EyeOff className='w-5 h-5' />
-                    ) : (
-                      <Eye className='w-5 h-5' />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className='flex items-center gap-4 my-8'>
-                <div className='flex-1 h-px bg-gray-300'></div>
-                <span className='text-gray-400 text-sm font-medium'>OR</span>
-                <div className='flex-1 h-px bg-gray-300'></div>
-              </div>
-
-              {/* Social Login */}
-              <div>
-                <h3 className='text-lg font-bold text-gray-700 mb-4'>
-                  Login with
-                </h3>
-                <div className='space-y-4'>
-                  <button
-                    type='button'
-                    className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
-                  >
-                    <svg className='w-6 h-6' viewBox='0 0 24 24'>
-                      <path
-                        d='M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z'
-                        fill='currentColor'
-                      />
-                    </svg>
-                    <span className='flex-1 text-left text-gray-700 font-medium'>
-                      Apple
-                    </span>
-                  </button>
-
-                  <button
-                    type='button'
-                    className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
-                  >
-                    <svg className='w-6 h-6' viewBox='0 0 24 24'>
-                      <path
-                        d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'
-                        fill='#4285F4'
-                      />
-                      <path
-                        d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'
-                        fill='#34A853'
-                      />
-                      <path
-                        d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'
-                        fill='#FBBC05'
-                      />
-                      <path
-                        d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'
-                        fill='#EA4335'
-                      />
-                    </svg>
-                    <span className='flex-1 text-left text-gray-700 font-medium'>
-                      Google
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-
+            {/* Fixed Submit Button */}
+            <div className='p-3 bg-white sticky bottom-0'>
               <button
                 onClick={
                   activeTab === 'login' ? handleLoginUser : handleRegisterUser
                 }
-                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors mt-8 text-lg'
+                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors text-center'
               >
                 {activeTab === 'login' ? 'Login' : 'Register'}
               </button>

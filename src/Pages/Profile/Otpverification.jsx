@@ -41,7 +41,7 @@ const Otpverification = () => {
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
-      <div className='w-full md:w-2/5 h-screen border-r border-gray-200 flex flex-col'>
+      <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col'>
         {/* Header */}
         <div className='p-2 border-b border-gray-200 flex-shrink-0'>
           <div className='flex items-center justify-between mb-1'>

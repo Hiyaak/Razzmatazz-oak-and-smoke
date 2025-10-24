@@ -108,7 +108,7 @@ const FoodDeliveryApp = () => {
       {/* Desktop layout  */}
       <div className='hidden md:flex min-h-screen bg-gray-50'>
         {/* Left Panel*/}
-        <div className='w-2/5 bg-white border-r border-gray-100 flex flex-col h-screen'>
+        <div className='w-[42%] bg-white border-r border-gray-100 flex flex-col h-screen'>
           <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
             {/* Header Section */}
             <div
@@ -124,7 +124,7 @@ const FoodDeliveryApp = () => {
                     className='w-16 h-16 object-contain'
                   />
                   <div>
-                    <h1 className='text-lg font-bold text-gray-900'>
+                    <h1 className='text-md font-bold text-gray-900'>
                       Oak and Smoke
                     </h1>
                     <p className='text-sm text-gray-500'>Smoke Meat Everyday</p>
@@ -225,7 +225,7 @@ const FoodDeliveryApp = () => {
                   <img
                     src={`${ImagePath}${item.product_img[0]}`}
                     alt={item.productName}
-                    className='w-full h-56 object-cover'
+                    className='w-full h-60 object-cover'
                   />
                   <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
                     <h3 className='text-gray-100 font-bold text-lg text-center'>
