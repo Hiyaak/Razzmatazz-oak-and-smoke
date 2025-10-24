@@ -1,149 +1,150 @@
-import { ArrowLeft, Search as SearchIcon } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, Search as SearchIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react'
-import ApiService, { ImagePath } from '../../Services/Apiservice'
-import { useCart } from '../../Context/CartContext'
-import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { useEffect, useState } from 'react';
+import ApiService, { ImagePath } from '../../Services/Apiservice';
+import { useCart } from '../../Context/CartContext';
+import RightPanelLayout from '../../Layout/RightPanelLayout';
+import { Minus, Plus } from 'lucide-react';
 
 const Search = () => {
-  const navigate = useNavigate()
-  const [subProducts, setSubProducts] = useState([])
-  const [filteredProducts, setFilteredProducts] = useState([])
-  const [searchQuery, setSearchQuery] = useState('')
-  const { cart, addToCart, updateQuantity } = useCart()
+  const navigate = useNavigate();
+  const [subProducts, setSubProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { cart, addToCart, updateQuantity } = useCart();
 
   // Fetch all products once
   const getAllSubProducts = async () => {
     try {
       const { data } = await ApiService.get(
         `getAllSubProductByBrandName/${encodeURIComponent('Oak and Smoke')}`
-      )
+      );
       if (data.status) {
-        setSubProducts(data.subproducts)
+        setSubProducts(data.subproducts);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    getAllSubProducts()
-  }, [])
+    getAllSubProducts();
+  }, []);
 
   // Filter products when typing
-  const handleSearch = e => {
-    const query = e.target.value.toLowerCase()
-    setSearchQuery(query)
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
 
     if (query.trim() === '') {
-      setFilteredProducts([])
-      return
+      setFilteredProducts([]);
+      return;
     }
 
-    const filtered = subProducts.filter(product =>
+    const filtered = subProducts.filter((product) =>
       product.name.toLowerCase().includes(query)
-    )
-    setFilteredProducts(filtered)
-  }
+    );
+    setFilteredProducts(filtered);
+  };
 
-  const getProductQuantity = productId => {
-    const cartItem = cart.find(item => item._id === productId)
-    return cartItem ? cartItem.quantity : 0
-  }
+  const getProductQuantity = (productId) => {
+    const cartItem = cart.find((item) => item._id === productId);
+    return cartItem ? cartItem.quantity : 0;
+  };
 
   return (
-    <div className='flex flex-col md:flex-row min-h-screen'>
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Sidebar */}
-      <div className='w-full md:w-[42%] min-h-screen border-r border-gray-200 flex flex-col'>
+      <div className="w-full md:w-[42%] min-h-screen border-r border-gray-200 flex flex-col">
         {/* Header — only input */}
-        <div className='p-3 border-b border-gray-200 flex items-center gap-3'>
+        <div className="p-3 border-b border-gray-200 flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
-            className='p-2 hover:bg-gray-200 rounded-full transition-colors'
+            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
           >
-            <ArrowLeft className='w-5 h-5 text-gray-600' />
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
 
           <input
-            type='text'
-            placeholder='Search...'
+            type="text"
+            placeholder="Search..."
             value={searchQuery}
             onChange={handleSearch}
-            className='w-full bg-transparent focus:outline-none text-md text-gray-800 placeholder-gray-400'
+            className="w-full bg-transparent focus:outline-none text-md text-gray-800 placeholder-gray-400"
           />
         </div>
 
         {/* Product List */}
         {searchQuery && (
-          <div className='flex-1 overflow-y-auto p-2'>
+          <div className="flex-1 overflow-y-auto p-2">
             {filteredProducts.length === 0 ? (
-              <p className='text-gray-500 text-center py-6'>
+              <p className="text-gray-500 text-center py-6">
                 No products found
               </p>
             ) : (
-              <ul className='space-y-3'>
-                {filteredProducts.map(item => {
-                  const quantity = getProductQuantity(item._id)
+              <ul className="space-y-3">
+                {filteredProducts.map((item) => {
+                  const quantity = getProductQuantity(item._id);
 
                   return (
                     <li
                       key={item._id}
-                      className='flex flex-col gap-2 p-3 hover:bg-gray-50 transition cursor-pointer'
+                      className="flex flex-col gap-2 p-3 hover:bg-gray-50 transition cursor-pointer"
                     >
-                      <div className='flex items-start gap-3'>
+                      <div className="flex items-start gap-3">
                         {/* Image */}
                         <img
                           src={`${ImagePath}${item.image}`}
                           alt={item.name}
-                          className='w-16 h-16 object-cover rounded-md flex-shrink-0'
+                          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
                         />
 
                         {/* Text + Price + Controls */}
-                        <div className='flex-1 flex flex-col'>
+                        <div className="flex-1 flex flex-col">
                           {/* Name + Description */}
                           <div>
-                            <h2 className='font-bold text-gray-900'>
+                            <h2 className="font-bold text-gray-900">
                               {item.name}
                             </h2>
-                            <p className='text-sm text-gray-600'>
+                            <p className="text-sm text-gray-600">
                               {item.description}
                             </p>
                           </div>
 
                           {/* Price + Quantity Controls */}
-                          <div className='flex justify-end items-center mt-2 gap-4'>
-                            <span className='text-red-500 font-semibold whitespace-nowrap'>
+                          <div className="flex justify-end items-center mt-2 gap-4">
+                            <span className="text-red-500 font-semibold whitespace-nowrap">
                               {item.price} KD
                             </span>
 
                             {quantity === 0 ? (
                               <button
                                 onClick={() => addToCart(item)}
-                                className='border border-red-500 text-red-500 px-2 py-1 rounded hover:bg-red-50 text-sm font-medium'
+                                className="border border-red-500 text-red-500 px-2 py-1 rounded hover:bg-red-50 text-sm font-medium"
                               >
-                                Add
+                                + Add
                               </button>
                             ) : (
-                              <div className='flex items-center border border-red-500 rounded-md overflow-hidden text-sm'>
+                              <div className="flex items-center justify-between rounded-md px-2 py-1">
                                 <button
                                   onClick={() =>
                                     updateQuantity(item._id, quantity - 1)
                                   }
-                                  className='bg-red-500 text-white px-2 py-1 hover:bg-red-600 transition-colors'
+                                  className="w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg"
                                 >
-                                  -
+                                  <Minus className="w-3 h-3" />
                                 </button>
-                                <span className='px-3 font-semibold'>
+                                <span className="px-3 py-0.5 text-center font-medium text-red-500 text-sm border border-gray-200 rounded">
                                   {quantity}
                                 </span>
                                 <button
                                   onClick={() =>
                                     updateQuantity(item._id, quantity + 1)
                                   }
-                                  className='bg-red-500 text-white px-2 py-1 hover:bg-red-600 transition-colors'
+                                  className="w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg"
                                 >
-                                  +
+                                  <Plus className="w-3 h-3" />
                                 </button>
                               </div>
                             )}
@@ -151,7 +152,7 @@ const Search = () => {
                         </div>
                       </div>
                     </li>
-                  )
+                  );
                 })}
               </ul>
             )}
@@ -162,7 +163,7 @@ const Search = () => {
       {/* Right Panel */}
       <RightPanelLayout />
     </div>
-  )
-}
+  );
+};
 
-export default Search
+export default Search;
