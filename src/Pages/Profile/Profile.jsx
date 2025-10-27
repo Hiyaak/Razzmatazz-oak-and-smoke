@@ -12,6 +12,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ApiService from '../../Services/Apiservice';
 import { toast } from 'react-toastify';
 import RightPanelLayout from '../../Layout/RightPanelLayout';
+import { FaShoppingCart } from 'react-icons/fa';
+import { MdMenuBook, MdOutlineMoreTime  } from 'react-icons/md';
 
 const MenuPage = () => {
   const navigate = useNavigate();
@@ -84,17 +86,17 @@ const MenuPage = () => {
 
   const menuItems = [
     {
-      icon: <ShoppingCart className="w-5 h-5 text-gray-600" />,
+      icon: <FaShoppingCart className="w-5 h-5 text-gray-600 font-semibold" />,
       label: 'My Cart',
       path: '/shoopingcart',
     },
     {
-      icon: <FileText className="w-5 h-5 text-gray-600" />,
+      icon: <MdMenuBook className="w-5 h-5 text-gray-600" />,
       label: 'Menu',
       path: '/',
     },
     {
-      icon: <Clock className="w-5 h-5 text-gray-600" />,
+      icon: <MdOutlineMoreTime className="w-5 h-5 text-gray-600" />,
       label: 'My Orders',
       path: '/myorders',
     },

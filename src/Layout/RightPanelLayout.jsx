@@ -4,6 +4,7 @@ import { Menu, ShoppingBag, Search, LogOut } from 'lucide-react'
 import heroImage from '../assets/oak.jpg'
 import instagram from "../assets/instagram_logo.png"
 import arabic from '../assets/arabic.png'
+import { Instagram } from 'lucide-react'
 
 const RightPanelLayout = () => {
   const navigate = useNavigate()
@@ -76,7 +77,7 @@ const RightPanelLayout = () => {
         {/* Bottom IG button */}
         <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
           <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
-            IG
+            <Instagram className="w-6 h-6 text-white" />
           </div>
         </div>
       </div>

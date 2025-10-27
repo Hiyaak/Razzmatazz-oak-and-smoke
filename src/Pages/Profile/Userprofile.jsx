@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import ApiService from '../../Services/Apiservice';
 import { toast } from 'react-toastify';
 import { FaShoppingCart } from 'react-icons/fa';
-import { MdMenuBook, MdOutlineMoreTime, MdDelete } from 'react-icons/md';
-import { MdApartment } from 'react-icons/md';
+import { MdMenuBook, MdOutlineMoreTime, MdDelete, MdApartment } from 'react-icons/md';
+
 
 const Userprofile = () => {
   const [profile, setProfile] = useState(null);
@@ -97,24 +97,32 @@ const Userprofile = () => {
     }
   };
 
-  // ✅ API CALL for deleting whole account
+  // ✅ FIXED VERSION — deletes user & clears entire localStorage
   const handleAccountDelete = async () => {
     if (deleteConfirmText !== 'Delete') return;
 
     try {
-      const { data } = await ApiService.delete(`deleteUserAccount`, {
-        user_id: registredUserId,
-      });
+      const { data } = await ApiService.delete(
+        `deleteUser/${registredUserId}`,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       if (data.status) {
         toast.success('Account deleted successfully!');
-        localStorage.removeItem(`registredUserId_${storedBrandId}`);
+
+        // ✅ Clear ALL local storage data
+        localStorage.clear();
+
+        // ✅ Redirect to home page
         navigate('/');
       } else {
-        toast.error('Failed to delete account');
+        toast.error(data.message || 'Failed to delete account');
       }
     } catch (error) {
-      toast.error('Something went wrong');
+      console.error('Error deleting account:', error);
+      toast.error('Something went wrong while deleting your account.');
     }
   };
 
