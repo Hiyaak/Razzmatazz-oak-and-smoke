@@ -5,6 +5,7 @@ import heroImage from '../assets/oak.jpg'
 import instagram from "../assets/instagram_logo.png"
 import arabic from '../assets/arabic.png'
 import { Instagram } from 'lucide-react'
+import {RiShoppingBagLine} from "react-icons/ri";
 
 const RightPanelLayout = () => {
   const navigate = useNavigate()
@@ -47,7 +48,7 @@ const RightPanelLayout = () => {
               onClick={handleShopingCartClick}
               className='w-10 h-10 bg-white text-black backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
             >
-              <ShoppingBag className='w-5 h-5' />
+              <RiShoppingBagLine className='w-5 h-5' />
             </button>
             <button
               onClick={handleSearch}
