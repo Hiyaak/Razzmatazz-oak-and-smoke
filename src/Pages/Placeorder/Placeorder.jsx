@@ -96,6 +96,7 @@ const Placeorder = () => {
       // Build payload
       const payload = {
         user_id: userId,
+        
         products: cart.map(item => ({
           subproduct_id: item._id,
           subProduct_img: item.image,

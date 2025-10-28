@@ -134,9 +134,10 @@ const FoodDeliveryApp = () => {
                     className="w-16 h-16 object-contain"
                   />
                   <div>
-                    <h1 className="text-md font-bold text-gray-900">
+                    <h1 className="font-quicksand font-bold text-[16px] leading-tight text-gray-900 tracking-wide">
                       Oak and Smoke
                     </h1>
+
                     <p className="text-sm text-gray-500">Smoke Meat Everyday</p>
                   </div>
                 </div>
@@ -406,26 +407,26 @@ const FoodDeliveryApp = () => {
 
             {/* Product Grid Section - Scrollable */}
             <div className="px-1 py-1">
-                <div className="px-2 pt-8 pb-4 bg-gray-100 grid grid-cols-2 gap-2 cursor-pointer">
-              {productCategories.map((item) => (
-                <div
-                  key={item._id}
-                  className="relative rounded-lg overflow-hidden shadow"
-                  onClick={() => handleProduct(item._id, item.productName)}
-                >
-                  <img
-                    src={`${ImagePath}${item.product_img[0]}`}
-                    alt={item.productName}
-                    className="w-full h-60 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
-                    <h3 className="text-gray-100 font-bold text-lg text-center">
-                      {item.productName.toUpperCase()}
-                    </h3>
+              <div className="px-2 pt-8 pb-4 bg-gray-100 grid grid-cols-2 gap-2 cursor-pointer">
+                {productCategories.map((item) => (
+                  <div
+                    key={item._id}
+                    className="relative rounded-lg overflow-hidden shadow"
+                    onClick={() => handleProduct(item._id, item.productName)}
+                  >
+                    <img
+                      src={`${ImagePath}${item.product_img[0]}`}
+                      alt={item.productName}
+                      className="w-full h-60 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                      <h3 className="text-gray-100 font-bold text-lg text-center">
+                        {item.productName.toUpperCase()}
+                      </h3>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
