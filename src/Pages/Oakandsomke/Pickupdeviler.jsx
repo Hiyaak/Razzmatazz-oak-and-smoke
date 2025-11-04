@@ -59,7 +59,7 @@ const HeroSection = () => {
           `/getAllPickUpGovernateByBrandId/${brandId}`
         )
       } else {
-        response = await ApiService.get(`/getAllGovernate/${brandId}`)
+        response = await ApiService.get(`/getAllGovernateByBrandId/${brandId}`)
       }
 
       const { data } = response
