@@ -228,7 +228,10 @@ const MenuPage = () => {
           /* ---------------- FORM VIEW ---------------- */
           <div className="flex flex-col h-full flex-1 relative">
             {/* Scrollable content */}
-            <div className="px-4 pb-24 overflow-y-auto">
+            <div    className="px-4 pb-24 overflow-y-auto flex-1 
+               [&::-webkit-scrollbar]:hidden 
+               [-ms-overflow-style:none] 
+               [scrollbar-width:none]">
               {/* Tab Navigation */}
               <div className="flex gap-3 mt-6 mb-8">
                 <button

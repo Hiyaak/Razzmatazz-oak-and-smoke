@@ -14,6 +14,10 @@ const HeroSection = () => {
   const methodFromState = location.state?.method || 'delivery'
 
   const [selectedMethod, setSelectedMethod] = useState(methodFromState)
+  const [managementStatus, setManagementStatus] = useState({
+    deliveryStatus: true,
+    pickupStatus: true
+  })
   const [governates, setGovernates] = useState([])
   const [expandedGovernateId, setExpandedGovernateId] = useState(null)
   const [areasByGovernate, setAreasByGovernate] = useState({})
@@ -48,6 +52,26 @@ const HeroSection = () => {
       return null
     })
     .filter(Boolean)
+
+  //GetmanagementStatus
+  const handlemanagementStatus = async () => {
+    try {
+      const { data } = await ApiService.get(`getmanagementByBrandId/${brandId}`)
+
+      if (data.status && data.data) {
+        setManagementStatus({
+          deliveryStatus: data.data.deliveryStatus ?? true, // null/undefined → true
+          pickupStatus: data.data.pickupStatus ?? true
+        })
+      }
+    } catch (error) {
+      console.error('Error in fetching managementStatus:', error)
+    }
+  }
+
+  useEffect(() => {
+    handlemanagementStatus()
+  }, [])
 
   // Fetch all governates for the brand based on selected method
   const getAllGovernates = async () => {
@@ -231,36 +255,33 @@ const HeroSection = () => {
             </h2>
             <div className='px-5 pb-6 border-b border-gray-200'>
               <div className='flex space-x-4'>
-                <button
-                  onClick={() => handleMethodChange('delivery')}
-                  className={`w-20 h-20 rounded-md font-medium text-base transition-all flex flex-col items-center justify-center border ${
-                    selectedMethod === 'delivery'
-                      ? 'text-red-600 border-red-600'
-                      : `text-gray-700 border-gray-300 ${
-                          selectedMethod === 'pickup'
-                            ? ''
-                            : 'hover:bg-[#AF0303] hover:border-red-600'
-                        }`
-                  }`}
-                >
-                  <FaCarSide className='w-5 h-5' />
-                  Delivery
-                </button>
-                <button
-                  onClick={() => handleMethodChange('pickup')}
-                  className={`w-20 h-20 rounded-md font-medium text-base transition-all flex flex-col items-center justify-center border ${
-                    selectedMethod === 'pickup'
-                      ? 'text-red-600 border-red-600'
-                      : `text-gray-700 border-gray-300 ${
-                          selectedMethod === 'delivery'
-                            ? ''
-                            : 'hover:text-red-600 hover:border-red-600'
-                        }`
-                  }`}
-                >
-                  <FaWalking className='w-5 h-5' />
-                  Pickup
-                </button>
+                {managementStatus.deliveryStatus && (
+                  <button
+                    onClick={() => handleMethodChange('delivery')}
+                    className={`w-20 h-20 rounded-md font-medium text-base transition-all flex flex-col items-center justify-center border ${
+                      selectedMethod === 'delivery'
+                        ? 'text-red-600 border-red-600'
+                        : `text-gray-700 border-gray-300 hover:bg-[#AF0303] hover:border-red-600`
+                    }`}
+                  >
+                    <FaCarSide className='w-5 h-5' />
+                    Delivery
+                  </button>
+                )}
+
+                {managementStatus.pickupStatus && (
+                  <button
+                    onClick={() => handleMethodChange('pickup')}
+                    className={`w-20 h-20 rounded-md font-medium text-base transition-all flex flex-col items-center justify-center border ${
+                      selectedMethod === 'pickup'
+                        ? 'text-red-600 border-red-600'
+                        : `text-gray-700 border-gray-300 hover:text-red-600 hover:border-red-600`
+                    }`}
+                  >
+                    <FaWalking className='w-5 h-5' />
+                    Pickup
+                  </button>
+                )}
               </div>
             </div>
           </div>
