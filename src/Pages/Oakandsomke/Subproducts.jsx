@@ -149,7 +149,7 @@ const Subproducts = () => {
 
         {/* Bottom Section */}
         {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
-          // ❌ Location not selected — show "Select your location"
+          // Location not selected — show "Select your location"
           <div className='p-3 bg-white flex-shrink-0'>
             <button
               onClick={() => navigate('/pickupdeviler')}
