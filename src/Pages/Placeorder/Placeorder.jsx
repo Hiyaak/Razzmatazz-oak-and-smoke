@@ -13,16 +13,18 @@ const Placeorder = () => {
   const navigate = useNavigate()
   const { cart } = useCart()
   const [userAdress, setUserAdress] = useState([])
+  const [deliveryCharges, setDeliveryCharges] = useState(0)
+
   const [profile, setProfile] = useState(null)
 
   const storedBrandId = localStorage.getItem('brandId')
 
-    const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
-    const registredUserId = localStorage.getItem(
-      `registredUserId_${storedBrandId}`
-    )
+  const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
+  const registredUserId = localStorage.getItem(
+    `registredUserId_${storedBrandId}`
+  )
 
-    const userId = registredUserId || guestUserId
+  const userId = registredUserId || guestUserId
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
     localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
   )
@@ -35,9 +37,7 @@ const Placeorder = () => {
 
   const fetchAdress = async () => {
     try {
-      const { data } = await ApiService.get(
-        `getAddressesByUser/${userId}`
-      )
+      const { data } = await ApiService.get(`getAddressesByUser/${userId}`)
       if (data.status) {
         setUserAdress(data.addresses)
         console.log('adress API response:', data.addresses)
@@ -69,61 +69,86 @@ const Placeorder = () => {
       toast.error('Something went wrong while loading your profile.')
     }
   }
+
+  const getdeliverycharges = async () => {
+    try {
+      const { data } = await ApiService.get(
+        `getdeliverychargesByBrandId/${storedBrandId}`
+      )
+
+      if (data.status && data.data.length > 0) {
+        setDeliveryCharges(data.data[0].deliveryCharges ?? 0)
+      } else {
+        setDeliveryCharges(0)
+      }
+    } catch (error) {
+      console.log('Error fetching delivery charges:', error)
+      setDeliveryCharges(0)
+    }
+  }
+
   useEffect(() => {
     fetchAdress()
     fetchProfile()
+    getdeliverycharges()
   }, [])
+
+  // Calculate subtotal
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  )
+
+  const total = subtotal + deliveryCharges
 
   const handlePlaceOrder = async () => {
     try {
       const storedBrandId = localStorage.getItem('brandId')
       if (!storedBrandId) return toast.error('No brand selected')
 
-      // Get user ID for this brand
       const userId =
         sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-        localStorage.getItem(`registredUserId_${storedBrandId}`)
+        localStorage.getItem(`registredUserId_${storedBrandId}`) 
 
       if (!userId) return toast.error('Please login or continue as guest')
 
-      // Get location for this brand
       const locationData = JSON.parse(
         localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
       )
+
       const { selectedMethod, selectedGovernateId, selectedAreaId } =
         locationData
-
       if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
         return toast.error('Please select your location')
 
-      // Build payload
       const payload = {
         user_id: userId,
-        
+        deliveryType: selectedMethod,
+        governateId: selectedGovernateId,
+        areaId: selectedAreaId,
+        deliveryCharges: Number(deliveryCharges),
         products: cart.map(item => ({
           subproduct_id: item._id,
           subProduct_img: item.image,
           subProduct_name: item.name,
-          price: item.price,
+          price: Number(item.price),
           quantity: item.quantity,
           description: item.description || ''
-        })),
-        deliveryType: selectedMethod,
-        governateId: selectedGovernateId,
-        areaId: selectedAreaId
+        }))
       }
+
+      console.log('Sending payload:', payload)
 
       const { data } = await ApiService.post('placeOrder', payload)
 
       if (data.status) {
-        console.log('Order placed successfully — Server Response:', data)
         toast.success('Order placed successfully!')
         navigate('/myorders')
       } else {
-        toast.error('Failed to place order. Please try again.')
+        toast.error(data.message || 'Failed to place order.')
       }
     } catch (error) {
-      console.error('Place order error:', error)
+      console.error('❌ Backend error:', error.response?.data || error)
       toast.error('Something went wrong while placing your order.')
     }
   }
@@ -131,7 +156,7 @@ const Placeorder = () => {
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
-      <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col'>
+      <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col overflow-hidden'>
         {/* Header */}
         <div className='p-2 border-b border-gray-200 flex-shrink-0'>
           <div className='flex items-center justify-between mb-1'>
@@ -147,7 +172,7 @@ const Placeorder = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+        <div className='flex-1 overflow-y-auto overflow-x-hidden'>
           {/* delivery Section */}
           <div>
             <div className='bg-gray-100 p-4'>
@@ -179,7 +204,7 @@ const Placeorder = () => {
                 <LuContact className='text-gray-500 text-xl flex-shrink-0' />
                 <div className='flex-1 text-center'>
                   <p className='text-gray-800 font-medium'>
-                    {profile?.firstName || 'Guest User'}
+                    {profile?.firstName || 'Unknown User'}
                     {profile?.mobileNumber
                       ? `, +965 ${profile.mobileNumber}`
                       : ''}
@@ -260,24 +285,23 @@ const Placeorder = () => {
               <div className='flex items-center'></div>
             </div>
           </div>
-
-          {/* <div>
-            <div className='bg-gray-100 p-4'>
-              <h2 className='text-base font-semibold text-gray-800'></h2>
-            </div>
-          </div> */}
         </div>
 
         {/* Fixed bottom section */}
-        <div className='fixed bottom-0 left-0 md:w-2/5 w-full border-t border-gray-200 bg-white p-3 space-y-2'>
-          <div className='flex justify-between items-center text-gray-800 font-semibold text-lg'>
+        <div className='fixed bottom-0 left-0 md:w-[42%] w-full border-t border-gray-200 bg-white p-3 space-y-2'>
+          <div className='flex justify-between items-center text-gray-800 font-semibold text-md'>
+            <span>Subtotal</span>
+            <span>{subtotal.toFixed(3)} KD</span>
+          </div>
+
+          <div className='flex justify-between items-center text-gray-800 font-semibold text-md'>
+            <span>Delivery Services</span>
+            <span>{deliveryCharges.toFixed(3)} KD</span>
+          </div>
+
+          <div className='flex justify-between items-center text-gray-900 font-bold text-md'>
             <span>Total</span>
-            <span>
-              {cart
-                .reduce((total, item) => total + item.price * item.quantity, 0)
-                .toFixed(3)}{' '}
-              KD
-            </span>
+            <span>{total.toFixed(3)} KD</span>
           </div>
 
           <button
