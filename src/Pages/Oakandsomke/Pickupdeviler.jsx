@@ -12,7 +12,6 @@ const HeroSection = () => {
   const brandId = localStorage.getItem('brandId')
 
   const methodFromState = location.state?.method || 'delivery'
-
   const [selectedMethod, setSelectedMethod] = useState(methodFromState)
   const [managementStatus, setManagementStatus] = useState({
     deliveryStatus: true,
@@ -60,7 +59,7 @@ const HeroSection = () => {
 
       if (data.status && data.data) {
         setManagementStatus({
-          deliveryStatus: data.data.deliveryStatus ?? true, // null/undefined → true
+          deliveryStatus: data.data.deliveryStatus ?? true, 
           pickupStatus: data.data.pickupStatus ?? true
         })
       }

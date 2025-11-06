@@ -16,10 +16,13 @@ const Placeorder = () => {
   const [profile, setProfile] = useState(null)
 
   const storedBrandId = localStorage.getItem('brandId')
-  const registredUserId = localStorage.getItem(
-    `registredUserId_${storedBrandId}`
-  )
 
+    const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
+    const registredUserId = localStorage.getItem(
+      `registredUserId_${storedBrandId}`
+    )
+
+    const userId = registredUserId || guestUserId
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
     localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
   )
@@ -33,7 +36,7 @@ const Placeorder = () => {
   const fetchAdress = async () => {
     try {
       const { data } = await ApiService.get(
-        `getAddressesByUser/${registredUserId}`
+        `getAddressesByUser/${userId}`
       )
       if (data.status) {
         setUserAdress(data.addresses)
@@ -48,13 +51,13 @@ const Placeorder = () => {
   }
 
   const fetchProfile = async () => {
-    if (!registredUserId) {
+    if (!userId) {
       toast.error('User not found. Please log in again.')
       navigate('/profile')
       return
     }
     try {
-      const payload = { id: registredUserId }
+      const payload = { id: userId }
       const { data } = await ApiService.post('getProfileById', payload)
       if (data.status) {
         setProfile(data.profile)

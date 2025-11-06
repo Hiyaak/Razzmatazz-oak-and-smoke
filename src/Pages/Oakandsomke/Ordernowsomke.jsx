@@ -5,9 +5,6 @@ import {
   Menu,
   ShoppingBag,
   Search,
-  User,
-  Leaf,
-  LogOut,
   AlertCircle,
   Instagram
 } from 'lucide-react'
