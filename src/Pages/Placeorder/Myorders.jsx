@@ -96,13 +96,20 @@ const Myorders = () => {
                         </p>
                       </div>
                       <p className='text-gray-900 font-semibold'>
-                        {product.quantity * product.price} KD
+                        {(product.quantity * product.price).toFixed(3)} KD
                       </p>
                     </div>
                   ))}
                 </div>
 
-                <div className='flex justify-between mt-2 font-semibold text-gray-900'>
+                {/* ✅ Delivery Charges */}
+                <div className='flex justify-between mt-2 text-gray-700 font-medium'>
+                  <span>Delivery Charges:</span>
+                  <span>{order.deliveryCharges.toFixed(3)} KD</span>
+                </div>
+
+                {/* ✅ Total Price */}
+                <div className='flex justify-between mt-1 font-semibold text-gray-900'>
                   <span>Total:</span>
                   <span>{order.totalPrice.toFixed(3)} KD</span>
                 </div>

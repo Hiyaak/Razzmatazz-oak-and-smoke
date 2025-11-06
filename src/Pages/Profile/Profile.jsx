@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   ArrowLeft,
   ShoppingCart,
@@ -6,133 +6,139 @@ import {
   Clock,
   Mail,
   Eye,
-  EyeOff,
-} from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
-import ApiService from '../../Services/Apiservice';
-import { toast } from 'react-toastify';
-import RightPanelLayout from '../../Layout/RightPanelLayout';
-import { FaShoppingCart } from 'react-icons/fa';
-import { MdMenuBook, MdOutlineMoreTime  } from 'react-icons/md';
+  EyeOff
+} from 'lucide-react'
+import { useNavigate, useParams } from 'react-router-dom'
+import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { FaShoppingCart } from 'react-icons/fa'
+import { MdMenuBook, MdOutlineMoreTime } from 'react-icons/md'
+import * as Yup from 'yup'
 
 const MenuPage = () => {
-  const navigate = useNavigate();
-  const [activeView, setActiveView] = useState('menu'); // 'menu' | 'form'
-  const [activeTab, setActiveTab] = useState('register');
-  const [showPassword, setShowPassword] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const navigate = useNavigate()
+  const [activeView, setActiveView] = useState('menu') // 'menu' | 'form'
+  const [activeTab, setActiveTab] = useState('register')
+  const [showPassword, setShowPassword] = useState(false)
+  const [otp, setOtp] = useState('')
+  const [formData, setFormData] = useState({ email: '', password: '' })
 
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-  const storedBrandId = localStorage.getItem('brandId');
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Invalid email format')
+      .required('Email is required'),
+    password: Yup.string()
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required')
+  })
+
+  const handleInputChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+  const storedBrandId = localStorage.getItem('brandId')
 
   const handleRegisterUser = async () => {
-    if (!formData.email || !formData.password) {
-      toast.error('Please enter email and password');
-      return;
-    }
-
+  
     try {
       const payload = {
         email: formData.email,
         password: formData.password,
-        brandId: storedBrandId,
-      };
+        brandId: storedBrandId
+      }
 
-      const { data } = await ApiService.post('registerWithEmail', payload);
+      const { data } = await ApiService.post('registerWithEmail', payload)
 
       if (data.status) {
-        sessionStorage.setItem('pendingEmail', formData.email);
+        sessionStorage.setItem('pendingEmail', formData.email)
 
         if (data.otp) {
-          sessionStorage.setItem('pendingOtp', data.otp);
-          console.log('📩 OTP from backend:', data.otp);
+          sessionStorage.setItem('pendingOtp', data.otp)
+          console.log('📩 OTP from backend:', data.otp)
         }
 
-        navigate('/otpverification');
+        navigate('/otpverification')
       } else {
-        toast.error(data.message || 'Registration failed');
+        toast.error(data.message || 'Registration failed')
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      toast.error('Something went wrong during registration');
+      console.error('Registration error:', error)
+      toast.error('Something went wrong during registration')
     }
-  };
+  }
 
   const handleLoginUser = async () => {
     try {
       const payload = {
         email: formData.email,
         password: formData.password,
-        brandId: storedBrandId,
-      };
+        brandId: storedBrandId
+      }
 
-      const { data } = await ApiService.post('loginWithEmail', payload);
+      const { data } = await ApiService.post('loginWithEmail', payload)
 
       if (data.status) {
-        localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id);
-        toast.success('Login successful!');
-        navigate('/');
+        localStorage.setItem(`registredUserId_${storedBrandId}`, data.user._id)
+        toast.success('Login successful!')
+        navigate('/')
       } else {
-        toast.error(data.message || 'Login failed');
+        toast.error(data.message || 'Login failed')
       }
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Something went wrong');
+      console.error('Login error:', error)
+      toast.error('Something went wrong')
     }
-  };
+  }
 
   const menuItems = [
     {
-      icon: <FaShoppingCart className="w-5 h-5 text-gray-600 font-semibold" />,
+      icon: <FaShoppingCart className='w-5 h-5 text-gray-600 font-semibold' />,
       label: 'My Cart',
-      path: '/shoopingcart',
+      path: '/shoopingcart'
     },
     {
-      icon: <MdMenuBook className="w-5 h-5 text-gray-600" />,
+      icon: <MdMenuBook className='w-5 h-5 text-gray-600' />,
       label: 'Menu',
-      path: '/',
+      path: '/'
     },
     {
-      icon: <MdOutlineMoreTime className="w-5 h-5 text-gray-600" />,
+      icon: <MdOutlineMoreTime className='w-5 h-5 text-gray-600' />,
       label: 'My Orders',
-      path: '/myorders',
-    },
-  ];
+      path: '/myorders'
+    }
+  ]
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
+    <div className='flex flex-col md:flex-row h-screen overflow-hidden'>
       {/* Left Sidebar */}
-      <div className="w-full md:w-[42%] min-h-screen border-r border-gray-200 flex flex-col relative">
+      <div className='w-full md:w-[42%] min-h-screen border-r border-gray-200 flex flex-col relative'>
         {/* Header */}
-        <div className="p-2 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-1">
+        <div className='p-2 border-b border-gray-200'>
+          <div className='flex items-center justify-between mb-1'>
             <button
               onClick={() => {
-                if (activeView === 'form') setActiveView('menu');
-                else navigate('/');
+                if (activeView === 'form') setActiveView('menu')
+                else navigate('/')
               }}
-              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              className='p-2 hover:bg-gray-200 rounded-full transition-colors'
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+              <ArrowLeft className='w-5 h-5 text-gray-600' />
             </button>
-            <div className="w-9" />
+            <div className='w-9' />
           </div>
         </div>
 
         {activeView === 'menu' ? (
           <>
             {/* Menu Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between mb-1">
-                <h1 className="text-2xl font-semibold text-gray-900">Menu</h1>
-                <div className="w-9" />
+            <div className='p-4 border-b border-gray-200'>
+              <div className='flex items-center justify-between mb-1'>
+                <h1 className='text-2xl font-semibold text-gray-900'>Menu</h1>
+                <div className='w-9' />
               </div>
             </div>
 
             {/* Menu Items */}
-            <div className="border-b border-gray-200">
+            <div className='border-b border-gray-200'>
               {menuItems.map((item, i, arr) => (
                 <button
                   key={i}
@@ -142,7 +148,7 @@ const MenuPage = () => {
                   }`}
                 >
                   {item.icon}
-                  <span className="text-gray-700 font-medium">
+                  <span className='text-gray-700 font-medium'>
                     {item.label}
                   </span>
                 </button>
@@ -150,74 +156,74 @@ const MenuPage = () => {
             </div>
 
             {/* Sign In Section */}
-            <div className="p-4">
-              <div className="flex items-center justify-between mb-1">
-                <h1 className="text-2xl font-semibold text-gray-900">
+            <div className='p-4'>
+              <div className='flex items-center justify-between mb-1'>
+                <h1 className='text-2xl font-semibold text-gray-900'>
                   Sign in with
                 </h1>
-                <div className="w-9" />
+                <div className='w-9' />
               </div>
             </div>
 
             {/* Sign In Options */}
-            <div className="flex flex-col divide-y divide-gray-200 rounded-lg border border-gray-200 overflow-hidden">
+            <div className='flex flex-col divide-y divide-gray-200 rounded-lg border border-gray-200 overflow-hidden'>
               {[
                 {
                   icon: (
-                    <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
-                      <Mail className="w-4 h-4 text-white" />
+                    <div className='w-6 h-6 bg-orange-500 rounded flex items-center justify-center'>
+                      <Mail className='w-4 h-4 text-white' />
                     </div>
                   ),
                   label: 'Email',
-                  onClick: () => setActiveView('form'),
+                  onClick: () => setActiveView('form')
                 },
                 {
                   icon: (
-                    <div className="w-6 h-6 bg-black rounded flex items-center justify-center">
+                    <div className='w-6 h-6 bg-black rounded flex items-center justify-center'>
                       <svg
-                        className="w-4 h-4 text-white"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
+                        className='w-4 h-4 text-white'
+                        viewBox='0 0 24 24'
+                        fill='currentColor'
                       >
-                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                        <path d='M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z' />
                       </svg>
                     </div>
                   ),
-                  label: 'Apple',
+                  label: 'Apple'
                 },
                 {
                   icon: (
-                    <div className="w-6 h-6 rounded flex items-center justify-center">
-                      <svg className="w-6 h-6" viewBox="0 0 24 24">
+                    <div className='w-6 h-6 rounded flex items-center justify-center'>
+                      <svg className='w-6 h-6' viewBox='0 0 24 24'>
                         <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          fill='#4285F4'
+                          d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'
                         />
                         <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          fill='#34A853'
+                          d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'
                         />
                         <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                          fill='#FBBC05'
+                          d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'
                         />
                         <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                          fill='#EA4335'
+                          d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'
                         />
                       </svg>
                     </div>
                   ),
-                  label: 'Google',
-                },
+                  label: 'Google'
+                }
               ].map((item, i) => (
                 <button
                   key={i}
                   onClick={item.onClick}
-                  className="w-full flex items-center space-x-4 p-3 text-left hover:bg-gray-50 transition"
+                  className='w-full flex items-center space-x-4 p-3 text-left hover:bg-gray-50 transition'
                 >
                   {item.icon}
-                  <span className="text-gray-700 font-medium">
+                  <span className='text-gray-700 font-medium'>
                     {item.label}
                   </span>
                 </button>
@@ -226,14 +232,16 @@ const MenuPage = () => {
           </>
         ) : (
           /* ---------------- FORM VIEW ---------------- */
-          <div className="flex flex-col h-full flex-1 relative">
+          <div className='flex flex-col h-full flex-1 relative'>
             {/* Scrollable content */}
-            <div    className="px-4 pb-24 overflow-y-auto flex-1 
+            <div
+              className='px-4 pb-24 overflow-y-auto flex-1 
                [&::-webkit-scrollbar]:hidden 
                [-ms-overflow-style:none] 
-               [scrollbar-width:none]">
+               [scrollbar-width:none]'
+            >
               {/* Tab Navigation */}
-              <div className="flex gap-3 mt-6 mb-8">
+              <div className='flex gap-3 mt-6 mb-8'>
                 <button
                   onClick={() => setActiveTab('login')}
                   className={`flex-1 py-2 rounded-md font-medium transition-all ${
@@ -257,106 +265,106 @@ const MenuPage = () => {
               </div>
 
               {/* Title */}
-              <h2 className="text-2xl font-bold text-gray-700 mb-8">
+              <h2 className='text-2xl font-bold text-gray-700 mb-8'>
                 {activeTab === 'login' ? 'Login' : 'Register'}
               </h2>
 
               {/* Form Fields */}
-              <div className="space-y-4">
+              <div className='space-y-4'>
                 {/* Email Field */}
                 <div>
-                  <label className="block text-sm text-gray-500 mb-2">
+                  <label className='block text-sm text-gray-500 mb-2'>
                     Email *
                   </label>
                   <input
-                    type="email"
-                    name="email"
+                    type='email'
+                    name='email'
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors"
+                    className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
                   />
                 </div>
 
                 {/* Password Field */}
                 <div>
-                  <label className="block text-sm text-gray-500 mb-2">
+                  <label className='block text-sm text-gray-500 mb-2'>
                     Password *
                   </label>
-                  <div className="relative">
+                  <div className='relative'>
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      name="password"
+                      name='password'
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="w-full pr-10 text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors"
+                      className='w-full pr-10 text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
                     />
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className='absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600'
                     >
                       {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
+                        <EyeOff className='w-5 h-5' />
                       ) : (
-                        <Eye className="w-5 h-5" />
+                        <Eye className='w-5 h-5' />
                       )}
                     </button>
                   </div>
                 </div>
 
                 {/* Divider */}
-                <div className="flex items-center gap-4 my-8">
-                  <div className="flex-1 h-px bg-gray-300"></div>
-                  <span className="text-gray-400 text-sm font-medium">OR</span>
-                  <div className="flex-1 h-px bg-gray-300"></div>
+                <div className='flex items-center gap-4 my-8'>
+                  <div className='flex-1 h-px bg-gray-300'></div>
+                  <span className='text-gray-400 text-sm font-medium'>OR</span>
+                  <div className='flex-1 h-px bg-gray-300'></div>
                 </div>
 
                 {/* Social Login */}
                 <div>
-                  <h3 className="text-lg font-bold text-gray-700 mb-4">
+                  <h3 className='text-lg font-bold text-gray-700 mb-4'>
                     Login with
                   </h3>
-                  <div className="space-y-4">
+                  <div className='space-y-4'>
                     {/* Apple Button */}
                     <button
-                      type="button"
-                      className="w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      type='button'
+                      className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
                     >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24">
+                      <svg className='w-6 h-6' viewBox='0 0 24 24'>
                         <path
-                          d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
-                          fill="currentColor"
+                          d='M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z'
+                          fill='currentColor'
                         />
                       </svg>
-                      <span className="flex-1 text-left text-gray-700 font-medium">
+                      <span className='flex-1 text-left text-gray-700 font-medium'>
                         Apple
                       </span>
                     </button>
 
                     {/* Google Button */}
                     <button
-                      type="button"
-                      className="w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      type='button'
+                      className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
                     >
-                      <svg className="w-6 h-6" viewBox="0 0 24 24">
+                      <svg className='w-6 h-6' viewBox='0 0 24 24'>
                         <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                          fill='#4285F4'
+                          d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'
                         />
                         <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                          fill='#34A853'
+                          d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'
                         />
                         <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                          fill='#FBBC05'
+                          d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'
                         />
                         <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                          fill='#EA4335'
+                          d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'
                         />
                       </svg>
-                      <span className="flex-1 text-left text-gray-700 font-medium">
+                      <span className='flex-1 text-left text-gray-700 font-medium'>
                         Google
                       </span>
                     </button>
@@ -366,12 +374,12 @@ const MenuPage = () => {
             </div>
 
             {/* Fixed Submit Button */}
-            <div className="p-3 bg-white sticky bottom-0">
+            <div className='p-3 bg-white sticky bottom-0'>
               <button
                 onClick={
                   activeTab === 'login' ? handleLoginUser : handleRegisterUser
                 }
-                className="w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors text-center"
+                className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors text-center'
               >
                 {activeTab === 'login' ? 'Login' : 'Register'}
               </button>
@@ -383,7 +391,7 @@ const MenuPage = () => {
       {/* Right Panel */}
       <RightPanelLayout />
     </div>
-  );
-};
+  )
+}
 
-export default MenuPage;
+export default MenuPage
