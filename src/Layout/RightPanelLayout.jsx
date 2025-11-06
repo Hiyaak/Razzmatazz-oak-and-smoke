@@ -1,22 +1,25 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, ShoppingBag, Search, LogOut } from 'lucide-react'
+import { Menu, Search } from 'lucide-react'
 import heroImage from '../assets/oak.jpg'
-import instagram from "../assets/instagram_logo.png"
-import arabic from '../assets/arabic.png'
+
 import { Instagram } from 'lucide-react'
-import {RiShoppingBagLine} from "react-icons/ri";
+import { RiShoppingBagLine } from 'react-icons/ri'
 
 const RightPanelLayout = () => {
   const navigate = useNavigate()
 
   const handleMenuClick = () => {
     const storedBrandId = localStorage.getItem('brandId')
+
+    const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
     const registredUserId = localStorage.getItem(
       `registredUserId_${storedBrandId}`
     )
 
-    if (registredUserId) {
+    const userId = registredUserId || guestUserId
+
+    if (userId) {
       navigate('/userprofile')
     } else {
       navigate('/profile')
@@ -78,7 +81,7 @@ const RightPanelLayout = () => {
         {/* Bottom IG button */}
         <div className='absolute top-1/2 right-0 z-20 transform -translate-y-1/2'>
           <div className='w-12 h-12 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm'>
-            <Instagram className="w-6 h-6 text-white" />
+            <Instagram className='w-6 h-6 text-white' />
           </div>
         </div>
       </div>
