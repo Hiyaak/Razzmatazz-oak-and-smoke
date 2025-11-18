@@ -168,96 +168,191 @@ const Otpverification = () => {
   };
 
   // ---------- MAIN HANDLER ----------
+  // const handleVerifyOtp = async () => {
+  //   if (!otpInput) {
+  //     toast.error("Please enter the OTP");
+  //     return;
+  //   }
+
+  //   try {
+  //     // 1) Verify OTP using the value user typed (otpInput)
+  //     const verifyPayload = {
+  //       email: pendingEmail,
+  //       otp: otpInput,
+  //     };
+
+  //     console.log("verifyEmailOtp payload:", verifyPayload);
+  //     const { data } = await ApiService.post("verifyEmailOtp", verifyPayload);
+  //     console.log("verifyEmailOtp response:", data);
+
+  //     if (!data || !data.status) {
+  //       // Backend returned false or an unexpected response
+  //       const msg = data?.message || "Invalid OTP or verification failed";
+  //       toast.error(msg);
+  //       console.warn("verifyEmailOtp failed response:", data);
+  //       return;
+  //     }
+
+  //     // 2) Save user id locally
+  //     const userId = data.userId;
+  //     if (!userId) {
+  //       toast.error("No userId returned from server. Check backend response.");
+  //       console.error("verifyEmailOtp success but missing userId:", data);
+  //       return;
+  //     }
+
+  //     localStorage.setItem(`registredUserId_${storedBrandId}`, userId);
+  //     console.log("Saved registredUserId:", userId);
+
+  //     // 3) Update backend with FCM token (backend expects key 'token')
+  //     const fcmToken = localStorage.getItem("fcmToken");
+  //     console.log("local fcmToken:", fcmToken);
+
+  //     if (fcmToken) {
+  //       try {
+  //         // IMPORTANT: backend expects { user_id, token }
+  //         const updatePayload = { user_id: userId, fcmToken: fcmToken };
+  //         // const updatePayload = { user_id: userId, token: fcmToken };
+
+  //         console.log("Calling updateUserToken with:", updatePayload);
+
+  //         const updateResp = await ApiService.post("updateUserToken", updatePayload);
+  //         console.log("updateUserToken response:", updateResp?.data ?? updateResp);
+
+  //         if (!updateResp?.data?.status) {
+  //           // backend responded but signalled failure
+  //           toast.info("OTP verified — token update returned failure. Check backend.");
+  //           console.warn("updateUserToken returned non-success:", updateResp?.data);
+  //         } else {
+  //           console.log("Token updated successfully on backend.");
+  //         }
+  //       } catch (err) {
+  //         // do not block the user flow if token update fails — log for debugging
+  //         console.error("updateUserToken error:", err?.response ?? err);
+  //         toast.info("OTP verified but token update failed (check console).");
+  //       }
+  //     } else {
+  //       console.warn("No fcmToken in localStorage. Token won't be updated in backend.");
+  //       toast.info("OTP verified but no local FCM token found.");
+  //     }
+
+  //     // 4) cleanup + navigate
+  //     sessionStorage.removeItem("pendingOtp");
+  //     sessionStorage.removeItem("pendingEmail");
+
+  //     toast.success("OTP verified successfully!");
+  //     navigate("/");
+  //   } catch (err) {
+  //     // Clear, actionable error reporting
+  //     console.error("OTP verification error (caught):", err);
+
+  //     if (err?.response) {
+  //       // axios-style error
+  //       console.error("Backend error body:", err.response.data);
+  //       const message = err.response.data?.message || `Server error (${err.response.status})`;
+  //       toast.error(message);
+  //     } else if (err?.message) {
+  //       toast.error(`Network or client error: ${err.message}`);
+  //     } else {
+  //       toast.error("Something went wrong while verifying OTP");
+  //     }
+  //   }
+  // };
+
   const handleVerifyOtp = async () => {
-    if (!otpInput) {
-      toast.error("Please enter the OTP");
+  if (!otpInput) {
+    toast.error("Please enter the OTP");
+    return;
+  }
+
+  try {
+    // 1) Verify OTP
+    const verifyPayload = {
+      email: pendingEmail,
+      otp: otpInput,
+    };
+
+    console.log("verifyEmailOtp payload:", verifyPayload);
+
+    const { data } = await ApiService.post("verifyEmailOtp", verifyPayload);
+
+    console.log("verifyEmailOtp response:", data);
+
+    if (!data || !data.status) {
+      const msg = data?.message || "Invalid OTP or verification failed";
+      toast.error(msg);
+      console.warn("verifyEmailOtp failed response:", data);
       return;
     }
 
-    try {
-      // 1) Verify OTP using the value user typed (otpInput)
-      const verifyPayload = {
-        email: pendingEmail,
-        otp: otpInput,
-      };
+    // 2) Get verified userId
+    const userId = data.userId;
 
-      console.log("verifyEmailOtp payload:", verifyPayload);
-      const { data } = await ApiService.post("verifyEmailOtp", verifyPayload);
-      console.log("verifyEmailOtp response:", data);
-
-      if (!data || !data.status) {
-        // Backend returned false or an unexpected response
-        const msg = data?.message || "Invalid OTP or verification failed";
-        toast.error(msg);
-        console.warn("verifyEmailOtp failed response:", data);
-        return;
-      }
-
-      // 2) Save user id locally
-      const userId = data.userId;
-      if (!userId) {
-        toast.error("No userId returned from server. Check backend response.");
-        console.error("verifyEmailOtp success but missing userId:", data);
-        return;
-      }
-
-      localStorage.setItem(`registredUserId_${storedBrandId}`, userId);
-      console.log("Saved registredUserId:", userId);
-
-      // 3) Update backend with FCM token (backend expects key 'token')
-      const fcmToken = localStorage.getItem("fcmToken");
-      console.log("local fcmToken:", fcmToken);
-
-      if (fcmToken) {
-        try {
-          // IMPORTANT: backend expects { user_id, token }
-          const updatePayload = { user_id: userId, fcmToken: fcmToken };
-          // const updatePayload = { user_id: userId, token: fcmToken };
-
-          console.log("Calling updateUserToken with:", updatePayload);
-
-          const updateResp = await ApiService.post("updateUserToken", updatePayload);
-          console.log("updateUserToken response:", updateResp?.data ?? updateResp);
-
-          if (!updateResp?.data?.status) {
-            // backend responded but signalled failure
-            toast.info("OTP verified — token update returned failure. Check backend.");
-            console.warn("updateUserToken returned non-success:", updateResp?.data);
-          } else {
-            console.log("Token updated successfully on backend.");
-          }
-        } catch (err) {
-          // do not block the user flow if token update fails — log for debugging
-          console.error("updateUserToken error:", err?.response ?? err);
-          toast.info("OTP verified but token update failed (check console).");
-        }
-      } else {
-        console.warn("No fcmToken in localStorage. Token won't be updated in backend.");
-        toast.info("OTP verified but no local FCM token found.");
-      }
-
-      // 4) cleanup + navigate
-      sessionStorage.removeItem("pendingOtp");
-      sessionStorage.removeItem("pendingEmail");
-
-      toast.success("OTP verified successfully!");
-      navigate("/");
-    } catch (err) {
-      // Clear, actionable error reporting
-      console.error("OTP verification error (caught):", err);
-
-      if (err?.response) {
-        // axios-style error
-        console.error("Backend error body:", err.response.data);
-        const message = err.response.data?.message || `Server error (${err.response.status})`;
-        toast.error(message);
-      } else if (err?.message) {
-        toast.error(`Network or client error: ${err.message}`);
-      } else {
-        toast.error("Something went wrong while verifying OTP");
-      }
+    if (!userId) {
+      toast.error("No userId returned from server. Check backend response.");
+      console.error("verifyEmailOtp success but missing userId:", data);
+      return;
     }
-  };
+
+    localStorage.setItem(`registredUserId_${storedBrandId}`, userId);
+    console.log("Saved registredUserId:", userId);
+
+    // 3) Get local FCM Token
+    const fcmToken = localStorage.getItem("fcmToken");
+    console.log("local fcmToken:", fcmToken);
+
+    // 4) Update backend with correct payload
+    if (fcmToken) {
+      try {
+        // Backend expects:  { user_id , fcmToken }
+        const updatePayload = {
+          user_id: userId,
+          fcmToken: fcmToken     // ✔ FIXED
+        };
+
+        console.log("Calling updateUserToken with:", updatePayload);
+
+        const updateResp = await ApiService.post("updateUserToken", updatePayload);
+
+        console.log("updateUserToken response:", updateResp?.data ?? updateResp);
+
+        if (!updateResp?.data?.status) {
+          toast.info("OTP verified — but token update failed. Check backend.");
+          console.warn("updateUserToken returned non-success:", updateResp?.data);
+        } else {
+          console.log("Token updated successfully in backend.");
+        }
+
+      } catch (err) {
+        console.error("updateUserToken error:", err?.response ?? err);
+        toast.info("OTP verified but token update failed.");
+      }
+    } else {
+      console.warn("No fcmToken in localStorage.");
+      toast.info("OTP verified but no saved FCM token found.");
+    }
+
+    // 5) Cleanup and redirect
+    sessionStorage.removeItem("pendingOtp");
+    sessionStorage.removeItem("pendingEmail");
+
+    toast.success("OTP verified successfully!");
+    navigate("/");
+
+  } catch (err) {
+    console.error("OTP verification error:", err);
+
+    if (err?.response) {
+      const message = err.response.data?.message || `Server error (${err.response.status})`;
+      toast.error(message);
+    } else if (err?.message) {
+      toast.error(`Error: ${err.message}`);
+    } else {
+      toast.error("Something went wrong while verifying OTP");
+    }
+  }
+};
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
