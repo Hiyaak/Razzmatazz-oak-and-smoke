@@ -14,6 +14,8 @@ import { toast } from 'react-toastify'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { FaShoppingCart } from 'react-icons/fa'
 import { MdMenuBook, MdOutlineMoreTime } from 'react-icons/md'
+import { getToken } from "firebase/messaging";
+import { messaging } from "../../firebase/firebaseConfig"; 
 import * as Yup from 'yup'
 import { Formik, Form } from 'formik'
 
@@ -48,33 +50,678 @@ const MenuPage = () => {
   // }
   const storedBrandId = localStorage.getItem('brandId')
 
-  const handleRegisterUser = async values => {
-    try {
-      const payload = {
-        email: values.email,
-        password: values.password,
-        brandId: storedBrandId
-      }
+  // const handleRegisterUser = async values => {
+  //   try {
+  //     const payload = {
+  //       email: values.email,
+  //       password: values.password,
+  //       brandId: storedBrandId
+  //     }
 
-      const { data } = await ApiService.post('registerWithEmail', payload)
+  //     const { data } = await ApiService.post('registerWithEmail', payload)
 
-      if (data.status) {
-        sessionStorage.setItem('pendingEmail', values.email)
+  //     if (data.status) {
+  //       sessionStorage.setItem('pendingEmail', values.email)
 
-        if (data.otp) {
-          sessionStorage.setItem('pendingOtp', data.otp)
-          console.log('📩 OTP from backend:', data.otp)
-        }
+  //       if (data.otp) {
+  //         sessionStorage.setItem('pendingOtp', data.otp)
+  //         console.log('📩 OTP from backend:', data.otp)
+  //       }
 
-        navigate('/otpverification')
-      } else {
-        toast.error(data.message || 'Registration failed')
-      }
-    } catch (error) {
-      console.error('Registration error:', error)
-      toast.error('Something went wrong during registration')
+  //       navigate('/otpverification')
+  //     } else {
+  //       toast.error(data.message || 'Registration failed')
+  //     }
+  //   } catch (error) {
+  //     console.error('Registration error:', error)
+  //     toast.error('Something went wrong during registration')
+  //   }
+  // }
+
+//  const handleRegisterUser = async values => {
+//   try {
+//     // 1️⃣ Request permission
+//     const permission = await Notification.requestPermission();
+//     if (permission !== "granted") {
+//       toast.error("Notifications permission denied");
+//       return;
+//     }
+
+//     // 2️⃣ Generate NEW FCM token for THIS user
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const newToken = await getToken(messaging, { vapidKey });
+
+//     console.log("📱 New User FCM Token:", newToken);
+
+//     // 3️⃣ Build payload with NEW token
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: newToken || ""
+//     };
+
+//     // 4️⃣ Save token for later use (optional)
+//     localStorage.setItem("fcmToken", newToken);
+
+//     // 5️⃣ API call
+//     const { data } = await ApiService.post('registerWithEmail', payload);
+
+//     if (data.status) {
+//       sessionStorage.setItem('pendingEmail', values.email);
+
+//       if (data.otp) {
+//         sessionStorage.setItem('pendingOtp', data.otp);
+//         console.log("📩 OTP:", data.otp);
+//       }
+
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message || "Registration failed");
+//     }
+//   } catch (error) {
+//     console.error("Registration error:", error);
+//     toast.error("Something went wrong during registration");
+//   }
+// };
+
+
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("🔄 Registering user…");
+
+//     const permission = await Notification.requestPermission();
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications");
+//       return;
+//     }
+
+//     // Auto-detect correct path for service worker
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("🧩 SW Registered:", registration);
+
+//     // Remove old token
+//     try {
+//       await deleteToken(messaging);
+//       console.log("🧹 Old token deleted");
+//     } catch (e) {}
+
+//     // Generate new token
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("📱 NEW FCM TOKEN:", fcmToken);
+
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken,
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     toast.error("Registration failed");
+//   }
+// };
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("🔄 Registering user…");
+
+//     const permission = await Notification.requestPermission();
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications");
+//       return;
+//     }
+
+//     // Auto detect correct service worker path
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("🧩 SW Registered:", registration);
+
+//     // Generate FCM token
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("📱 NEW FCM TOKEN:", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("Failed to generate FCM token");
+//       return;
+//     }
+
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken,
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     toast.error("Registration failed");
+//   }
+// };
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("🔄 Registering new user…");
+
+//     // 1️⃣ Ask for notification permission first
+//     const permission = await Notification.requestPermission();
+//     console.log("📌 Permission:", permission);
+
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications to continue.");
+//       return;
+//     }
+
+//     // 2️⃣ Correct SW path
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     // 3️⃣ Register service worker
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("🧩 SW Registered:", registration);
+
+//     // 4️⃣ Generate FCM token
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("🔥 NEW FCM TOKEN:", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("❌ Failed to generate FCM token");
+//       return;
+//     }
+
+//     // 5️⃣ Prepare payload for backend
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken,
+//     };
+
+//     // 6️⃣ Send to backend
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       // Save OTP & email temporarily
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+
+//       toast.success("Account created! OTP sent.");
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     toast.error("Registration failed.");
+//   }
+// }; 
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("🔄 Registering new user…");
+
+//     // 1️⃣ Ask permission
+//     const permission = await Notification.requestPermission();
+//     console.log("📌 Permission:", permission);
+
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications to continue.");
+//       return;
+//     }
+
+//     // 2️⃣ Correct SW path for BOTH dev & production
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     console.log("🛠 SW Path used:", swPath);
+
+//     // 3️⃣ Register service worker
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("🧩 SW Registered:", registration);
+
+//     // 4️⃣ Generate NEW FCM token
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("🔥 NEW FCM TOKEN:", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("Unable to generate FCM token");
+//       return;
+//     }
+
+//     // 5️⃣ Send token to backend
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken,
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (error) {
+//     console.error("🔥 Registration error:", error);
+//     toast.error("Something went wrong.");
+//   }
+// };
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("STEP 1: Asking notification permission...");
+
+//     const permission = await Notification.requestPermission();
+//     console.log("STEP 2: Permission result =", permission);
+
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications");
+//       return;
+//     }
+
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     console.log("STEP 3: Service worker path =", swPath);
+
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("STEP 4: SW registration object =", registration);
+
+//     console.log("STEP 5: Generating FCM token...");
+
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("STEP 6: NEW FCM TOKEN =", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("Failed to generate FCM token");
+//       return;
+//     }
+
+//     localStorage.setItem("fcmToken", fcmToken);
+
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (err) {
+//     console.error("🔥 Registration error =", err);
+//   }
+// };
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("STEP 1: Asking notification permission...");
+
+//     const permission = await Notification.requestPermission();
+//     console.log("STEP 2: Permission result =", permission);
+
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications");
+//       return;
+//     }
+
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     console.log("STEP 3: Service worker path =", swPath);
+
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("STEP 4: SW registration object =", registration);
+
+//     console.log("STEP 5: Generating FCM token...");
+
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("STEP 6: NEW FCM TOKEN =", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("Failed to generate FCM token");
+//       return;
+//     }
+
+//     // Save token locally
+//     localStorage.setItem("fcmToken", fcmToken);
+
+//     // ⭐ IMPORTANT FIX — SEND correct key: fcmToken
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       fcmToken: fcmToken,   // <-- FIXED
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (err) {
+//     console.error("🔥 Registration error =", err);
+//   }
+// };
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("STEP 1: Asking notification permission...");
+
+//     const permission = await Notification.requestPermission();
+//     console.log("STEP 2: Permission result =", permission);
+
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications");
+//       return;
+//     }
+
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     console.log("STEP 3: Service worker path =", swPath);
+
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("STEP 4: SW registration =", registration);
+
+//     console.log("STEP 5: Generating FCM token...");
+
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("STEP 6: NEW FCM TOKEN =", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("Failed to generate FCM token");
+//       return;
+//     }
+
+//     // Save token locally
+//     localStorage.setItem("fcmToken", fcmToken);
+
+//     // IMPORTANT — MUST MATCH BACKEND PARAM NAME
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken,  // <-- Backend expects 'token'
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     console.log("Register API response:", data);
+
+//     if (data.status) {
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (err) {
+//     console.error("🔥 Registration error =", err);
+//   }
+// };
+
+
+// const handleRegisterUser = async (values) => {
+//   try {
+//     console.log("STEP 1: Asking notification permission...");
+
+//     const permission = await Notification.requestPermission();
+//     console.log("STEP 2: Permission result =", permission);
+
+//     if (permission !== "granted") {
+//       toast.error("Please allow notifications");
+//       return;
+//     }
+
+//     const swPath =
+//       import.meta.env.MODE === "production"
+//         ? "/oakandsmoke/firebase-messaging-sw.js"
+//         : "/firebase-messaging-sw.js";
+
+//     console.log("STEP 3: Service worker path =", swPath);
+
+//     const registration = await navigator.serviceWorker.register(swPath);
+//     console.log("STEP 4: SW registration =", registration);
+
+//     console.log("STEP 5: Generating FCM token...");
+
+//     const vapidKey =
+//       "BK9m8LEO5fnNFPGwdee7i1cZQTUEQXyLrOufdzFZum3_JanwQoIstecg1hag8hjtOFL1G3rDfEhgsTtJjtmFWJo";
+
+//     const fcmToken = await getToken(messaging, {
+//       vapidKey,
+//       serviceWorkerRegistration: registration,
+//     });
+
+//     console.log("STEP 6: NEW FCM TOKEN =", fcmToken);
+
+//     if (!fcmToken) {
+//       toast.error("Failed to generate FCM token");
+//       return;
+//     }
+
+//     // Store token for later use
+//     localStorage.setItem("fcmToken", fcmToken);
+
+//     // MUST MATCH BACKEND — backend expects "token"
+//     const payload = {
+//       email: values.email,
+//       password: values.password,
+//       brandId: storedBrandId,
+//       token: fcmToken,   // <-- IMPORTANT
+//     };
+
+//     const { data } = await ApiService.post("registerWithEmail", payload);
+
+//     if (data.status) {
+//       // store email & OTP temporarily
+//       sessionStorage.setItem("pendingEmail", values.email);
+//       sessionStorage.setItem("pendingOtp", data.otp);
+
+//       navigate("/otpverification");
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (err) {
+//     console.error("🔥 Registration error =", err);
+//     toast.error("Something went wrong during registration.");
+//   }
+// };
+
+const handleRegisterUser = async (values) => {
+  try {
+    console.log("STEP 1: Asking notification permission...");
+    
+    // Request notification permission
+    const permission = await Notification.requestPermission();
+    console.log("STEP 2: Permission result =", permission);
+    
+    if (permission !== "granted") {
+      toast.error("Please allow notifications to continue with registration");
+      return;
+    }
+
+    // Determine service worker path based on environment
+    const swPath = import.meta.env.MODE === "production" 
+      ? "/oakandsmoke/firebase-messaging-sw.js" 
+      : "/firebase-messaging-sw.js";
+    
+    console.log("STEP 3: Service worker path =", swPath);
+
+    // Register service worker
+    const registration = await navigator.serviceWorker.register(swPath);
+    console.log("STEP 4: SW registration successful =", registration);
+
+    console.log("STEP 5: Generating FCM token...");
+    
+    // VAPID key for FCM
+    const vapidKey = "BLoCrkSlGVLc0e3Q-QZqvByyFyEIZ9JQEQcZyAiOLkwVEXm7m_RxNzzSAsUmnvozhuOs69mvVoJPqvlr8dNUdMM";
+    
+    // Generate FCM token
+    const fcmToken = await getToken(messaging, { 
+      vapidKey, 
+      serviceWorkerRegistration: registration 
+    });
+    
+    console.log("STEP 6: NEW FCM TOKEN =", fcmToken);
+
+    if (!fcmToken) {
+      toast.error("Failed to generate notification token");
+      return;
+    }
+
+    // Store token in localStorage for future use
+    localStorage.setItem("fcmToken", fcmToken);
+
+    // Prepare registration payload
+    const payload = {
+      email: values.email,
+      password: values.password,
+      brandId: storedBrandId,
+      token: fcmToken, // Must match backend expectation
+    };
+
+    // Send registration request to API
+    const { data } = await ApiService.post("registerWithEmail", payload);
+    console.log("data error:-",data)
+
+    if (data.status) {
+      // Store temporary data for OTP verification
+      sessionStorage.setItem("pendingEmail", values.email);
+      sessionStorage.setItem("pendingOtp", data.otp);
+      
+      // Navigate to OTP verification page
+      navigate("/otpverification");
+    } else {
+      toast.error(data.message || "Registration failed");
+    }
+
+  } catch (error) {
+    console.error("🔥 Registration error =", error);
+    
+    // More specific error handling
+    if (error.name === "NotAllowedError") {
+      toast.error("Notification permission denied. Please enable notifications in browser settings.");
+    } else if (error.message?.includes("service worker")) {
+      toast.error("Failed to setup notifications. Please try again.");
+    } else {
+      toast.error("Something went wrong during registration. Please try again.");
     }
   }
+};
+
+
+
+
+
+
+
 
   const handleLoginUser = async values => {
     try {

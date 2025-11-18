@@ -1,8 +1,18 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// // https://vite.dev/config/
+// export default defineConfig({
+//   plugins: [react()],
+//   base: '/oakandsmoke/'
+// })
+
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+// LOCAL development config
 export default defineConfig({
   plugins: [react()],
-  base: '/oakandsmoke/'
-})
+  base: "/", // VERY IMPORTANT FOR DEV
+});
