@@ -89,8 +89,6 @@
 //   return <h2>Firebase Cloud Messaging Ready ✅</h2>;
 // }
 
-
-
 // import React, { useEffect } from "react";
 // import { onMessage } from "firebase/messaging";
 // import { messaging } from "./firebaseConfig";
@@ -110,7 +108,6 @@
 //   return null;
 // }
 
-
 // import { useEffect } from "react";
 // import { onMessage } from "firebase/messaging";
 // import { messaging } from "./firebaseConfig";
@@ -125,7 +122,6 @@
 
 //   return null;
 // }
-
 
 // import { useEffect } from "react";
 // import { requestFcmToken, onMessageListener } from "./firebaseConfig";
@@ -156,7 +152,6 @@
 
 //   return null;
 // }
-
 
 // import { useEffect } from "react";
 // import { getToken, onMessage } from "firebase/messaging";
@@ -203,7 +198,6 @@
 
 //   return null;
 // }
-
 
 // import { useEffect } from "react";
 // import { getToken, onMessage } from "firebase/messaging";
@@ -279,7 +273,8 @@ export default function GetFcmToken() {
         console.log("🔄 Getting FCM Token...");
         const token = await getToken(messaging, {
           vapidKey:
-            "BLoCrkSlGVLc0e3Q-QZqvByyFyEIZ9JQEQcZyAiOLkwVEXm7m_RxNzzSAsUmnvozhuOs69mvVoJPqvlr8dNUdMM",
+            "BBQQmlldlGlgReCfvtivjs0mbbw0cU9wsDu44CCMISj9ddCBibfd8byKS8GfJsdDO5oicRUG5z_lO-i5JZHBsPU",
+
           serviceWorkerRegistration: registration, // ✔ REQUIRED
         });
 
@@ -308,10 +303,6 @@ export default function GetFcmToken() {
 
   return null;
 }
-
-
-
-
 
 // import { getToken } from "firebase/messaging";
 // import { messaging } from "./firebaseConfig";

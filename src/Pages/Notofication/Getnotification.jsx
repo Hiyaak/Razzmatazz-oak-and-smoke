@@ -144,30 +144,220 @@
 // export default Getnotification;
 
 
+// import React, { useEffect, useState } from 'react';
+// import RightPanelLayout from '../../Layout/RightPanelLayout';
+
+// const Getnotification = () => {
+
+//   const [notifications, setNotifications] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   // 🔥 Fetch user notifications
+//   const fetchNotifications = async () => {
+//     try {
+//       // ✅ Get brandId first
+//       const storedBrandId = localStorage.getItem("brandId");
+
+//       // ✅ Get userId based on your login storage format
+//       const userId = localStorage.getItem(`registredUserId_${storedBrandId}`);
+
+//       if (!userId) {
+//         console.log("⚠️ No user ID found in localStorage");
+//         setLoading(false);
+//         return;
+//       }
+
+//       // 🔥 Final API Call
+//       const response = await fetch(
+//         `http://13.126.81.242:5001/getUserNotifications/${userId}`,
+//         { method: "GET" }
+//       );
+
+//       const data = await response.json();
+
+//       if (data.status) {
+//         setNotifications(data.notifications);
+//       } else {
+//         console.log("⚠️ Failed to fetch notifications");
+//       }
+//     } catch (error) {
+//       console.error("🔥 Error fetching notifications:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchNotifications();
+//   }, []);
+
+//   return (
+//     <div className='flex flex-col md:flex-row min-h-screen'>
+      
+//       {/* Left Content Area */}
+//       <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col'>
+
+//         {/* Header */}
+//         <div className='p-4 border-b border-gray-200'>
+//           <h1 className='text-2xl font-semibold text-gray-900'>Notifications</h1>
+//         </div>
+
+//         {/* Scrollable Content */}
+//         <div className='flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+
+//           {loading && <p className="text-gray-500">Loading notifications...</p>}
+
+//           {!loading && notifications.length === 0 && (
+//             <p className="text-gray-500">No notifications found.</p>
+//           )}
+
+//           {/* 🔔 Notifications List */}
+//           {notifications.map((n) => (
+//             <div
+//               key={n._id}
+//               className="border border-gray-300 rounded-xl p-4 mb-4 bg-white shadow-sm"
+//             >
+//               <h2 className="text-lg font-semibold text-gray-800">{n.title}</h2>
+//               <p className="text-gray-600 mt-1">{n.message}</p>
+
+//               {n.metaData?.orderId && (
+//                 <p className="text-sm text-gray-500 mt-1">
+//                   Order ID: {n.metaData.orderId}
+//                 </p>
+//               )}
+
+//               {n.metaData?.totalAmount && (
+//                 <p className="text-sm text-gray-500">
+//                   Amount: ₹{n.metaData.totalAmount}
+//                 </p>
+//               )}
+
+//               <p className="text-xs text-gray-400 mt-2">
+//                 {new Date(n.createdAt).toLocaleString()}
+//               </p>
+//             </div>
+//           ))}
+
+//         </div>
+//       </div>
+
+//       {/* Right Panel */}
+//       <RightPanelLayout />
+//     </div>
+//   );
+// };
+
+// export default Getnotification;
+
+
+// import React, { useEffect, useState } from 'react';
+// import RightPanelLayout from '../../Layout/RightPanelLayout';
+
+// const Getnotification = () => {
+//   const [notifications, setNotifications] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   const fetchNotifications = async () => {
+//     try {
+//       const storedBrandId = localStorage.getItem("brandId");
+//       const userIdKey = `registredUserId_${storedBrandId}`;
+//       const userId = localStorage.getItem(userIdKey);
+
+//       console.log("✅ brandId:", storedBrandId);
+//       console.log("✅ userId key:", userIdKey);
+//       console.log("✅ userId:", userId);
+
+//       if (!userId) {
+//         console.warn("❌ User ID not found in localStorage");
+//         setLoading(false);
+//         return;
+//       }
+
+//       const response = await fetch(
+//         `http://13.126.81.242:5001/getUserNotifications/${userId}`,
+//         { method: "GET" }
+//       );
+
+//       const data = await response.json();
+
+//       console.log("✅ API Response:", data);
+
+//       if (data.status && Array.isArray(data.notifications)) {
+//         setNotifications(data.notifications);
+//       } else {
+//         setNotifications([]);
+//       }
+
+//     } catch (error) {
+//       console.error("🔥 Fetch Error:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchNotifications();
+//   }, []);
+
+//   return (
+//     <div className='flex flex-col md:flex-row min-h-screen'>
+//       <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col'>
+
+//         <div className='p-4 border-b border-gray-200'>
+//           <h1 className='text-2xl font-semibold text-gray-900'>Notifications</h1>
+//         </div>
+
+//         <div className='flex-1 overflow-y-auto p-4'>
+
+//           {loading && <p className="text-gray-500">Loading notifications...</p>}
+
+//           {!loading && notifications.length === 0 && (
+//             <p className="text-gray-500">No notifications found.</p>
+//           )}
+
+//           {notifications.map((n) => (
+//             <div key={n._id} className="border rounded-xl p-4 mb-4 bg-white shadow-sm">
+//               <h2 className="text-lg font-semibold">{n.title}</h2>
+//               <p>{n.message}</p>
+//               {n.metaData?.orderId && <p>Order ID: {n.metaData.orderId}</p>}
+//               {n.metaData?.totalAmount && <p>Amount: ₹{n.metaData.totalAmount}</p>}
+//               <p className="text-xs text-gray-400">
+//                 {new Date(n.createdAt).toLocaleString()}
+//               </p>
+//             </div>
+//           ))}
+
+//         </div>
+//       </div>
+
+//       <RightPanelLayout />
+//     </div>
+//   );
+// };
+
+// export default Getnotification;
+
+
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import RightPanelLayout from '../../Layout/RightPanelLayout';
 
 const Getnotification = () => {
-
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // 🔥 Fetch user notifications
   const fetchNotifications = async () => {
     try {
-      // ✅ Get brandId first
       const storedBrandId = localStorage.getItem("brandId");
-
-      // ✅ Get userId based on your login storage format
-      const userId = localStorage.getItem(`registredUserId_${storedBrandId}`);
+      const userIdKey = `registredUserId_${storedBrandId}`;
+      const userId = localStorage.getItem(userIdKey);
 
       if (!userId) {
-        console.log("⚠️ No user ID found in localStorage");
         setLoading(false);
         return;
       }
 
-      // 🔥 Final API Call
       const response = await fetch(
         `http://13.126.81.242:5001/getUserNotifications/${userId}`,
         { method: "GET" }
@@ -176,12 +366,13 @@ const Getnotification = () => {
       const data = await response.json();
 
       if (data.status) {
-        setNotifications(data.notifications);
+        setNotifications(data.notifications || []);
       } else {
-        console.log("⚠️ Failed to fetch notifications");
+        setNotifications([]);
       }
+
     } catch (error) {
-      console.error("🔥 Error fetching notifications:", error);
+      console.error("Fetch Error:", error);
     } finally {
       setLoading(false);
     }
@@ -191,19 +382,20 @@ const Getnotification = () => {
     fetchNotifications();
   }, []);
 
+  // ✅ Proper navigation (works with HashRouter)
+  const handleNotificationClick = () => {
+    navigate("/notifications");
+  };
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
-      
-      {/* Left Content Area */}
       <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col'>
 
-        {/* Header */}
         <div className='p-4 border-b border-gray-200'>
           <h1 className='text-2xl font-semibold text-gray-900'>Notifications</h1>
         </div>
 
-        {/* Scrollable Content */}
-        <div className='flex-1 overflow-y-auto p-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+        <div className='flex-1 overflow-y-auto p-4'>
 
           {loading && <p className="text-gray-500">Loading notifications...</p>}
 
@@ -211,28 +403,17 @@ const Getnotification = () => {
             <p className="text-gray-500">No notifications found.</p>
           )}
 
-          {/* 🔔 Notifications List */}
           {notifications.map((n) => (
             <div
               key={n._id}
-              className="border border-gray-300 rounded-xl p-4 mb-4 bg-white shadow-sm"
+              onClick={handleNotificationClick}
+              className="cursor-pointer border rounded-xl p-4 mb-4 bg-white shadow-sm hover:bg-gray-50 transition"
             >
-              <h2 className="text-lg font-semibold text-gray-800">{n.title}</h2>
-              <p className="text-gray-600 mt-1">{n.message}</p>
-
-              {n.metaData?.orderId && (
-                <p className="text-sm text-gray-500 mt-1">
-                  Order ID: {n.metaData.orderId}
-                </p>
-              )}
-
-              {n.metaData?.totalAmount && (
-                <p className="text-sm text-gray-500">
-                  Amount: ₹{n.metaData.totalAmount}
-                </p>
-              )}
-
-              <p className="text-xs text-gray-400 mt-2">
+              <h2 className="text-lg font-semibold">{n.title}</h2>
+              <p>{n.message}</p>
+              {n.metaData?.orderId && <p>Order ID: {n.metaData.orderId}</p>}
+              {n.metaData?.totalAmount && <p>Amount: ₹{n.metaData.totalAmount}</p>}
+              <p className="text-xs text-gray-400">
                 {new Date(n.createdAt).toLocaleString()}
               </p>
             </div>
@@ -241,7 +422,6 @@ const Getnotification = () => {
         </div>
       </div>
 
-      {/* Right Panel */}
       <RightPanelLayout />
     </div>
   );
