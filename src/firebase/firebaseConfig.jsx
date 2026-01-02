@@ -48,15 +48,17 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 // };
 
 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyB3csmb87BiG1wvTXwbbkN2ZUfK9QH0-Vw",
-  authDomain: "razzmatazz-e9feb.firebaseapp.com",
-  projectId: "razzmatazz-e9feb",     // ✔ FIXED
-  storageBucket: "razzmatazz-e9feb.firebasestorage.app",
-  messagingSenderId: "1011542027358",
-  appId: "1:1011542027358:web:e06b1e92611486f8e618cf",
-  measurementId: "G-RRMM68GQWM"
+  apiKey: "AIzaSyB-HLjIoO4bqia8ndfXvMXkDMsd53Gx9Uk",
+  authDomain: "pushnotificationrazzmatazz.firebaseapp.com",
+  projectId: "pushnotificationrazzmatazz",
+  storageBucket: "pushnotificationrazzmatazz.firebasestorage.app",
+  messagingSenderId: "622773877166",
+  appId: "1:622773877166:web:d3ef5154b6e6ad6c9ef03f",
+  measurementId: "G-GTZYKTMC29"
 };
+
 
 
 const app = initializeApp(firebaseConfig);
@@ -66,7 +68,7 @@ export const requestFcmToken = async () => {
   try {
     const token = await getToken(messaging, {
        vapidKey:
-        "BLoCrkSlGVLc0e3Q-QZqvByyFyEIZ9JQEQcZyAiOLkwVEXm7m_RxNzzSAsUmnvozhuOs69mvVoJPqvlr8dNUdMM",
+        "BBQQmlldlGlgReCfvtivjs0mbbw0cU9wsDu44CCMISj9ddCBibfd8byKS8GfJsdDO5oicRUG5z_lO-i5JZHBsPU",
     });
 
 
