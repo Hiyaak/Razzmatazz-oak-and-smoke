@@ -108,7 +108,7 @@
 
 //       const userId =
 //         sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-//         localStorage.getItem(`registredUserId_${storedBrandId}`) 
+//         localStorage.getItem(`registredUserId_${storedBrandId}`)
 
 //       if (!userId) return toast.error('Please login or continue as guest')
 
@@ -321,319 +321,371 @@
 
 // export default Placeorder
 
-
-
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, PenLine } from 'lucide-react'
-import { useCart } from '../../Context/CartContext'
-import ApiService from '../../Services/Apiservice'
-import { toast } from 'react-toastify'
-import RightPanelLayout from '../../Layout/RightPanelLayout'
-import { useEffect, useState } from 'react'
-import { LuContact } from 'react-icons/lu'
-import { FaBuilding } from 'react-icons/fa'
-import { HiPencil } from 'react-icons/hi'
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, PenLine } from "lucide-react";
+import { useCart } from "../../Context/CartContext";
+import ApiService from "../../Services/Apiservice";
+import { toast } from "react-toastify";
+import RightPanelLayout from "../../Layout/RightPanelLayout";
+import { useEffect, useState } from "react";
+import { LuContact } from "react-icons/lu";
+import { FaBuilding } from "react-icons/fa";
+import { HiPencil } from "react-icons/hi";
 
 const Placeorder = () => {
-  const navigate = useNavigate()
-  const { cart } = useCart()
+  const navigate = useNavigate();
+  const { cart } = useCart();
 
-  const [userAdress, setUserAdress] = useState([])
-  const [deliveryCharges, setDeliveryCharges] = useState(0)
-  const [profile, setProfile] = useState(null)
+  // const [userAdress, setUserAdress] = useState([])
+  // const [deliveryCharges, setDeliveryCharges] = useState(0)
+  // const [profile, setProfile] = useState(null)
 
-  const storedBrandId = localStorage.getItem('brandId')
-  const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
-  const registredUserId = localStorage.getItem(`registredUserId_${storedBrandId}`)
-  const userId = registredUserId || guestUserId
+  const [userAdress, setUserAdress] = useState([]);
+  const [deliveryCharges, setDeliveryCharges] = useState(0);
+  const [profile, setProfile] = useState(null);
+
+  const [coupons, setCoupons] = useState([]);
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const [loadingCoupons, setLoadingCoupons] = useState(true);
+  const [showAllCoupons, setShowAllCoupons] = useState(false);
+
+  const storedBrandId = localStorage.getItem("brandId");
+  const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`);
+  const registredUserId = localStorage.getItem(
+    `registredUserId_${storedBrandId}`
+  );
+  const userId = registredUserId || guestUserId;
 
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
-    localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-  )
+    localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
+  );
 
   const handleEditProfile = () => {
-    navigate('/usercheckout', { state: { profile } })
-  }
+    navigate("/usercheckout", { state: { profile } });
+  };
 
   const fetchAdress = async () => {
     try {
-      const { data } = await ApiService.get(`getAddressesByUser/${userId}`)
+      const { data } = await ApiService.get(`getAddressesByUser/${userId}`);
       if (data.status) {
-        setUserAdress(data.addresses)
+        setUserAdress(data.addresses);
       } else {
-        toast.error('Failed to load address')
+        toast.error("Failed to load address");
       }
     } catch (error) {
-      toast.error('Something went wrong while loading your profile.')
+      toast.error("Something went wrong while loading your profile.");
     }
-  }
+  };
 
   const fetchProfile = async () => {
     if (!userId) {
-      toast.error('User not found. Please log in again.')
-      navigate('/profile')
-      return
+      toast.error("User not found. Please log in again.");
+      navigate("/profile");
+      return;
     }
     try {
-      const payload = { id: userId }
-      const { data } = await ApiService.post('getProfileById', payload)
+      const payload = { id: userId };
+      const { data } = await ApiService.post("getProfileById", payload);
       if (data.status) {
-        setProfile(data.profile)
+        setProfile(data.profile);
       } else {
-        toast.error(data.message || 'Failed to load profile.')
+        toast.error(data.message || "Failed to load profile.");
       }
     } catch (error) {
-      toast.error('Something went wrong while loading your profile.')
+      toast.error("Something went wrong while loading your profile.");
     }
-  }
+  };
 
   const getdeliverycharges = async () => {
     try {
-      const { data } = await ApiService.get(`getdeliverychargesByBrandId/${storedBrandId}`)
+      const { data } = await ApiService.get(
+        `getdeliverychargesByBrandId/${storedBrandId}`
+      );
       if (data.status && data.data.length > 0) {
-        setDeliveryCharges(data.data[0].deliveryCharges ?? 0)
+        setDeliveryCharges(data.data[0].deliveryCharges ?? 0);
       } else {
-        setDeliveryCharges(0)
+        setDeliveryCharges(0);
       }
     } catch (error) {
-      setDeliveryCharges(0)
+      setDeliveryCharges(0);
     }
-  }
+  };
+
+  const loadCoupons = async () => {
+    try {
+      const res = await fetch("http://13.126.81.242:5001/getAllCoupons");
+      const data = await res.json();
+      const today = new Date();
+
+      const validCoupons = data.coupons.filter((c) => {
+        const from = new Date(c.validFrom);
+        const to = new Date(c.validTo);
+        return c.isActive && today >= from && today <= to;
+      });
+
+      setCoupons(validCoupons);
+    } catch {
+      toast.error("Failed to load coupons");
+    } finally {
+      setLoadingCoupons(false);
+    }
+  };
 
   useEffect(() => {
-    fetchAdress()
-    fetchProfile()
-    getdeliverycharges()
-  }, [])
+    fetchAdress();
+    fetchProfile();
+    getdeliverycharges();
+    loadCoupons();
+  }, []);
 
-  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
-  const total = subtotal + deliveryCharges
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const total = subtotal + deliveryCharges;
+
+  let discount = 0;
+
+  if (selectedCoupon) {
+    if (selectedCoupon.discountPercentage) {
+      discount = (subtotal * selectedCoupon.discountPercentage) / 100;
+    } else if (selectedCoupon.flatAmount) {
+      discount = selectedCoupon.flatAmount;
+    }
+  }
+
+  const finalTotal = Math.max(subtotal - discount + deliveryCharges, 0);
 
   // ⭐⭐⭐ FINAL PlaceOrder Function (NO POPUP) ⭐⭐⭐
-//  const handlePlaceOrder = async () => {
-//   try {
-//     const storedBrandId = localStorage.getItem('brandId');
-//     if (!storedBrandId) return toast.error('No brand selected');
+  //  const handlePlaceOrder = async () => {
+  //   try {
+  //     const storedBrandId = localStorage.getItem('brandId');
+  //     if (!storedBrandId) return toast.error('No brand selected');
 
-//     const userId =
-//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-//       localStorage.getItem(`registredUserId_${storedBrandId}`);
+  //     const userId =
+  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+  //       localStorage.getItem(`registredUserId_${storedBrandId}`);
 
-//     if (!userId) return toast.error('Please login or continue as guest');
+  //     if (!userId) return toast.error('Please login or continue as guest');
 
-//     const locationData = JSON.parse(
-//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-//     );
+  //     const locationData = JSON.parse(
+  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+  //     );
 
-//     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
+  //     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
 
-//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-//       return toast.error('Please select your location');
+  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+  //       return toast.error('Please select your location');
 
-//     // ⭐ GET FCM TOKEN
-//     const fcmToken = localStorage.getItem("fcmToken");
-//     console.log("FCM Token being sent to backend:", fcmToken);
+  //     // ⭐ GET FCM TOKEN
+  //     const fcmToken = localStorage.getItem("fcmToken");
+  //     console.log("FCM Token being sent to backend:", fcmToken);
 
-//     const payload = {
-//       user_id: userId,
-//       deliveryType: selectedMethod,
-//       governateId: selectedGovernateId,
-//       areaId: selectedAreaId,
-//       deliveryCharges: Number(deliveryCharges),
-//       fcmToken: fcmToken,      // <-- 🔥 IMPORTANT
-//       products: cart.map(item => ({
-//         subproduct_id: item._id,
-//         subProduct_img: item.image,
-//         subProduct_name: item.name,
-//         price: Number(item.price),
-//         quantity: item.quantity,
-//         description: item.description || ''
-//       }))
-//     };
+  //     const payload = {
+  //       user_id: userId,
+  //       deliveryType: selectedMethod,
+  //       governateId: selectedGovernateId,
+  //       areaId: selectedAreaId,
+  //       deliveryCharges: Number(deliveryCharges),
+  //       fcmToken: fcmToken,      // <-- 🔥 IMPORTANT
+  //       products: cart.map(item => ({
+  //         subproduct_id: item._id,
+  //         subProduct_img: item.image,
+  //         subProduct_name: item.name,
+  //         price: Number(item.price),
+  //         quantity: item.quantity,
+  //         description: item.description || ''
+  //       }))
+  //     };
 
-//     const { data } = await ApiService.post('placeOrder', payload);
+  //     const { data } = await ApiService.post('placeOrder', payload);
 
-//     if (data.status) {
-//       toast.success('Order placed successfully!');
-//       navigate('/myorders');
-//     } else {
-//       toast.error(data.message || 'Failed to place order.');
-//     }
-//   } catch (error) {
-//     toast.error('Something went wrong while placing your order.');
-//   }
-// };
+  //     if (data.status) {
+  //       toast.success('Order placed successfully!');
+  //       navigate('/myorders');
+  //     } else {
+  //       toast.error(data.message || 'Failed to place order.');
+  //     }
+  //   } catch (error) {
+  //     toast.error('Something went wrong while placing your order.');
+  //   }
+  // };
 
-// const handlePlaceOrder = async () => {
-//   try {
-//     const storedBrandId = localStorage.getItem('brandId');
-//     if (!storedBrandId) return toast.error('No brand selected');
+  // const handlePlaceOrder = async () => {
+  //   try {
+  //     const storedBrandId = localStorage.getItem('brandId');
+  //     if (!storedBrandId) return toast.error('No brand selected');
 
-//     const userId =
-//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-//       localStorage.getItem(`registredUserId_${storedBrandId}`);
+  //     const userId =
+  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+  //       localStorage.getItem(`registredUserId_${storedBrandId}`);
 
-//     if (!userId) return toast.error('Please login or continue as guest');
+  //     if (!userId) return toast.error('Please login or continue as guest');
 
-//     const locationData = JSON.parse(
-//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-//     );
+  //     const locationData = JSON.parse(
+  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+  //     );
 
-//     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
+  //     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
 
-//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-//       return toast.error('Please select your location');
+  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+  //       return toast.error('Please select your location');
 
-//     const fcmToken = localStorage.getItem("fcmToken");
-//     console.log("FCM Token being sent to backend:", fcmToken);
+  //     const fcmToken = localStorage.getItem("fcmToken");
+  //     console.log("FCM Token being sent to backend:", fcmToken);
 
-//     const payload = {
-//       user_id: userId,
-//       deliveryType: selectedMethod,
-//       governateId: selectedGovernateId,
-//       areaId: selectedAreaId,
-//       deliveryCharges: Number(deliveryCharges),
+  //     const payload = {
+  //       user_id: userId,
+  //       deliveryType: selectedMethod,
+  //       governateId: selectedGovernateId,
+  //       areaId: selectedAreaId,
+  //       deliveryCharges: Number(deliveryCharges),
 
-//       // FIX HERE
-//       token: fcmToken,  // <-- BACKEND EXPECTS THIS
+  //       // FIX HERE
+  //       token: fcmToken,  // <-- BACKEND EXPECTS THIS
 
-//       products: cart.map(item => ({
-//         subproduct_id: item._id,
-//         subProduct_img: item.image,
-//         subProduct_name: item.name,
-//         price: Number(item.price),
-//         quantity: item.quantity,
-//         description: item.description || ''
-//       }))
-//     };
+  //       products: cart.map(item => ({
+  //         subproduct_id: item._id,
+  //         subProduct_img: item.image,
+  //         subProduct_name: item.name,
+  //         price: Number(item.price),
+  //         quantity: item.quantity,
+  //         description: item.description || ''
+  //       }))
+  //     };
 
-//     const { data } = await ApiService.post('placeOrder', payload);
+  //     const { data } = await ApiService.post('placeOrder', payload);
 
-//     if (data.status) {
-//       toast.success('Order placed successfully!');
-//       navigate('/myorders');
-//     } else {
-//       toast.error(data.message || 'Failed to place order.');
-//     }
-//   } catch (error) {
-//     toast.error('Something went wrong while placing your order.');
-//   }
-// };
+  //     if (data.status) {
+  //       toast.success('Order placed successfully!');
+  //       navigate('/myorders');
+  //     } else {
+  //       toast.error(data.message || 'Failed to place order.');
+  //     }
+  //   } catch (error) {
+  //     toast.error('Something went wrong while placing your order.');
+  //   }
+  // };
 
-const handlePlaceOrder = async () => {
-  try {
-    const storedBrandId = localStorage.getItem("brandId");
-    if (!storedBrandId) return toast.error("No brand selected");
+  const handlePlaceOrder = async () => {
+    try {
+      const storedBrandId = localStorage.getItem("brandId");
+      if (!storedBrandId) return toast.error("No brand selected");
 
-    const userId =
-      sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-      localStorage.getItem(`registredUserId_${storedBrandId}`);
+      const userId =
+        sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+        localStorage.getItem(`registredUserId_${storedBrandId}`);
 
-    if (!userId) return toast.error("Please login or continue as guest");
+      if (!userId) return toast.error("Please login or continue as guest");
 
-    const locationData = JSON.parse(
-      localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
-    );
+      const locationData = JSON.parse(
+        localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
+      );
 
-    const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
+      const { selectedMethod, selectedGovernateId, selectedAreaId } =
+        locationData;
 
-    if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-      return toast.error("Please select your location");
+      if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+        return toast.error("Please select your location");
 
-    const fcmToken = localStorage.getItem("fcmToken");
+      const fcmToken = localStorage.getItem("fcmToken");
 
-    const payload = {
-      user_id: userId,
-      deliveryType: selectedMethod,
-      governateId: selectedGovernateId,
-      areaId: selectedAreaId,
-      deliveryCharge: Number(deliveryCharges),
+      const payload = {
+        user_id: userId,
+        deliveryType: selectedMethod,
+        governateId: selectedGovernateId,
+        areaId: selectedAreaId,
+        deliveryCharge: Number(deliveryCharges),
 
-      // BACKEND DOES NOT WANT THIS HERE ANYMORE.
-      // Token is taken from DB after updateUserToken
-      // So DO NOT send fcmToken in placeOrder.
-      // ❌ fcmToken
-      // ❌ token
+        // BACKEND DOES NOT WANT THIS HERE ANYMORE.
+        // Token is taken from DB after updateUserToken
+        // So DO NOT send fcmToken in placeOrder.
+        // ❌ fcmToken
+        // ❌ token
 
-      products: cart.map((item) => ({
-        subproduct_id: item._id,
-        subProduct_img: item.image,
-        subProduct_name: item.name,
-        price: Number(item.price),
-        quantity: item.quantity,
-        description: item.description || "",
-      })),
-    };
+        couponId: selectedCoupon._id,
+        couponCode: selectedCoupon.code,
+        discountPercentage: selectedCoupon.discountPercentage || 0,
+        flatAmount: selectedCoupon.flatAmount || 0,
 
-    const { data } = await ApiService.post("placeOrder", payload);
+        products: cart.map((item) => ({
+          subproduct_id: item._id,
+          subProduct_img: item.image,
+          subProduct_name: item.name,
+          price: Number(item.price),
+          quantity: item.quantity,
+          description: item.description || "",
+        })),
+      };
 
-    if (data.status) {
-      toast.success("Order placed successfully!");
-      navigate("/myorders");
-    } else {
-      toast.error(data.message || "Order failed.");
+      const { data } = await ApiService.post("placeOrder", payload);
+
+      if (data.status) {
+        toast.success("Order placed successfully!");
+        navigate("/myorders");
+      } else {
+        toast.error(data.message || "Order failed.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong while placing your order.");
     }
-  } catch (error) {
-    toast.error("Something went wrong while placing your order.");
-  }
-};
-
-
+  };
 
   return (
-    <div className='flex flex-col md:flex-row min-h-screen'>
-
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left Sidebar */}
-      <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col'>
-
+      <div className="w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col">
         {/* Header */}
-        <div className='p-2 border-b border-gray-200 flex-shrink-0'>
-          <div className='flex items-center justify-between mb-1'>
+        <div className="p-2 border-b border-gray-200 flex-shrink-0">
+          <div className="flex items-center justify-between mb-1">
             <button
               onClick={() => navigate(-1)}
-              className='p-2 hover:bg-gray-200 rounded-full transition-colors'
+              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
             >
-              <ArrowLeft className='w-5 h-5 text-gray-600' />
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
-            <div className='w-9' />
+            <div className="w-9" />
           </div>
         </div>
 
         {/* Scrollable Content */}
-        <div className='flex-1 overflow-y-auto overflow-x-hidden'>
-          
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
           {/* Deliver To */}
           <div>
-            <div className='bg-gray-100 p-4'>
-              <h2 className='text-base font-semibold text-gray-800'>Deliver to</h2>
+            <div className="bg-gray-100 p-4">
+              <h2 className="text-base font-semibold text-gray-800">
+                Deliver to
+              </h2>
             </div>
 
-            <div className='bg-white p-5 border-gray-300 space-y-4'>
-              <div className='flex items-center justify-between'>
-                <FaBuilding className='text-gray-500 text-lg' />
-                <div className='flex-1 text-center'>
-                  <p className='text-gray-700 text-sm'>
-                    {selectedArea || 'No address selected'}
+            <div className="bg-white p-5 border-gray-300 space-y-4">
+              <div className="flex items-center justify-between">
+                <FaBuilding className="text-gray-500 text-lg" />
+                <div className="flex-1 text-center">
+                  <p className="text-gray-700 text-sm">
+                    {selectedArea || "No address selected"}
                   </p>
                 </div>
-                <button className='text-gray-600 hover:text-[#FA0303]'>
-                  <HiPencil className='text-lg' />
+                <button className="text-gray-600 hover:text-[#FA0303]">
+                  <HiPencil className="text-lg" />
                 </button>
               </div>
 
-              <div className='flex items-center justify-between'>
-                <LuContact className='text-gray-500 text-xl' />
-                <div className='flex-1 text-center'>
-                  <p className='text-gray-800 font-medium'>
-                    {profile?.firstName || 'Unknown User'}
-                    {profile?.mobileNumber ? `, +965 ${profile.mobileNumber}` : ''}
+              <div className="flex items-center justify-between">
+                <LuContact className="text-gray-500 text-xl" />
+                <div className="flex-1 text-center">
+                  <p className="text-gray-800 font-medium">
+                    {profile?.firstName || "Unknown User"}
+                    {profile?.mobileNumber
+                      ? `, +965 ${profile.mobileNumber}`
+                      : ""}
                   </p>
                 </div>
                 <button
                   onClick={handleEditProfile}
-                  className='text-gray-600 hover:text-[#FA0303]'
+                  className="text-gray-600 hover:text-[#FA0303]"
                 >
-                  <HiPencil className='text-lg' />
+                  <HiPencil className="text-lg" />
                 </button>
               </div>
             </div>
@@ -641,18 +693,23 @@ const handlePlaceOrder = async () => {
 
           {/* Item List */}
           <div>
-            <div className='bg-gray-100 p-4'>
-              <h2 className='text-base font-semibold text-gray-800'>Items</h2>
+            <div className="bg-gray-100 p-4">
+              <h2 className="text-base font-semibold text-gray-800">Items</h2>
             </div>
 
             {cart.length === 0 ? (
-              <p className='text-gray-500 text-center py-4'>No items in cart</p>
+              <p className="text-gray-500 text-center py-4">No items in cart</p>
             ) : (
-              cart.map(item => (
-                <div key={item._id} className='grid grid-cols-3 items-center border-b border-gray-200 px-4 py-2'>
-                  <div className='text-left font-semibold'>{item.quantity}x</div>
-                  <div className='text-center text-gray-800'>{item.name}</div>
-                  <div className='text-right text-red-500 font-semibold'>
+              cart.map((item) => (
+                <div
+                  key={item._id}
+                  className="grid grid-cols-3 items-center border-b border-gray-200 px-4 py-2"
+                >
+                  <div className="text-left font-semibold">
+                    {item.quantity}x
+                  </div>
+                  <div className="text-center text-gray-800">{item.name}</div>
+                  <div className="text-right text-red-500 font-semibold">
                     {(item.price * item.quantity).toFixed(3)} KD
                   </div>
                 </div>
@@ -662,44 +719,162 @@ const handlePlaceOrder = async () => {
 
           {/* Promotions */}
           <div>
-            <div className='bg-gray-100 p-4'>
-              <h2 className='text-base font-semibold text-gray-800'>Promotions</h2>
+            <div className="bg-gray-100 p-4">
+              <h2 className="text-base font-semibold text-gray-800">
+                Promotions
+              </h2>
             </div>
 
-            <div className='bg-white p-5 border-gray-300'>
-              <div className='flex items-center'>
-                <PenLine className='w-5 h-5 text-gray-500 mr-3' />
+            <div className="bg-white p-5 border-gray-300">
+              <div className="flex items-center">
+                <PenLine className="w-5 h-5 text-gray-500 mr-3" />
                 <input
-                  type='text'
-                  placeholder='Enter promotion code'
-                  className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1'
+                  type="text"
+                  placeholder="Enter promotion code"
+                  className="w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1"
                 />
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Bottom Summary + Place Order */}
-        <div className='fixed bottom-0 left-0 md:w-[42%] w-full border-t border-gray-200 bg-white p-3 space-y-2'>
-          <div className='flex justify-between text-gray-800 font-semibold'>
+        <div className="fixed bottom-0 left-0 md:w-[42%] w-full border-t border-gray-200 bg-white p-3 space-y-2">
+          {/* <div className="flex justify-between text-gray-800 font-semibold">
+            <span>Subtotal</span>
+            <span>{subtotal.toFixed(3)} KD</span>
+          </div> */}
+
+          <div className="flex justify-between text-gray-800">
             <span>Subtotal</span>
             <span>{subtotal.toFixed(3)} KD</span>
           </div>
 
-          <div className='flex justify-between text-gray-800 font-semibold'>
+          <div className="flex justify-between text-gray-800">
             <span>Delivery Services</span>
             <span>{deliveryCharges.toFixed(3)} KD</span>
           </div>
 
-          <div className='flex justify-between text-gray-900 font-bold'>
+          {/* {selectedCoupon && (
+            <div className="flex justify-between text-green-700 font-medium">
+              <span>Coupon ({selectedCoupon.code})</span>
+              <span>- {discount.toFixed(3)} KD</span>
+            </div>
+          )} */}
+
+          <hr className="my-2" />
+
+          <div className="flex justify-between text-gray-900 font-bold text-lg">
+            <span>Total</span>
+            <span>{finalTotal.toFixed(3)} KD</span>
+            <span>Subtotal</span>
+            <span>{subtotal.toFixed(3)} KD</span>
+          </div>
+
+          <div className="flex justify-between text-gray-800 font-semibold">
+            <span>Delivery Services</span>
+            <span>{deliveryCharges.toFixed(3)} KD</span>
+          </div>
+
+          {selectedCoupon && (
+            <div className="flex justify-between text-green-700 font-medium">
+              <span>Coupon ({selectedCoupon.code})</span>
+              <span>- {discount.toFixed(3)} KD</span>
+            </div>
+          )}
+
+          {/* <h3 className="font-bold">Select Coupon</h3>
+          {loadingCoupons ? "Loading..." : coupons.map(c => (
+            <div key={c._id}
+              onClick={() => setSelectedCoupon(c)}
+              className={`p-2 border cursor-pointer ${selectedCoupon?._id === c._id ? "bg-green-100" : ""}`}>
+              {c.code}
+            </div>
+          ))} */}
+
+          <h3 className="font-bold mb-2">Select Coupon</h3>
+
+          <div className="border rounded-lg overflow-hidden">
+            {loadingCoupons ? (
+              <div className="p-3 text-gray-500">Loading coupons…</div>
+            ) : (
+              <>
+                {(showAllCoupons ? coupons : coupons.slice(0, 2)).map((c) => (
+                  <div
+                    key={c._id}
+                    onClick={() => setSelectedCoupon(c)}
+                    className={`flex justify-between items-center px-4 py-3 cursor-pointer border-b last:border-b-0 
+            ${
+              selectedCoupon?._id === c._id
+                ? "bg-green-100"
+                : "hover:bg-gray-100"
+            }`}
+                  >
+                    <div>
+                      <p className="font-medium">{c.code}</p>
+                      {c.discountPercentage && (
+                        <p className="text-sm text-gray-500">
+                          {c.discountPercentage}% OFF
+                        </p>
+                      )}
+                      {c.flatAmount && (
+                        <p className="text-sm text-gray-500">
+                          Flat {c.flatAmount} OFF
+                        </p>
+                      )}
+                    </div>
+
+                    {selectedCoupon?._id === c._id && (
+                      <span className="text-green-600 font-bold">✓</span>
+                    )}
+                  </div>
+                ))}
+
+                {coupons.length > 2 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllCoupons(!showAllCoupons)}
+                    className="w-full text-center py-2 text-sm text-blue-600 hover:bg-gray-50"
+                  >
+                    {showAllCoupons ? "Show less" : "Show more coupons"}
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* <div className="flex justify-between text-gray-900 font-bold">
             <span>Total</span>
             <span>{total.toFixed(3)} KD</span>
+          </div> */}
+
+          <div className="flex justify-between text-gray-800">
+            <span>Subtotal</span>
+            <span>{subtotal.toFixed(3)} KD</span>
+          </div>
+
+          <div className="flex justify-between text-gray-800">
+            <span>Delivery Services</span>
+            <span>{deliveryCharges.toFixed(3)} KD</span>
+          </div>
+
+          {selectedCoupon && (
+            <div className="flex justify-between text-green-700 font-medium">
+              <span>Coupon ({selectedCoupon.code})</span>
+              <span>- {discount.toFixed(3)} KD</span>
+            </div>
+          )}
+
+          <hr className="my-2" />
+
+          <div className="flex justify-between text-gray-900 font-bold text-lg">
+            <span>To Pay</span>
+            <span>{finalTotal.toFixed(3)} KD</span>
           </div>
 
           <button
             onClick={handlePlaceOrder}
-            className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg'
+            className="w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg"
           >
             Place Order
           </button>
@@ -709,7 +884,7 @@ const handlePlaceOrder = async () => {
       {/* Right Panel */}
       <RightPanelLayout />
     </div>
-  )
-}
+  );
+};
 
-export default Placeorder
+export default Placeorder;

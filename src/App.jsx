@@ -174,6 +174,9 @@ const BrandDetails = lazy(() => import("./Pages/Contact/BrandDetails/BrandDetail
 const Userprofile = lazy(() => import("./Pages/Profile/Userprofile"));
 const Usercheckout = lazy(() => import("./Pages/Profile/Usercheckout"));
 const Getnotification = lazy(() => import("./Pages/Notofication/Getnotification"));
+const GetAllPackages = lazy(() => import("./Pages/Oakandsomke/GetAllPackages"));
+const PackagesDetails = lazy(() => import("./Pages/Oakandsomke/PackagesDetails"));
+
 
 function App() {
   return (
@@ -197,6 +200,9 @@ function App() {
             <Route path="/userprofile" element={<Userprofile />} />
             <Route path="/usercheckout" element={<Usercheckout />} />
             <Route path="/notifications" element={<Getnotification />} />
+            <Route path="/getAllPackages" element={<GetAllPackages />} />
+            {/* <Route path="/packagesdetails" element={<PackagesDetails />} /> */}
+            <Route path="/package/:id" element={<PackagesDetails />} />
           </Routes>
         </Suspense>
       </Router>
