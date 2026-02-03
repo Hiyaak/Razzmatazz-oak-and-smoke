@@ -413,8 +413,8 @@ const Placeorder = () => {
 
   const loadCoupons = async () => {
     try {
-      const res = await fetch("http://13.126.81.242:5001/getAllCoupons");
-      const data = await res.json();
+      const res = await ApiService.get("getAllCoupons");
+      const data = res.data;
       const today = new Date();
 
       const validCoupons = data.coupons.filter((c) => {
@@ -567,69 +567,127 @@ const Placeorder = () => {
   //   }
   // };
 
+  // const handlePlaceOrder = async () => {
+  //   try {
+  //     const storedBrandId = localStorage.getItem("brandId");
+  //     if (!storedBrandId) return toast.error("No brand selected");
+
+  //     const userId =
+  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+  //       localStorage.getItem(`registredUserId_${storedBrandId}`);
+
+  //     if (!userId) return toast.error("Please login or continue as guest");
+
+  //     const locationData = JSON.parse(
+  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
+  //     );
+
+  //     const { selectedMethod, selectedGovernateId, selectedAreaId } =
+  //       locationData;
+
+  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+  //       return toast.error("Please select your location");
+
+  //     const fcmToken = localStorage.getItem("fcmToken");
+
+  //     const payload = {
+  //       user_id: userId,
+  //       deliveryType: selectedMethod,
+  //       governateId: selectedGovernateId,
+  //       areaId: selectedAreaId,
+  //       deliveryCharge: Number(deliveryCharges),
+
+  //       // BACKEND DOES NOT WANT THIS HERE ANYMORE.
+  //       // Token is taken from DB after updateUserToken
+  //       // So DO NOT send fcmToken in placeOrder.
+  //       // ❌ fcmToken
+  //       // ❌ token
+
+  //       couponId: selectedCoupon._id,
+  //       couponCode: selectedCoupon.code,
+  //       discountPercentage: selectedCoupon.discountPercentage || 0,
+  //       flatAmount: selectedCoupon.flatAmount || 0,
+
+  //       products: cart.map((item) => ({
+  //         subproduct_id: item._id,
+  //         subProduct_img: item.image,
+  //         subProduct_name: item.name,
+  //         price: Number(item.price),
+  //         quantity: item.quantity,
+  //         description: item.description || "",
+  //       })),
+  //     };
+
+  //     const { data } = await ApiService.post("placeOrder", payload);
+
+  //     if (data.status) {
+  //       toast.success("Order placed successfully!");
+  //       navigate("/myorders");
+  //     } else {
+  //       toast.error(data.message || "Order failed.");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Something went wrong while placing your order.");
+  //   }
+  // };
+
   const handlePlaceOrder = async () => {
-    try {
-      const storedBrandId = localStorage.getItem("brandId");
-      if (!storedBrandId) return toast.error("No brand selected");
+  try {
+    const storedBrandId = localStorage.getItem("brandId");
+    if (!storedBrandId) return toast.error("No brand selected");
 
-      const userId =
-        sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-        localStorage.getItem(`registredUserId_${storedBrandId}`);
+    const userId =
+      sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+      localStorage.getItem(`registredUserId_${storedBrandId}`);
 
-      if (!userId) return toast.error("Please login or continue as guest");
+    if (!userId) return toast.error("Please login or continue as guest");
 
-      const locationData = JSON.parse(
-        localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
-      );
+    const locationData = JSON.parse(
+      localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
+    );
 
-      const { selectedMethod, selectedGovernateId, selectedAreaId } =
-        locationData;
+    const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
 
-      if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-        return toast.error("Please select your location");
+    if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+      return toast.error("Please select your location");
 
-      const fcmToken = localStorage.getItem("fcmToken");
+    const payload = {
+      user_id: userId,
+      deliveryType: selectedMethod,
+      governateId: selectedGovernateId,
+      areaId: selectedAreaId,
+      deliveryCharge: Number(deliveryCharges), // FIXED
 
-      const payload = {
-        user_id: userId,
-        deliveryType: selectedMethod,
-        governateId: selectedGovernateId,
-        areaId: selectedAreaId,
-        deliveryCharge: Number(deliveryCharges),
+      couponId: selectedCoupon?._id || null,
+      couponCode: selectedCoupon?.code || "",
+      discountPercentage: selectedCoupon?.discountPercentage || 0,
+      flatAmount: selectedCoupon?.flatAmount || 0,
 
-        // BACKEND DOES NOT WANT THIS HERE ANYMORE.
-        // Token is taken from DB after updateUserToken
-        // So DO NOT send fcmToken in placeOrder.
-        // ❌ fcmToken
-        // ❌ token
+      products: cart.map((item) => ({
+        subproduct_id: item._id,
+        subProduct_img: item.image,
+        subProduct_name: item.name,
+        price: Number(item.price),
+        quantity: item.quantity,
+        description: item.description || "",
+      })),
+    };
 
-        couponId: selectedCoupon._id,
-        couponCode: selectedCoupon.code,
-        discountPercentage: selectedCoupon.discountPercentage || 0,
-        flatAmount: selectedCoupon.flatAmount || 0,
+    const { data } = await ApiService.post("placeOrder", payload);
 
-        products: cart.map((item) => ({
-          subproduct_id: item._id,
-          subProduct_img: item.image,
-          subProduct_name: item.name,
-          price: Number(item.price),
-          quantity: item.quantity,
-          description: item.description || "",
-        })),
-      };
-
-      const { data } = await ApiService.post("placeOrder", payload);
-
-      if (data.status) {
-        toast.success("Order placed successfully!");
-        navigate("/myorders");
-      } else {
-        toast.error(data.message || "Order failed.");
-      }
-    } catch (error) {
-      toast.error("Something went wrong while placing your order.");
+    if (data.status) {
+      toast.success("Order placed successfully!");
+      navigate("/myorders");
+    } else {
+      toast.error(data.message || "Order failed.");
     }
-  };
+  } catch (error) {
+    console.log(error);
+     console.log("PLACE ORDER ERROR:", error?.response?.data || error);
+    toast.error("Something went wrong while placing your order.");
+  }
+};
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">

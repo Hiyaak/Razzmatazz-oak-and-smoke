@@ -394,19 +394,13 @@ const Myorders = () => {
 
       setCancellingId(orderId)
 
-      const response = await fetch('http://13.126.81.242:5001/cancelOrder', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          order_id: orderId,
-          user_id: userId,
-          reason: reason
-        })
+      const response = await ApiService.post('cancelOrder', {
+        order_id: orderId,
+        user_id: userId,
+        reason: reason
       })
 
-      const result = await response.json()
+      const result = response.data
 
       if (result.status) {
         toast.success('Order cancelled successfully')
