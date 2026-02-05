@@ -169,16 +169,18 @@ const ShoppingCartPage = () => {
               <div className='space-y-4 mt-1 px-4 border-b border-gray-200'>
                 {cart.map(item => (
                   <div
-                    key={item._id}
+                    key={item.cartItemId}
                     className='border-b border-gray-200 pb-4 last:border-b-0'
                   >
-                    {/* Edit Button */}
-                    <button className='text-[#FA0303] text-sm font-medium mb-2'>
-                      edit
-                    </button>
+                    {/* Edit Button (optional for combo) */}
+                    {item.type === 'combo' && (
+                      <button className='text-[#FA0303] text-sm font-medium mb-2'>
+                        edit
+                      </button>
+                    )}
 
                     <div className='flex items-center justify-between'>
-                      {/* Product Image */}
+                      {/* Image */}
                       <img
                         src={`${ImagePath}${item.image}`}
                         alt={item.name}
@@ -188,19 +190,21 @@ const ShoppingCartPage = () => {
                       {/* Name */}
                       <div className='flex-1 px-4 mb-9'>
                         <h2 className='text-lg font-semibold'>{item.name}</h2>
+                        {item.type === 'combo' && (
+                          <p className='text-xs text-gray-500'>Combo item</p>
+                        )}
                       </div>
 
-                      {/* Price - Top Right */}
+                      {/* Price & Quantity */}
                       <div className='flex flex-col items-end'>
                         <span className='text-[#FA0303] font-medium mb-5'>
                           KD {(item.price * item.quantity).toFixed(3)}
                         </span>
 
-                        {/* Quantity Controls - Circular Buttons */}
                         <div className='flex items-center gap-2'>
                           <button
                             onClick={() =>
-                              handleQuantityChange(item._id, item.quantity - 1)
+                              updateQuantity(item.cartItemId, item.quantity - 1)
                             }
                             className={`w-4 h-4 flex items-center justify-center border-2 rounded-full hover:bg-gray-100 transition-colors ${
                               item.quantity > 1
@@ -210,12 +214,14 @@ const ShoppingCartPage = () => {
                           >
                             <Minus className='w-3 h-3' />
                           </button>
+
                           <span className='px-4 py-0.5 text-center font-medium text-[#FA0303] text-sm border border-gray-300 rounded'>
                             {item.quantity}
                           </span>
+
                           <button
                             onClick={() =>
-                              handleQuantityChange(item._id, item.quantity + 1)
+                              updateQuantity(item.cartItemId, item.quantity + 1)
                             }
                             className='w-4 h-4 flex items-center justify-center border-2 border-[#FA0303] rounded-full text-[#FA0303] hover:bg-red-50 transition-colors'
                           >
@@ -225,9 +231,9 @@ const ShoppingCartPage = () => {
                       </div>
                     </div>
 
-                    {/* Remove Button */}
+                    {/* Remove */}
                     <button
-                      onClick={() => removeFromCart(item._id)}
+                      onClick={() => removeFromCart(item.cartItemId)}
                       className='text-[#f34f4f] text-sm font-medium'
                     >
                       remove

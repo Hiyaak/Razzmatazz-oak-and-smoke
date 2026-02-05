@@ -45,8 +45,14 @@ const Subproducts = () => {
     navigate('/shoopingcart')
   }
 
+  // const getProductQuantity = productId => {
+  //   const cartItem = cart.find(item => item._id === productId)
+  //   return cartItem ? cartItem.quantity : 0
+  // }
   const getProductQuantity = productId => {
-    const cartItem = cart.find(item => item._id === productId)
+    const cartItem = cart.find(
+      item => item.cartItemId === `product-${productId}`
+    )
     return cartItem ? cartItem.quantity : 0
   }
 
@@ -115,7 +121,7 @@ const Subproducts = () => {
                   </div>
 
                   {/* Add to Cart / Quantity Controls */}
-                  {quantity === 0 ? (
+                  {/* {quantity === 0 ? (
                     <button
                       onClick={() => addToCart(item)}
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
@@ -136,6 +142,48 @@ const Subproducts = () => {
                       <button
                         onClick={() => updateQuantity(item._id, quantity + 1)}
                         className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
+                      >
+                        <Plus className='w-3 h-3' />
+                      </button>
+                    </div>
+                  )} */}
+
+                  {quantity === 0 ? (
+                    <button
+                      onClick={() =>
+                        addToCart({
+                          cartItemId: `product-${item._id}`,
+                          _id: item._id,
+                          type: 'product',
+                          name: item.name,
+                          price: item.price,
+                          image: item.image
+                        })
+                      }
+                      className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
+                    >
+                      + Add
+                    </button>
+                  ) : (
+                    <div className='flex items-center justify-between rounded-md px-2 py-1'>
+                      <button
+                        onClick={() =>
+                          updateQuantity(`product-${item._id}`, quantity - 1)
+                        }
+                        className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50'
+                      >
+                        <Minus className='w-3 h-3' />
+                      </button>
+
+                      <span className='px-3 py-0.5 text-center font-medium text-red-500 text-sm'>
+                        {quantity}
+                      </span>
+
+                      <button
+                        onClick={() =>
+                          updateQuantity(`product-${item._id}`, quantity + 1)
+                        }
+                        className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50'
                       >
                         <Plus className='w-3 h-3' />
                       </button>
