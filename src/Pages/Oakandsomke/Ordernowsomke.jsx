@@ -12,7 +12,8 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import CateringImage from '../../assets/CateringImage.jpg'
-
+import ComboImage from '../../assets/ComboImage.png'
+import ComboDIY from '../../assets/ComboDIY.png'
 import oak from '../../assets/oaklogo1.png'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
@@ -243,7 +244,7 @@ const FoodDeliveryApp = () => {
                 <div className='flex items-center gap-2 pl-2'>
                   <CookingPot className='w-4 h-4 text-gray-400 group-hover:text-red-500' />
                   <p className='text-sm text-gray-600 group-hover:text-red-500'>
-                    Combo
+                    Combo....
                   </p>
                 </div>
               </div>
@@ -255,18 +256,70 @@ const FoodDeliveryApp = () => {
                 <img src={CateringImage} alt="Catering" className="w-full h-60 object-cover" />
                 <button>Catering - Set Menu's</button>
               </div> */}
-              <div
+              {/* <div
                 onClick={() => navigate('/GetAllPackages')}
                 style={{ cursor: 'pointer' }}
               >
                 <img
                   src={CateringImage}
                   alt='Catering'
-                  // className="text-gray-100 font-bold text-lg text-center"
+
                   className='w-full h-60 object-cover text-gray-100 font-bold text-lg text-center'
                 />
-                {/* <button>Catering - Set Menu's</button> */}
-              </div>
+
+                
+              </div> */}
+               {/* Catering Image 1 */}
+  <div
+    onClick={() => navigate('/GetAllPackages')}
+    className='relative rounded-lg overflow-hidden shadow'
+  >
+    <img
+      src={CateringImage}
+      alt='Catering'
+      className='w-full h-60 object-cover'
+    />
+    <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+      <h3 className='text-gray-100 font-bold text-lg text-center'>
+       
+      </h3>
+    </div>
+  </div>
+
+  {/* Catering Image 2 (Same Image Next To It) */}
+  <div
+    onClick={() => navigate('/combo')}
+    className='relative rounded-lg overflow-hidden shadow'
+  >
+    <img
+      src={ComboImage}
+      alt='Catering'
+      className='w-full h-60 object-cover'
+    />
+    <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+      <h3 className='text-gray-100 font-bold text-lg text-center'>
+       
+      </h3>
+    </div>
+  </div>
+
+   {/* Catering Image 3 (Same Image Next To It) */}
+  <div
+    // onClick={() => navigate('/combo')}
+    className='relative rounded-lg overflow-hidden shadow'
+  >
+    <img
+      src={ComboDIY}
+      alt='Catering'
+      className='w-full h-60 object-cover'
+    />
+    <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+      <h3 className='text-gray-100 font-bold text-lg text-center'>
+       
+      </h3>
+    </div>
+  </div>
+
 
               {productCategories.map(item => (
                 <div
