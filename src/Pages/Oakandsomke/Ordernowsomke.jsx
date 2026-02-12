@@ -244,7 +244,7 @@ const FoodDeliveryApp = () => {
                 <div className='flex items-center gap-2 pl-2'>
                   <CookingPot className='w-4 h-4 text-gray-400 group-hover:text-red-500' />
                   <p className='text-sm text-gray-600 group-hover:text-red-500'>
-                    Combo
+                    Combo....
                   </p>
                 </div>
               </div>
