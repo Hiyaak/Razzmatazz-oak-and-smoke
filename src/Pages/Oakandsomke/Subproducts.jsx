@@ -35,6 +35,7 @@ const Subproducts = () => {
         brandName: 'Oak and Smoke'
       }
       const { data } = await ApiService.post('getAllSubproducts', payload)
+      console.log('Subproducts Response:', data)
       if (data.status) setSubProductCategories(data.subproducts)
     } catch (error) {
       console.log('Error fetching subproducts:', error)
@@ -120,40 +121,15 @@ const Subproducts = () => {
                     {item.price} KD
                   </div>
 
-                  {/* Add to Cart / Quantity Controls */}
-                  {/* {quantity === 0 ? (
-                    <button
-                      onClick={() => addToCart(item)}
-                      className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
-                    >
-                      + Add
-                    </button>
-                  ) : (
-                    <div className='flex items-center justify-between rounded-md px-2 py-1'>
-                      <button
-                        onClick={() => updateQuantity(item._id, quantity - 1)}
-                        className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
-                      >
-                        <Minus className='w-3 h-3' />
-                      </button>
-                      <span className='px-3 py-0.5 text-center font-medium text-red-500 text-sm border border-gray-200 rounded'>
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(item._id, quantity + 1)}
-                        className='w-4 h-4 flex items-center justify-center bg-white text-[#FA0303] border-2 border-[#FA0303] rounded-full hover:bg-red-50 transition-colors leading-none text-lg'
-                      >
-                        <Plus className='w-3 h-3' />
-                      </button>
-                    </div>
-                  )} */}
+                 
 
                   {quantity === 0 ? (
                     <button
                       onClick={() =>
                         addToCart({
                           cartItemId: `product-${item._id}`,
-                          _id: item._id,
+                          _id: item._id, 
+                          product_id: item.product_id, 
                           type: 'product',
                           name: item.name,
                           price: item.price,
