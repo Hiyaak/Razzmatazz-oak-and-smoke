@@ -1,3 +1,612 @@
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft, PenLine } from 'lucide-react'
+import { useCart } from '../../Context/CartContext'
+import ApiService from '../../Services/Apiservice'
+import { toast } from 'react-toastify'
+import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { useEffect, useState } from 'react'
+import { LuContact } from 'react-icons/lu'
+import { FaBuilding } from 'react-icons/fa'
+import { HiPencil } from 'react-icons/hi'
+
+const Placeorder = () => {
+  const navigate = useNavigate()
+  const { cart } = useCart()
+
+  const [userAdress, setUserAdress] = useState([])
+  const [deliveryCharges, setDeliveryCharges] = useState(0)
+  const [profile, setProfile] = useState(null)
+
+  const [coupons, setCoupons] = useState([])
+  const [couponInput, setCouponInput] = useState('')
+  const [selectedCoupon, setSelectedCoupon] = useState(null)
+  const [loadingCoupons, setLoadingCoupons] = useState(true)
+  const [showAllCoupons, setShowAllCoupons] = useState(false)
+
+  const storedBrandId = localStorage.getItem('brandId')
+  const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
+  const registredUserId = localStorage.getItem(
+    `registredUserId_${storedBrandId}`
+  )
+  const userId = registredUserId || guestUserId
+
+  const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
+    localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+  )
+
+  const handleEditProfile = () => {
+    navigate('/usercheckout', { state: { profile } })
+  }
+
+  const fetchAdress = async () => {
+    try {
+      const { data } = await ApiService.get(`getAddressesByUser/${userId}`)
+      if (data.status) {
+        setUserAdress(data.addresses)
+      } else {
+        toast.error('Failed to load address')
+      }
+    } catch (error) {
+      toast.error('Something went wrong while loading your profile.')
+    }
+  }
+
+  const fetchProfile = async () => {
+    if (!userId) {
+      toast.error('User not found. Please log in again.')
+      navigate('/profile')
+      return
+    }
+    try {
+      const payload = { id: userId }
+      const { data } = await ApiService.post('getProfileById', payload)
+      if (data.status) {
+        setProfile(data.profile)
+      } else {
+        toast.error(data.message || 'Failed to load profile.')
+      }
+    } catch (error) {
+      toast.error('Something went wrong while loading your profile.')
+    }
+  }
+
+  const getdeliverycharges = async () => {
+    try {
+      const { data } = await ApiService.get(
+        `getdeliverychargesByBrandId/${storedBrandId}`
+      )
+      if (data.status && data.data.length > 0) {
+        setDeliveryCharges(data.data[0].deliveryCharges ?? 0)
+      } else {
+        setDeliveryCharges(0)
+      }
+    } catch (error) {
+      setDeliveryCharges(0)
+    }
+  }
+  const fetchCoupons = async () => {
+    try {
+      setLoadingCoupons(true)
+
+      const brandName = 'Oak and Smoke'
+
+      const { data } = await ApiService.get(
+        `getCouponsByBrandName?brandName=${encodeURIComponent(brandName)}`
+      )
+
+      if (data.success) {
+        const now = new Date()
+
+        const filteredCoupons = data.coupons.filter(coupon => {
+          // ✅ Active check
+          if (!coupon.isActive) return false
+
+          // ✅ Date check
+          if (
+            new Date(coupon.validFrom) > now ||
+            new Date(coupon.validTo) < now
+          ) {
+            return false
+          }
+
+          // ❌ Ignore general coupons
+          if (!coupon.productIds || coupon.productIds.length === 0) {
+            return false
+          }
+
+          // ✅ Compare using product_id (NOT subproduct _id)
+          const cartProductIds = cart.map(item => String(item.product_id))
+
+          const couponProductIds = coupon.productIds.map(id => String(id))
+
+          // Show coupon only if ALL cart products are allowed
+          return cartProductIds.every(id => couponProductIds.includes(id))
+        })
+
+        setCoupons(filteredCoupons)
+      }
+    } catch (error) {
+      console.log('Coupon fetch error', error)
+    } finally {
+      setLoadingCoupons(false)
+    }
+  }
+
+  const handleApplyCoupon = () => {
+    if (!couponInput.trim()) {
+      toast.error('Please enter coupon code')
+      return
+    }
+
+    const coupon = coupons.find(
+      c => c.code.toLowerCase() === couponInput.toLowerCase()
+    )
+
+    if (!coupon) {
+      toast.error('Coupon not applicable for this cart')
+      return
+    }
+
+    setSelectedCoupon(coupon)
+    toast.success(`Coupon ${coupon.code} applied`)
+  }
+
+  useEffect(() => {
+    fetchAdress()
+    fetchProfile()
+    getdeliverycharges()
+  }, [])
+
+  useEffect(() => {
+    if (cart.length === 0) {
+      setCoupons([])
+      setSelectedCoupon(null)
+      return
+    }
+
+    fetchCoupons()
+  }, [cart])
+
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  )
+  const total = subtotal + deliveryCharges
+
+  let discount = 0
+
+  if (selectedCoupon) {
+    if (selectedCoupon.discountPercentage) {
+      discount = (subtotal * selectedCoupon.discountPercentage) / 100
+    } else if (selectedCoupon.flatAmount) {
+      discount = selectedCoupon.flatAmount
+    }
+  }
+
+  const finalTotal = Math.max(subtotal - discount + deliveryCharges, 0)
+
+  const handlePlaceOrder = async () => {
+    try {
+      const storedBrandId = localStorage.getItem('brandId')
+      if (!storedBrandId) return toast.error('No brand selected')
+
+      const userId =
+        sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+        localStorage.getItem(`registredUserId_${storedBrandId}`)
+
+      if (!userId) return toast.error('Please login or continue as guest')
+
+      const locationData = JSON.parse(
+        localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+      )
+
+      const { selectedMethod, selectedGovernateId, selectedAreaId } =
+        locationData
+
+      if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+        return toast.error('Please select your location')
+
+      const payload = {
+        user_id: userId,
+        deliveryType: selectedMethod,
+        governateId: selectedGovernateId,
+        areaId: selectedAreaId,
+        deliveryCharge: Number(deliveryCharges), // FIXED
+
+        couponId: selectedCoupon?._id || null,
+        couponCode: selectedCoupon?.code || '',
+        discountPercentage: selectedCoupon?.discountPercentage || 0,
+        flatAmount: selectedCoupon?.flatAmount || 0,
+
+        products: cart.map(item => ({
+          subproduct_id: item._id,
+          subProduct_img: item.image,
+          subProduct_name: item.name,
+          price: Number(item.price),
+          quantity: item.quantity,
+          description: item.description || ''
+        }))
+      }
+
+      const { data } = await ApiService.post('placeOrder', payload)
+
+      if (data.status) {
+        toast.success('Order placed successfully!')
+        navigate('/myorders')
+      } else {
+        toast.error(data.message || 'Order failed.')
+      }
+    } catch (error) {
+      console.log(error)
+      console.log('PLACE ORDER ERROR:', error?.response?.data || error)
+      toast.error('Something went wrong while placing your order.')
+    }
+  }
+
+  return (
+    <div className='flex flex-col md:flex-row min-h-screen'>
+      {/* Left Sidebar */}
+      <div className='w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col relative'>
+        {/* Header */}
+        <div className='p-2 border-b border-gray-200 flex-shrink-0'>
+          <div className='flex items-center justify-between mb-1'>
+            <button
+              onClick={() => navigate(-1)}
+              className='p-2 hover:bg-gray-200 rounded-full transition-colors'
+            >
+              <ArrowLeft className='w-5 h-5 text-gray-600' />
+            </button>
+            <div className='w-9' />
+          </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className='flex-1 overflow-y-auto overflow-x-hidden pb-64 no-scrollbar'>
+          {/* Deliver To */}
+          <div>
+            <div className='bg-gray-100 p-4'>
+              <h2 className='text-base font-semibold text-gray-800'>
+                Deliver to
+              </h2>
+            </div>
+
+            <div className='bg-white p-5 border-gray-300 space-y-4'>
+              <div className='flex items-center justify-between'>
+                <FaBuilding className='text-gray-500 text-lg' />
+                <div className='flex-1 text-center'>
+                  <p className='text-gray-700 text-sm'>
+                    {selectedArea || 'No address selected'}
+                  </p>
+                </div>
+                <button className='text-gray-600 hover:text-[#FA0303]'>
+                  <HiPencil className='text-lg' />
+                </button>
+              </div>
+
+              <div className='flex items-center justify-between'>
+                <LuContact className='text-gray-500 text-xl' />
+                <div className='flex-1 text-center'>
+                  <p className='text-gray-800 font-medium'>
+                    {profile?.firstName || 'Unknown User'}
+                    {profile?.mobileNumber
+                      ? `, +965 ${profile.mobileNumber}`
+                      : ''}
+                  </p>
+                </div>
+                <button
+                  onClick={handleEditProfile}
+                  className='text-gray-600 hover:text-[#FA0303]'
+                >
+                  <HiPencil className='text-lg' />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Item List */}
+          <div>
+            <div className='bg-gray-100 p-4'>
+              <h2 className='text-base font-semibold text-gray-800'>Items</h2>
+            </div>
+
+            {cart.length === 0 ? (
+              <p className='text-gray-500 text-center py-4'>No items in cart</p>
+            ) : (
+              cart.map(item => (
+                <div
+                  key={item._id}
+                  className='grid grid-cols-3 items-center border-b border-gray-200 px-4 py-3'
+                >
+                  <div className='text-left font-semibold'>
+                    {item.quantity}x
+                  </div>
+                  <div className='text-center text-gray-800'>{item.name}</div>
+                  <div className='text-right text-red-500 font-semibold'>
+                    {(item.price * item.quantity).toFixed(3)} KD
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Promotions */}
+          <div>
+            <div className='bg-gray-100 p-4'>
+              <h2 className='text-base font-semibold text-gray-800'>
+                Promotions
+              </h2>
+            </div>
+
+            <div className='bg-white p-5 border-gray-300 space-y-4'>
+              {/* Coupon Input */}
+              <div className='flex items-center gap-3'>
+                <input
+                  type='text'
+                  value={couponInput}
+                  onChange={e => setCouponInput(e.target.value)}
+                  placeholder='Enter promotion code'
+                  className='flex-1 border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1'
+                />
+
+                <button
+                  onClick={handleApplyCoupon}
+                  className='bg-[#FA0303] text-white px-4 py-1 rounded text-sm'
+                >
+                  Apply
+                </button>
+              </div>
+
+              {/* Available Coupons */}
+              {coupons.length > 0 && (
+                <div className='space-y-2'>
+                  <p className='text-sm font-medium text-gray-700'>
+                    Available Coupons
+                  </p>
+
+                  {coupons.map(coupon => (
+                    <div
+                      key={coupon._id}
+                      onClick={() => {
+                        setSelectedCoupon(coupon)
+                        setCouponInput(coupon.code)
+                        toast.success('Coupon applied')
+                      }}
+                      className='border p-2 rounded flex justify-between items-center cursor-pointer hover:bg-gray-50'
+                    >
+                      <div>
+                        <p className='font-semibold text-sm'>{coupon.code}</p>
+                        <p className='text-xs text-gray-500'>
+                          Flat {coupon.flatAmount} KD off
+                        </p>
+                      </div>
+
+                      <span className='text-green-600 text-sm'>Apply</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Summary + Place Order */}
+        <div className='absolute bottom-0 left-0 w-full border-t border-gray-200 bg-white p-4 space-y-2 shadow-lg'>
+          <div className='flex justify-between text-gray-800'>
+            <span>Subtotal</span>
+            <span>{subtotal.toFixed(3)} KD</span>
+          </div>
+
+          <div className='flex justify-between text-gray-800'>
+            <span>Delivery Services</span>
+            <span>{deliveryCharges.toFixed(3)} KD</span>
+          </div>
+
+          {selectedCoupon && (
+            <div className='flex justify-between text-green-700 font-medium'>
+              <span>Coupon ({selectedCoupon.code})</span>
+              <span>- {discount.toFixed(3)} KD</span>
+            </div>
+          )}
+
+          <hr className='my-2' />
+
+          <div className='flex justify-between text-gray-900 font-bold text-lg'>
+            <span>To Pay</span>
+            <span>{finalTotal.toFixed(3)} KD</span>
+          </div>
+
+          <button
+            onClick={handlePlaceOrder}
+            className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg'
+          >
+            Place Order
+          </button>
+        </div>
+      </div>
+
+      {/* Right Panel */}
+      <RightPanelLayout />
+    </div>
+  )
+}
+
+export default Placeorder
+
+// ⭐⭐⭐ FINAL PlaceOrder Function (NO POPUP) ⭐⭐⭐
+//  const handlePlaceOrder = async () => {
+//   try {
+//     const storedBrandId = localStorage.getItem('brandId');
+//     if (!storedBrandId) return toast.error('No brand selected');
+
+//     const userId =
+//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+//       localStorage.getItem(`registredUserId_${storedBrandId}`);
+
+//     if (!userId) return toast.error('Please login or continue as guest');
+
+//     const locationData = JSON.parse(
+//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+//     );
+
+//     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
+
+//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+//       return toast.error('Please select your location');
+
+//     // ⭐ GET FCM TOKEN
+//     const fcmToken = localStorage.getItem("fcmToken");
+//     console.log("FCM Token being sent to backend:", fcmToken);
+
+//     const payload = {
+//       user_id: userId,
+//       deliveryType: selectedMethod,
+//       governateId: selectedGovernateId,
+//       areaId: selectedAreaId,
+//       deliveryCharges: Number(deliveryCharges),
+//       fcmToken: fcmToken,      // <-- 🔥 IMPORTANT
+//       products: cart.map(item => ({
+//         subproduct_id: item._id,
+//         subProduct_img: item.image,
+//         subProduct_name: item.name,
+//         price: Number(item.price),
+//         quantity: item.quantity,
+//         description: item.description || ''
+//       }))
+//     };
+
+//     const { data } = await ApiService.post('placeOrder', payload);
+
+//     if (data.status) {
+//       toast.success('Order placed successfully!');
+//       navigate('/myorders');
+//     } else {
+//       toast.error(data.message || 'Failed to place order.');
+//     }
+//   } catch (error) {
+//     toast.error('Something went wrong while placing your order.');
+//   }
+// };
+
+// const handlePlaceOrder = async () => {
+//   try {
+//     const storedBrandId = localStorage.getItem('brandId');
+//     if (!storedBrandId) return toast.error('No brand selected');
+
+//     const userId =
+//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+//       localStorage.getItem(`registredUserId_${storedBrandId}`);
+
+//     if (!userId) return toast.error('Please login or continue as guest');
+
+//     const locationData = JSON.parse(
+//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+//     );
+
+//     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
+
+//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+//       return toast.error('Please select your location');
+
+//     const fcmToken = localStorage.getItem("fcmToken");
+//     console.log("FCM Token being sent to backend:", fcmToken);
+
+//     const payload = {
+//       user_id: userId,
+//       deliveryType: selectedMethod,
+//       governateId: selectedGovernateId,
+//       areaId: selectedAreaId,
+//       deliveryCharges: Number(deliveryCharges),
+
+//       // FIX HERE
+//       token: fcmToken,  // <-- BACKEND EXPECTS THIS
+
+//       products: cart.map(item => ({
+//         subproduct_id: item._id,
+//         subProduct_img: item.image,
+//         subProduct_name: item.name,
+//         price: Number(item.price),
+//         quantity: item.quantity,
+//         description: item.description || ''
+//       }))
+//     };
+
+//     const { data } = await ApiService.post('placeOrder', payload);
+
+//     if (data.status) {
+//       toast.success('Order placed successfully!');
+//       navigate('/myorders');
+//     } else {
+//       toast.error(data.message || 'Failed to place order.');
+//     }
+//   } catch (error) {
+//     toast.error('Something went wrong while placing your order.');
+//   }
+// };
+
+// const handlePlaceOrder = async () => {
+//   try {
+//     const storedBrandId = localStorage.getItem("brandId");
+//     if (!storedBrandId) return toast.error("No brand selected");
+
+//     const userId =
+//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+//       localStorage.getItem(`registredUserId_${storedBrandId}`);
+
+//     if (!userId) return toast.error("Please login or continue as guest");
+
+//     const locationData = JSON.parse(
+//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
+//     );
+
+//     const { selectedMethod, selectedGovernateId, selectedAreaId } =
+//       locationData;
+
+//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+//       return toast.error("Please select your location");
+
+//     const fcmToken = localStorage.getItem("fcmToken");
+
+//     const payload = {
+//       user_id: userId,
+//       deliveryType: selectedMethod,
+//       governateId: selectedGovernateId,
+//       areaId: selectedAreaId,
+//       deliveryCharge: Number(deliveryCharges),
+
+//       // BACKEND DOES NOT WANT THIS HERE ANYMORE.
+//       // Token is taken from DB after updateUserToken
+//       // So DO NOT send fcmToken in placeOrder.
+//       // ❌ fcmToken
+//       // ❌ token
+
+//       couponId: selectedCoupon._id,
+//       couponCode: selectedCoupon.code,
+//       discountPercentage: selectedCoupon.discountPercentage || 0,
+//       flatAmount: selectedCoupon.flatAmount || 0,
+
+//       products: cart.map((item) => ({
+//         subproduct_id: item._id,
+//         subProduct_img: item.image,
+//         subProduct_name: item.name,
+//         price: Number(item.price),
+//         quantity: item.quantity,
+//         description: item.description || "",
+//       })),
+//     };
+
+//     const { data } = await ApiService.post("placeOrder", payload);
+
+//     if (data.status) {
+//       toast.success("Order placed successfully!");
+//       navigate("/myorders");
+//     } else {
+//       toast.error(data.message || "Order failed.");
+//     }
+//   } catch (error) {
+//     toast.error("Something went wrong while placing your order.");
+//   }
+// };
+
 // import { useNavigate } from 'react-router-dom'
 // import { ArrowLeft, Menu, PenLine } from 'lucide-react'
 // import { useCart } from '../../Context/CartContext'
@@ -320,629 +929,3 @@
 // }
 
 // export default Placeorder
-
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, PenLine } from "lucide-react";
-import { useCart } from "../../Context/CartContext";
-import ApiService from "../../Services/Apiservice";
-import { toast } from "react-toastify";
-import RightPanelLayout from "../../Layout/RightPanelLayout";
-import { useEffect, useState } from "react";
-import { LuContact } from "react-icons/lu";
-import { FaBuilding } from "react-icons/fa";
-import { HiPencil } from "react-icons/hi";
-
-const Placeorder = () => {
-  const navigate = useNavigate();
-  const { cart } = useCart();
-
-  // const [userAdress, setUserAdress] = useState([])
-  // const [deliveryCharges, setDeliveryCharges] = useState(0)
-  // const [profile, setProfile] = useState(null)
-
-  const [userAdress, setUserAdress] = useState([]);
-  const [deliveryCharges, setDeliveryCharges] = useState(0);
-  const [profile, setProfile] = useState(null);
-
-  const [coupons, setCoupons] = useState([]);
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
-  const [loadingCoupons, setLoadingCoupons] = useState(true);
-  const [showAllCoupons, setShowAllCoupons] = useState(false);
-
-  const storedBrandId = localStorage.getItem("brandId");
-  const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`);
-  const registredUserId = localStorage.getItem(
-    `registredUserId_${storedBrandId}`
-  );
-  const userId = registredUserId || guestUserId;
-
-  const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
-    localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
-  );
-
-  const handleEditProfile = () => {
-    navigate("/usercheckout", { state: { profile } });
-  };
-
-  const fetchAdress = async () => {
-    try {
-      const { data } = await ApiService.get(`getAddressesByUser/${userId}`);
-      if (data.status) {
-        setUserAdress(data.addresses);
-      } else {
-        toast.error("Failed to load address");
-      }
-    } catch (error) {
-      toast.error("Something went wrong while loading your profile.");
-    }
-  };
-
-  const fetchProfile = async () => {
-    if (!userId) {
-      toast.error("User not found. Please log in again.");
-      navigate("/profile");
-      return;
-    }
-    try {
-      const payload = { id: userId };
-      const { data } = await ApiService.post("getProfileById", payload);
-      if (data.status) {
-        setProfile(data.profile);
-      } else {
-        toast.error(data.message || "Failed to load profile.");
-      }
-    } catch (error) {
-      toast.error("Something went wrong while loading your profile.");
-    }
-  };
-
-  const getdeliverycharges = async () => {
-    try {
-      const { data } = await ApiService.get(
-        `getdeliverychargesByBrandId/${storedBrandId}`
-      );
-      if (data.status && data.data.length > 0) {
-        setDeliveryCharges(data.data[0].deliveryCharges ?? 0);
-      } else {
-        setDeliveryCharges(0);
-      }
-    } catch (error) {
-      setDeliveryCharges(0);
-    }
-  };
-
-  const loadCoupons = async () => {
-    try {
-      const res = await ApiService.get("getAllCoupons");
-      const data = res.data;
-      const today = new Date();
-
-      const validCoupons = data.coupons.filter((c) => {
-        const from = new Date(c.validFrom);
-        const to = new Date(c.validTo);
-        return c.isActive && today >= from && today <= to;
-      });
-
-      setCoupons(validCoupons);
-    } catch {
-      toast.error("Failed to load coupons");
-    } finally {
-      setLoadingCoupons(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAdress();
-    fetchProfile();
-    getdeliverycharges();
-    loadCoupons();
-  }, []);
-
-  const subtotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-  const total = subtotal + deliveryCharges;
-
-  let discount = 0;
-
-  if (selectedCoupon) {
-    if (selectedCoupon.discountPercentage) {
-      discount = (subtotal * selectedCoupon.discountPercentage) / 100;
-    } else if (selectedCoupon.flatAmount) {
-      discount = selectedCoupon.flatAmount;
-    }
-  }
-
-  const finalTotal = Math.max(subtotal - discount + deliveryCharges, 0);
-
-  // ⭐⭐⭐ FINAL PlaceOrder Function (NO POPUP) ⭐⭐⭐
-  //  const handlePlaceOrder = async () => {
-  //   try {
-  //     const storedBrandId = localStorage.getItem('brandId');
-  //     if (!storedBrandId) return toast.error('No brand selected');
-
-  //     const userId =
-  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-  //       localStorage.getItem(`registredUserId_${storedBrandId}`);
-
-  //     if (!userId) return toast.error('Please login or continue as guest');
-
-  //     const locationData = JSON.parse(
-  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-  //     );
-
-  //     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
-
-  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-  //       return toast.error('Please select your location');
-
-  //     // ⭐ GET FCM TOKEN
-  //     const fcmToken = localStorage.getItem("fcmToken");
-  //     console.log("FCM Token being sent to backend:", fcmToken);
-
-  //     const payload = {
-  //       user_id: userId,
-  //       deliveryType: selectedMethod,
-  //       governateId: selectedGovernateId,
-  //       areaId: selectedAreaId,
-  //       deliveryCharges: Number(deliveryCharges),
-  //       fcmToken: fcmToken,      // <-- 🔥 IMPORTANT
-  //       products: cart.map(item => ({
-  //         subproduct_id: item._id,
-  //         subProduct_img: item.image,
-  //         subProduct_name: item.name,
-  //         price: Number(item.price),
-  //         quantity: item.quantity,
-  //         description: item.description || ''
-  //       }))
-  //     };
-
-  //     const { data } = await ApiService.post('placeOrder', payload);
-
-  //     if (data.status) {
-  //       toast.success('Order placed successfully!');
-  //       navigate('/myorders');
-  //     } else {
-  //       toast.error(data.message || 'Failed to place order.');
-  //     }
-  //   } catch (error) {
-  //     toast.error('Something went wrong while placing your order.');
-  //   }
-  // };
-
-  // const handlePlaceOrder = async () => {
-  //   try {
-  //     const storedBrandId = localStorage.getItem('brandId');
-  //     if (!storedBrandId) return toast.error('No brand selected');
-
-  //     const userId =
-  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-  //       localStorage.getItem(`registredUserId_${storedBrandId}`);
-
-  //     if (!userId) return toast.error('Please login or continue as guest');
-
-  //     const locationData = JSON.parse(
-  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-  //     );
-
-  //     const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
-
-  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-  //       return toast.error('Please select your location');
-
-  //     const fcmToken = localStorage.getItem("fcmToken");
-  //     console.log("FCM Token being sent to backend:", fcmToken);
-
-  //     const payload = {
-  //       user_id: userId,
-  //       deliveryType: selectedMethod,
-  //       governateId: selectedGovernateId,
-  //       areaId: selectedAreaId,
-  //       deliveryCharges: Number(deliveryCharges),
-
-  //       // FIX HERE
-  //       token: fcmToken,  // <-- BACKEND EXPECTS THIS
-
-  //       products: cart.map(item => ({
-  //         subproduct_id: item._id,
-  //         subProduct_img: item.image,
-  //         subProduct_name: item.name,
-  //         price: Number(item.price),
-  //         quantity: item.quantity,
-  //         description: item.description || ''
-  //       }))
-  //     };
-
-  //     const { data } = await ApiService.post('placeOrder', payload);
-
-  //     if (data.status) {
-  //       toast.success('Order placed successfully!');
-  //       navigate('/myorders');
-  //     } else {
-  //       toast.error(data.message || 'Failed to place order.');
-  //     }
-  //   } catch (error) {
-  //     toast.error('Something went wrong while placing your order.');
-  //   }
-  // };
-
-  // const handlePlaceOrder = async () => {
-  //   try {
-  //     const storedBrandId = localStorage.getItem("brandId");
-  //     if (!storedBrandId) return toast.error("No brand selected");
-
-  //     const userId =
-  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-  //       localStorage.getItem(`registredUserId_${storedBrandId}`);
-
-  //     if (!userId) return toast.error("Please login or continue as guest");
-
-  //     const locationData = JSON.parse(
-  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
-  //     );
-
-  //     const { selectedMethod, selectedGovernateId, selectedAreaId } =
-  //       locationData;
-
-  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-  //       return toast.error("Please select your location");
-
-  //     const fcmToken = localStorage.getItem("fcmToken");
-
-  //     const payload = {
-  //       user_id: userId,
-  //       deliveryType: selectedMethod,
-  //       governateId: selectedGovernateId,
-  //       areaId: selectedAreaId,
-  //       deliveryCharge: Number(deliveryCharges),
-
-  //       // BACKEND DOES NOT WANT THIS HERE ANYMORE.
-  //       // Token is taken from DB after updateUserToken
-  //       // So DO NOT send fcmToken in placeOrder.
-  //       // ❌ fcmToken
-  //       // ❌ token
-
-  //       couponId: selectedCoupon._id,
-  //       couponCode: selectedCoupon.code,
-  //       discountPercentage: selectedCoupon.discountPercentage || 0,
-  //       flatAmount: selectedCoupon.flatAmount || 0,
-
-  //       products: cart.map((item) => ({
-  //         subproduct_id: item._id,
-  //         subProduct_img: item.image,
-  //         subProduct_name: item.name,
-  //         price: Number(item.price),
-  //         quantity: item.quantity,
-  //         description: item.description || "",
-  //       })),
-  //     };
-
-  //     const { data } = await ApiService.post("placeOrder", payload);
-
-  //     if (data.status) {
-  //       toast.success("Order placed successfully!");
-  //       navigate("/myorders");
-  //     } else {
-  //       toast.error(data.message || "Order failed.");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Something went wrong while placing your order.");
-  //   }
-  // };
-
-  const handlePlaceOrder = async () => {
-  try {
-    const storedBrandId = localStorage.getItem("brandId");
-    if (!storedBrandId) return toast.error("No brand selected");
-
-    const userId =
-      sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-      localStorage.getItem(`registredUserId_${storedBrandId}`);
-
-    if (!userId) return toast.error("Please login or continue as guest");
-
-    const locationData = JSON.parse(
-      localStorage.getItem(`selectedLocation_${storedBrandId}`) || "{}"
-    );
-
-    const { selectedMethod, selectedGovernateId, selectedAreaId } = locationData;
-
-    if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-      return toast.error("Please select your location");
-
-    const payload = {
-      user_id: userId,
-      deliveryType: selectedMethod,
-      governateId: selectedGovernateId,
-      areaId: selectedAreaId,
-      deliveryCharge: Number(deliveryCharges), // FIXED
-
-      couponId: selectedCoupon?._id || null,
-      couponCode: selectedCoupon?.code || "",
-      discountPercentage: selectedCoupon?.discountPercentage || 0,
-      flatAmount: selectedCoupon?.flatAmount || 0,
-
-      products: cart.map((item) => ({
-        subproduct_id: item._id,
-        subProduct_img: item.image,
-        subProduct_name: item.name,
-        price: Number(item.price),
-        quantity: item.quantity,
-        description: item.description || "",
-      })),
-    };
-
-    const { data } = await ApiService.post("placeOrder", payload);
-
-    if (data.status) {
-      toast.success("Order placed successfully!");
-      navigate("/myorders");
-    } else {
-      toast.error(data.message || "Order failed.");
-    }
-  } catch (error) {
-    console.log(error);
-     console.log("PLACE ORDER ERROR:", error?.response?.data || error);
-    toast.error("Something went wrong while placing your order.");
-  }
-};
-
-
-  return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      {/* Left Sidebar */}
-      <div className="w-full md:w-[42%] h-screen border-r border-gray-200 flex flex-col">
-        {/* Header */}
-        <div className="p-2 border-b border-gray-200 flex-shrink-0">
-          <div className="flex items-center justify-between mb-1">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </button>
-            <div className="w-9" />
-          </div>
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
-          {/* Deliver To */}
-          <div>
-            <div className="bg-gray-100 p-4">
-              <h2 className="text-base font-semibold text-gray-800">
-                Deliver to
-              </h2>
-            </div>
-
-            <div className="bg-white p-5 border-gray-300 space-y-4">
-              <div className="flex items-center justify-between">
-                <FaBuilding className="text-gray-500 text-lg" />
-                <div className="flex-1 text-center">
-                  <p className="text-gray-700 text-sm">
-                    {selectedArea || "No address selected"}
-                  </p>
-                </div>
-                <button className="text-gray-600 hover:text-[#FA0303]">
-                  <HiPencil className="text-lg" />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <LuContact className="text-gray-500 text-xl" />
-                <div className="flex-1 text-center">
-                  <p className="text-gray-800 font-medium">
-                    {profile?.firstName || "Unknown User"}
-                    {profile?.mobileNumber
-                      ? `, +965 ${profile.mobileNumber}`
-                      : ""}
-                  </p>
-                </div>
-                <button
-                  onClick={handleEditProfile}
-                  className="text-gray-600 hover:text-[#FA0303]"
-                >
-                  <HiPencil className="text-lg" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Item List */}
-          <div>
-            <div className="bg-gray-100 p-4">
-              <h2 className="text-base font-semibold text-gray-800">Items</h2>
-            </div>
-
-            {cart.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No items in cart</p>
-            ) : (
-              cart.map((item) => (
-                <div
-                  key={item._id}
-                  className="grid grid-cols-3 items-center border-b border-gray-200 px-4 py-2"
-                >
-                  <div className="text-left font-semibold">
-                    {item.quantity}x
-                  </div>
-                  <div className="text-center text-gray-800">{item.name}</div>
-                  <div className="text-right text-red-500 font-semibold">
-                    {(item.price * item.quantity).toFixed(3)} KD
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Promotions */}
-          <div>
-            <div className="bg-gray-100 p-4">
-              <h2 className="text-base font-semibold text-gray-800">
-                Promotions
-              </h2>
-            </div>
-
-            <div className="bg-white p-5 border-gray-300">
-              <div className="flex items-center">
-                <PenLine className="w-5 h-5 text-gray-500 mr-3" />
-                <input
-                  type="text"
-                  placeholder="Enter promotion code"
-                  className="w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Summary + Place Order */}
-        <div className="fixed bottom-0 left-0 md:w-[42%] w-full border-t border-gray-200 bg-white p-3 space-y-2">
-          {/* <div className="flex justify-between text-gray-800 font-semibold">
-            <span>Subtotal</span>
-            <span>{subtotal.toFixed(3)} KD</span>
-          </div> */}
-
-          <div className="flex justify-between text-gray-800">
-            <span>Subtotal</span>
-            <span>{subtotal.toFixed(3)} KD</span>
-          </div>
-
-          <div className="flex justify-between text-gray-800">
-            <span>Delivery Services</span>
-            <span>{deliveryCharges.toFixed(3)} KD</span>
-          </div>
-
-          {/* {selectedCoupon && (
-            <div className="flex justify-between text-green-700 font-medium">
-              <span>Coupon ({selectedCoupon.code})</span>
-              <span>- {discount.toFixed(3)} KD</span>
-            </div>
-          )} */}
-
-          <hr className="my-2" />
-
-          <div className="flex justify-between text-gray-900 font-bold text-lg">
-            <span>Total</span>
-            <span>{finalTotal.toFixed(3)} KD</span>
-            <span>Subtotal</span>
-            <span>{subtotal.toFixed(3)} KD</span>
-          </div>
-
-          <div className="flex justify-between text-gray-800 font-semibold">
-            <span>Delivery Services</span>
-            <span>{deliveryCharges.toFixed(3)} KD</span>
-          </div>
-
-          {selectedCoupon && (
-            <div className="flex justify-between text-green-700 font-medium">
-              <span>Coupon ({selectedCoupon.code})</span>
-              <span>- {discount.toFixed(3)} KD</span>
-            </div>
-          )}
-
-          {/* <h3 className="font-bold">Select Coupon</h3>
-          {loadingCoupons ? "Loading..." : coupons.map(c => (
-            <div key={c._id}
-              onClick={() => setSelectedCoupon(c)}
-              className={`p-2 border cursor-pointer ${selectedCoupon?._id === c._id ? "bg-green-100" : ""}`}>
-              {c.code}
-            </div>
-          ))} */}
-
-          <h3 className="font-bold mb-2">Select Coupon</h3>
-
-          <div className="border rounded-lg overflow-hidden">
-            {loadingCoupons ? (
-              <div className="p-3 text-gray-500">Loading coupons…</div>
-            ) : (
-              <>
-                {(showAllCoupons ? coupons : coupons.slice(0, 2)).map((c) => (
-                  <div
-                    key={c._id}
-                    onClick={() => setSelectedCoupon(c)}
-                    className={`flex justify-between items-center px-4 py-3 cursor-pointer border-b last:border-b-0 
-            ${
-              selectedCoupon?._id === c._id
-                ? "bg-green-100"
-                : "hover:bg-gray-100"
-            }`}
-                  >
-                    <div>
-                      <p className="font-medium">{c.code}</p>
-                      {c.discountPercentage && (
-                        <p className="text-sm text-gray-500">
-                          {c.discountPercentage}% OFF
-                        </p>
-                      )}
-                      {c.flatAmount && (
-                        <p className="text-sm text-gray-500">
-                          Flat {c.flatAmount} OFF
-                        </p>
-                      )}
-                    </div>
-
-                    {selectedCoupon?._id === c._id && (
-                      <span className="text-green-600 font-bold">✓</span>
-                    )}
-                  </div>
-                ))}
-
-                {coupons.length > 2 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllCoupons(!showAllCoupons)}
-                    className="w-full text-center py-2 text-sm text-blue-600 hover:bg-gray-50"
-                  >
-                    {showAllCoupons ? "Show less" : "Show more coupons"}
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* <div className="flex justify-between text-gray-900 font-bold">
-            <span>Total</span>
-            <span>{total.toFixed(3)} KD</span>
-          </div> */}
-
-          <div className="flex justify-between text-gray-800">
-            <span>Subtotal</span>
-            <span>{subtotal.toFixed(3)} KD</span>
-          </div>
-
-          <div className="flex justify-between text-gray-800">
-            <span>Delivery Services</span>
-            <span>{deliveryCharges.toFixed(3)} KD</span>
-          </div>
-
-          {selectedCoupon && (
-            <div className="flex justify-between text-green-700 font-medium">
-              <span>Coupon ({selectedCoupon.code})</span>
-              <span>- {discount.toFixed(3)} KD</span>
-            </div>
-          )}
-
-          <hr className="my-2" />
-
-          <div className="flex justify-between text-gray-900 font-bold text-lg">
-            <span>To Pay</span>
-            <span>{finalTotal.toFixed(3)} KD</span>
-          </div>
-
-          <button
-            onClick={handlePlaceOrder}
-            className="w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg"
-          >
-            Place Order
-          </button>
-        </div>
-      </div>
-
-      {/* Right Panel */}
-      <RightPanelLayout />
-    </div>
-  );
-};
-
-export default Placeorder;

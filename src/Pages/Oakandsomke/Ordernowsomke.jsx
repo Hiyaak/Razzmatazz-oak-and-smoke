@@ -6,10 +6,9 @@ import {
   ShoppingBag,
   Search,
   AlertCircle,
-  CookingPot,
   Instagram
 } from 'lucide-react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import CateringImage from '../../assets/CateringImage.jpg'
 import ComboImage from '../../assets/ComboImage.png'
@@ -236,90 +235,54 @@ const FoodDeliveryApp = () => {
                   <p className='text-sm text-gray-600'>Earliest arrival</p>
                 </div>
               </div>
-
-              <div
-                onClick={() => navigate('/combo')}
-                className='flex items-center justify-center cursor-pointer group'
-              >
-                <div className='flex items-center gap-2 pl-2'>
-                  <CookingPot className='w-4 h-4 text-gray-400 group-hover:text-red-500' />
-                  <p className='text-sm text-gray-600 group-hover:text-red-500'>
-                    Combo....
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Food Categories */}
             <div className='px-2 pt-8 pb-4 bg-gray-100 grid grid-cols-2 gap-2 cursor-pointer'>
-              {/* <div>
-                <img src={CateringImage} alt="Catering" className="w-full h-60 object-cover" />
-                <button>Catering - Set Menu's</button>
-              </div> */}
-              {/* <div
+              {/* Catering section */}
+              <div
                 onClick={() => navigate('/GetAllPackages')}
-                style={{ cursor: 'pointer' }}
+                className='relative rounded-lg overflow-hidden shadow'
               >
                 <img
                   src={CateringImage}
                   alt='Catering'
-
-                  className='w-full h-60 object-cover text-gray-100 font-bold text-lg text-center'
+                  className='w-full h-60 object-cover'
                 />
+                <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'></h3>
+                </div>
+              </div>
 
-                
-              </div> */}
-               {/* Catering Image 1 */}
-  <div
-    onClick={() => navigate('/GetAllPackages')}
-    className='relative rounded-lg overflow-hidden shadow'
-  >
-    <img
-      src={CateringImage}
-      alt='Catering'
-      className='w-full h-60 object-cover'
-    />
-    <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
-      <h3 className='text-gray-100 font-bold text-lg text-center'>
-       
-      </h3>
-    </div>
-  </div>
+              {/* Combo section */}
+              <div
+                onClick={() => navigate('/combo')}
+                className='relative rounded-lg overflow-hidden shadow'
+              >
+                <img
+                  src={ComboImage}
+                  alt='Catering'
+                  className='w-full h-60 object-cover'
+                />
+                <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'></h3>
+                </div>
+              </div>
 
-  {/* Catering Image 2 (Same Image Next To It) */}
-  <div
-    onClick={() => navigate('/combo')}
-    className='relative rounded-lg overflow-hidden shadow'
-  >
-    <img
-      src={ComboImage}
-      alt='Catering'
-      className='w-full h-60 object-cover'
-    />
-    <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
-      <h3 className='text-gray-100 font-bold text-lg text-center'>
-       
-      </h3>
-    </div>
-  </div>
-
-   {/* Catering Image 3 (Same Image Next To It) */}
-  <div
-    // onClick={() => navigate('/combo')}
-    className='relative rounded-lg overflow-hidden shadow'
-  >
-    <img
-      src={ComboDIY}
-      alt='Catering'
-      className='w-full h-60 object-cover'
-    />
-    <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
-      <h3 className='text-gray-100 font-bold text-lg text-center'>
-       
-      </h3>
-    </div>
-  </div>
-
+              {/* Diy section */}
+              <div
+                onClick={() => navigate('/diy')}
+                className='relative rounded-lg overflow-hidden shadow'
+              >
+                <img
+                  src={ComboDIY}
+                  alt='Catering'
+                  className='w-full h-60 object-cover'
+                />
+                <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'></h3>
+                </div>
+              </div>
 
               {productCategories.map(item => (
                 <div

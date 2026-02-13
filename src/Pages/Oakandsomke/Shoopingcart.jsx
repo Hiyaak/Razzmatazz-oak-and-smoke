@@ -16,6 +16,9 @@ const ShoppingCartPage = () => {
   const navigate = useNavigate()
   const { cart, updateQuantity, removeFromCart } = useCart()
 
+
+  console.log('Cart Items:', cart) 
+
   const brandId = localStorage.getItem('brandId')
 
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
@@ -258,7 +261,7 @@ const ShoppingCartPage = () => {
               </button>
             </div>
           ) : (
-            // ✅ Location selected — show "Go to checkout"
+            // ✅ Location selected — show " checkout"
             <div
               className='p-3  bg-white flex-shrink-0'
               onClick={handleGotocheckout}
