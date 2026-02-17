@@ -46,10 +46,6 @@ const Subproducts = () => {
     navigate('/shoopingcart')
   }
 
-  // const getProductQuantity = productId => {
-  //   const cartItem = cart.find(item => item._id === productId)
-  //   return cartItem ? cartItem.quantity : 0
-  // }
   const getProductQuantity = productId => {
     const cartItem = cart.find(
       item => item.cartItemId === `product-${productId}`
@@ -119,9 +115,7 @@ const Subproducts = () => {
                   {/* Price moved here (just above Add button) */}
                   <div className='text-[#FA0303] font-bold text-right mb-3'>
                     {item.price} KD
-                  </div>
-
-                 
+                  </div>           
 
                   {quantity === 0 ? (
                     <button
