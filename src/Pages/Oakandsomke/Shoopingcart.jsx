@@ -18,8 +18,9 @@ const ShoppingCartPage = () => {
   const [specialRemark, setSpecialRemark] = useState('')
   const [isSpecialRemarksEnabled, setIsSpecialRemarksEnabled] = useState(false)
 
-  // console.log('Cart Items:', cart)
-
+  useEffect(() => {
+    console.log('Cart Data:', cart)
+  }, [cart])
   const brandId = localStorage.getItem('brandId')
 
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
@@ -206,7 +207,11 @@ const ShoppingCartPage = () => {
                     <div className='flex items-center justify-between'>
                       {/* Image */}
                       <img
-                        src={`${ImagePath}${item.image}`}
+                        src={
+                          item.image?.startsWith('http')
+                            ? item.image
+                            : `${ImagePath}${item.image}`
+                        }
                         alt={item.name}
                         className='w-16 h-16 object-cover rounded-md'
                       />
