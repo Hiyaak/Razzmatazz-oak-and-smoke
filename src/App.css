@@ -13,3 +13,21 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;     /* Firefox */
 }
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: inherit;
+}
+
+.react-calendar__tile {
+  border-radius: 8px;
+}
+
+.react-calendar__tile--active {
+  background: #16a34a !important; /* green */
+  color: white !important;
+}
+
+.react-calendar__tile:enabled:hover {
+  background-color: #f3f4f6;
+}

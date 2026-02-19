@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, PenLine } from 'lucide-react'
 import { useCart } from '../../Context/CartContext'
 import ApiService from '../../Services/Apiservice'
@@ -12,6 +12,11 @@ import { HiPencil } from 'react-icons/hi'
 const Placeorder = () => {
   const navigate = useNavigate()
   const { cart } = useCart()
+
+  const location = useLocation()
+
+  const specialRemark = location.state?.specialRemark || ''
+  // console.log('specialRemark in Placeorder:', specialRemark)
 
   const [userAdress, setUserAdress] = useState([])
   const [deliveryCharges, setDeliveryCharges] = useState(0)
@@ -298,10 +303,7 @@ const Placeorder = () => {
                 <LuContact className='text-gray-500 text-xl' />
                 <div className='flex-1 text-center'>
                   <p className='text-gray-800 font-medium'>
-                    {profile?.firstName || 'Unknown User'}
-                    {profile?.mobileNumber
-                      ? `, +965 ${profile.mobileNumber}`
-                      : ''}
+                    {profile?.name || 'User Name'}
                   </p>
                 </div>
                 <button

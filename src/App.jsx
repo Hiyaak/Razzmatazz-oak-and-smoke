@@ -209,7 +209,7 @@ function App () {
             <Route path='/notifications' element={<Getnotification />} />
             <Route path='/getAllPackages' element={<GetAllPackages />} />
             {/* <Route path="/packagesdetails" element={<PackagesDetails />} /> */}
-            <Route path='/package/:id' element={<PackagesDetails />} />
+            <Route path='/package/:packageId' element={<PackagesDetails />} />
           </Routes>
         </Suspense>
       </Router>

@@ -2,6 +2,7 @@ import { ArrowLeft } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import ApiService from '../../Services/Apiservice'
 
 const Usercheckout = () => {
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ const Usercheckout = () => {
     if (location.state?.profile) {
       const user = location.state.profile
       setFormData({
-        name: user.firstName || '',
+        name: user.name || '',
         email: user.email || '',
         phone: user.mobileNumber ? String(user.mobileNumber) : ''
       })
@@ -39,45 +40,34 @@ const Usercheckout = () => {
     setError('')
     setSuccess(false)
   }
-
   const handleSubmit = async () => {
     if (!userId) return
+
     setLoading(true)
     setError('')
     setSuccess(false)
 
     try {
-      const myHeaders = new Headers()
-      myHeaders.append('Content-Type', 'application/json')
-
-      const raw = JSON.stringify({
+      const payload = {
         user_id: userId,
         Name: formData.name,
         phone: formData.phone.replace(/[^0-9]/g, '')
-      })
-
-      const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
       }
 
-      const response = await fetch(
-        'http://13.126.81.242:5001/updateUser',
-        requestOptions
-      )
-      const result = await response.json()
+      const { data } = await ApiService.post('updateUser', payload)
 
-      if (result.status) {
+      if (data.status) {
         setSuccess(true)
         navigate('/userprofile', { replace: true })
       } else {
-        setError(result.message || 'Failed to update user information')
+        setError(data.message || 'Failed to update user information')
       }
     } catch (err) {
-      console.error('Error:', err)
-      setError('An error occurred while updating. Please try again.')
+      console.error('Error:', err.response?.data || err)
+      setError(
+        err.response?.data?.message ||
+          'An error occurred while updating. Please try again.'
+      )
     } finally {
       setLoading(false)
     }
