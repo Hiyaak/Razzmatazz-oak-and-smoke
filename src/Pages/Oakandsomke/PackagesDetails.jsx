@@ -1,7 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
-import { ArrowLeft } from 'lucide-react'
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquareText
+} from 'lucide-react'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
@@ -9,13 +14,13 @@ import { useCart } from '../../Context/CartContext'
 
 const PackageDetails = () => {
   const { packageId } = useParams()
-  const { cart, addToCart, updateQuantity, removeFromCart } = useCart()
+  const { cart, addToCart } = useCart()
 
   const [selectedItems, setSelectedItems] = useState({})
 
-  console.log('packageId:', packageId)
-
   const navigate = useNavigate()
+  const timeScrollRef = useRef(null)
+
   const brandId = localStorage.getItem('brandId')
 
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -86,6 +91,20 @@ const PackageDetails = () => {
 
   const existingItem = cart.find(item => item.cartItemId === cartItemId)
 
+  const scrollLeft = () => {
+    timeScrollRef.current?.scrollBy({
+      left: -200,
+      behavior: 'smooth'
+    })
+  }
+
+  const scrollRight = () => {
+    timeScrollRef.current?.scrollBy({
+      left: 200,
+      behavior: 'smooth'
+    })
+  }
+
   const increaseItem = item => {
     setSelectedItems(prev => ({
       ...prev,
@@ -123,11 +142,13 @@ const PackageDetails = () => {
 
       const selected = selectedOptions[category.id]
 
-      const selectedCount = Array.isArray(selected)
-        ? selected.length
-        : selected
-        ? 1
-        : 0
+      let selectedCount = 0
+
+      if (Array.isArray(selected)) {
+        selectedCount = selected.length
+      } else if (selected !== undefined) {
+        selectedCount = 1
+      }
 
       if (selectedCount < category.minItems) {
         errors[category.id] = 'This field is required'
@@ -216,31 +237,52 @@ const PackageDetails = () => {
                 <p className='text-red-500 text-sm mb-3'>Date not available</p>
               )}
 
-              <div className='flex flex-wrap gap-3'>
-                {packageData?.allTimeSlots?.map((slot, index) => {
-                  const isBooked = packageData?.bookedTimeSlots?.includes(slot)
-                  const isAvailable =
-                    packageData?.availableTimeSlots?.includes(slot)
+              <div className='flex items-center gap-2'>
+                {/* LEFT ARROW */}
+                <button
+                  onClick={scrollLeft}
+                  className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                >
+                  <ChevronLeft className='w-5 h-5' />
+                </button>
 
-                  return (
-                    <button
-                      key={index}
-                      disabled={!isAvailable}
-                      onClick={() => setSelectedSlot(slot)}
-                      className={`px-4 py-2 rounded-md border text-sm transition
-    ${
-      selectedSlot === slot
-        ? 'bg-green-600 text-white'
-        : isAvailable
-        ? 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
-        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-    }
-  `}
-                    >
-                      {formatTo12Hour(slot)} - {getEndTime(slot)}
-                    </button>
-                  )
-                })}
+                {/* TIME SLOTS */}
+                <div
+                  ref={timeScrollRef}
+                  className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
+                >
+                  {packageData?.allTimeSlots?.map((slot, index) => {
+                    const isAvailable =
+                      packageData?.availableTimeSlots?.includes(slot)
+
+                    return (
+                      <button
+                        key={index}
+                        disabled={!isAvailable}
+                        onClick={() => setSelectedSlot(slot)}
+                        className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
+            ${
+              selectedSlot === slot
+                ? 'bg-green-600 text-white'
+                : isAvailable
+                ? 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }
+          `}
+                      >
+                        {formatTo12Hour(slot)} - {getEndTime(slot)}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* RIGHT ARROW */}
+                <button
+                  onClick={scrollRight}
+                  className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                >
+                  <ChevronRight className='w-5 h-5' />
+                </button>
               </div>
             </div>
           </div>
@@ -272,178 +314,182 @@ const PackageDetails = () => {
           </div>
 
           {/* Categories */}
-          {packageData?.package?.categories?.map(category => (
-            <div key={category.id} className='border-b border-gray-200'>
-              {/* Category Section */}
-              <div className=' border-gray-200'>
-                {/* Heading Only (Grey Background) */}
-                <div className='bg-gray-100  p-4'>
-                  <h2 className='text-base font-semibold text-gray-800'>
-                    {category.name}
-                  </h2>
-                </div>
+          {[...(packageData?.package?.categories || [])]
+            .sort((a, b) => {
+              // 1️⃣ Additional Services always last
+              if (a.name === 'Addittional Services') return 1
+              if (b.name === 'Addittional Services') return -1
 
-                {/* Required + Min/Max */}
-                <div className='p-4 flex items-center justify-between'>
-                  {/* Left Side */}
-                  {category.name === 'Addittional Services' ? (
-                    <p className='text-sm font-medium text-gray-700'>
-                      Optional
-                    </p>
-                  ) : category.minItems > 0 ? (
-                    <p className='text-sm font-medium text-gray-700'>
-                      Required
-                    </p>
-                  ) : null}
+              // 2️⃣ Yes/No categories after normal categories
+              const aIsYesNo = a.items?.[0]?.isYesNoType
+              const bIsYesNo = b.items?.[0]?.isYesNoType
 
-                  {/* Right Side */}
-                  {(category.minItems > 0 || category.maxItems > 0) && (
-                    <p className='text-sm text-gray-600'>
-                      {category.minItems > 0 && `min: ${category.minItems}`}
-                      {category.minItems > 0 && category.maxItems > 0 && ', '}
-                      {category.maxItems > 0 && `max: ${category.maxItems}`}
+              if (aIsYesNo && !bIsYesNo) return 1
+              if (!aIsYesNo && bIsYesNo) return -1
+
+              return 0
+            })
+            .map(category => (
+              <div key={category.id} className='border-b border-gray-200'>
+                {/* Category Section */}
+                <div className=' border-gray-200'>
+                  {/* Heading Only (Grey Background) */}
+                  <div className='bg-gray-100  p-4'>
+                    <h2 className='text-base font-semibold text-gray-800'>
+                      {category.name}
+                    </h2>
+                  </div>
+
+                  {/* Required + Min/Max */}
+                  <div className='p-4 flex items-center justify-between'>
+                    {/* Left Side */}
+                    {category.name === 'Addittional Services' ? (
+                      <p className='text-sm font-medium text-gray-700'>
+                        Optional
+                      </p>
+                    ) : category.minItems > 0 ? (
+                      <p className='text-sm font-medium text-gray-700'>
+                        Required
+                      </p>
+                    ) : null}
+
+                    {/* Right Side */}
+                    {(category.minItems > 0 || category.maxItems > 0) && (
+                      <p className='text-sm text-gray-600'>
+                        {category.minItems > 0 && `min: ${category.minItems}`}
+                        {category.minItems > 0 && category.maxItems > 0 && ', '}
+                        {category.maxItems > 0 && `max: ${category.maxItems}`}
+                      </p>
+                    )}
+                  </div>
+                  {validationErrors[category.id] && (
+                    <p className='text-red-500 text-sm px-4 pb-2'>
+                      {validationErrors[category.id]}
                     </p>
                   )}
                 </div>
-                {validationErrors[category.id] && (
-                  <p className='text-red-500 text-sm px-4 pb-2'>
-                    {validationErrors[category.id]}
-                  </p>
-                )}
-              </div>
 
-              {/* Items Section (White Area) */}
-              <div className='p-4 pt-0 space-y-3'>
-                {category.items?.[0]?.isYesNoType
-                  ? category.items[0].options.map((opt, i) => (
-                      <label
-                        key={i}
-                        className='flex items-center gap-3 py-1 cursor-pointer'
-                      >
-                        <input
-                          type='radio'
-                          name={category.id}
-                          value={opt.value}
-                          onChange={() => {
-                            setSelectedOptions(prev => ({
-                              ...prev,
-                              [category.id]: opt.value
-                            }))
-
-                            setValidationErrors(prev => ({
-                              ...prev,
-                              [category.id]: null
-                            }))
-                          }}
-                          className='accent-red-500'
-                        />
-
-                        <span>{opt.label}</span>
-                      </label>
-                    ))
-                  : category.items?.map(item => {
-                      const quantity = selectedItems[item.id] || 0
-
-                      return (
-                        <div
-                          key={item.id}
-                          className='flex justify-between items-center'
+                {/* Items Section (White Area) */}
+                <div className='p-4 pt-0 space-y-3'>
+                  {category.items?.[0]?.isYesNoType
+                    ? category.items[0].options.map((opt, i) => (
+                        <label
+                          key={i}
+                          className='flex items-center gap-3 py-1 cursor-pointer'
                         >
-                          <div className='flex items-center gap-3'>
-                            {/*  Only Additional Services gets + - */}
-                            {category.name === 'Addittional Services' ? (
-                              <span>{item.name}</span>
-                            ) : (
-                              <>
-                                <input
-                                  type={
-                                    category.selectionType === 'multiple'
-                                      ? 'checkbox'
-                                      : 'radio'
-                                  }
-                                  name={category.id}
-                                  value={item.id}
-                                  checked={
-                                    category.selectionType === 'multiple'
-                                      ? selectedOptions[category.id]?.includes(
-                                          item.id
-                                        )
-                                      : selectedOptions[category.id] === item.id
-                                  }
-                                  onChange={e => {
-                                    setSelectedOptions(prev => {
-                                      const updated = { ...prev }
+                          <input
+                            type='radio'
+                            name={category.id}
+                            value={opt.value}
+                            checked={selectedOptions[category.id] === opt.value}
+                            onChange={() => {
+                              setSelectedOptions(prev => ({
+                                ...prev,
+                                [category.id]: opt.value
+                              }))
 
-                                      if (
-                                        category.selectionType === 'multiple'
-                                      ) {
-                                        const existing =
-                                          updated[category.id] || []
+                              setValidationErrors(prev => ({
+                                ...prev,
+                                [category.id]: null
+                              }))
+                            }}
+                            className='accent-red-500'
+                          />
+                          <span>{opt.label}</span>
+                        </label>
+                      ))
+                    : category.items?.map(item => {
+                        const quantity = selectedItems[item.id] || 0
 
-                                        if (e.target.checked) {
-                                          updated[category.id] = [
-                                            ...existing,
-                                            item.id
-                                          ]
-                                        } else {
-                                          updated[category.id] =
-                                            existing.filter(
-                                              id => id !== item.id
-                                            )
-                                        }
-                                      } else {
-                                        updated[category.id] = item.id
-                                      }
-
-                                      return updated
-                                    })
-
-                                    setValidationErrors(prev => ({
-                                      ...prev,
-                                      [category.id]: null
-                                    }))
-                                  }}
-                                  className='accent-red-500'
-                                />
-
+                        return (
+                          <div
+                            key={item.id}
+                            className='flex justify-between items-center'
+                          >
+                            <div className='flex items-center gap-3'>
+                              {/*  Only Additional Services gets + - */}
+                              {category.name === 'Addittional Services' ? (
                                 <span>{item.name}</span>
-                              </>
-                            )}
-                          </div>
-
-                          <div className='flex items-center gap-3'>
-                            {/* Price */}
-                            {item.price > 0 && (
-                              <span className='text-green-600 font-semibold text-sm'>
-                                {packageData?.package?.currency}{' '}
-                                {item.price.toFixed(3)}
-                              </span>
-                            )}
-
-                            {/*  Only Additional Services gets + - */}
-                            {category.name === 'Addittional Services' &&
-                              (quantity === 0 ? (
-                                <button
-                                  type='button'
-                                  onClick={() => increaseItem(item)}
-                                  className='bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center'
-                                >
-                                  +
-                                </button>
                               ) : (
-                                <div className='flex items-center gap-2'>
-                                  <button
-                                    type='button'
-                                    onClick={() => decreaseItem(item)}
-                                    className='bg-gray-300 rounded-full w-6 h-6 flex items-center justify-center'
-                                  >
-                                    −
-                                  </button>
+                                <>
+                                  <input
+                                    type={
+                                      category.selectionType === 'multiple'
+                                        ? 'checkbox'
+                                        : 'radio'
+                                    }
+                                    name={category.id}
+                                    value={item.id}
+                                    checked={
+                                      category.selectionType === 'multiple'
+                                        ? selectedOptions[
+                                            category.id
+                                          ]?.includes(item.id)
+                                        : selectedOptions[category.id] ===
+                                          item.id
+                                    }
+                                    disabled={
+                                      category.selectionType === 'multiple' &&
+                                      category.maxItems > 0 &&
+                                      !selectedOptions[category.id]?.includes(
+                                        item.id
+                                      ) &&
+                                      (selectedOptions[category.id]?.length ||
+                                        0) >= category.maxItems
+                                    }
+                                    onChange={e => {
+                                      setSelectedOptions(prev => {
+                                        const updated = { ...prev }
 
-                                  <span className='font-medium'>
-                                    {quantity}
-                                  </span>
+                                        if (
+                                          category.selectionType === 'multiple'
+                                        ) {
+                                          const existing =
+                                            updated[category.id] || []
 
+                                          if (e.target.checked) {
+                                            updated[category.id] = [
+                                              ...existing,
+                                              item.id
+                                            ]
+                                          } else {
+                                            updated[category.id] =
+                                              existing.filter(
+                                                id => id !== item.id
+                                              )
+                                          }
+                                        } else {
+                                          updated[category.id] = item.id
+                                        }
+
+                                        return updated
+                                      })
+
+                                      setValidationErrors(prev => ({
+                                        ...prev,
+                                        [category.id]: null
+                                      }))
+                                    }}
+                                    className='accent-red-500'
+                                  />
+
+                                  <span>{item.name}</span>
+                                </>
+                              )}
+                            </div>
+
+                            <div className='flex items-center gap-3'>
+                              {/* Price */}
+                              {item.price > 0 && (
+                                <span className='text-green-600 font-semibold text-sm'>
+                                  {packageData?.package?.currency}{' '}
+                                  {item.price.toFixed(3)}
+                                </span>
+                              )}
+
+                              {/*  Only Additional Services gets + - */}
+                              {category.name === 'Addittional Services' &&
+                                (quantity === 0 ? (
                                   <button
                                     type='button'
                                     onClick={() => increaseItem(item)}
@@ -451,15 +497,57 @@ const PackageDetails = () => {
                                   >
                                     +
                                   </button>
-                                </div>
-                              ))}
+                                ) : (
+                                  <div className='flex items-center gap-2'>
+                                    <button
+                                      type='button'
+                                      onClick={() => decreaseItem(item)}
+                                      className='bg-gray-300 rounded-full w-6 h-6 flex items-center justify-center'
+                                    >
+                                      −
+                                    </button>
+
+                                    <span className='font-medium'>
+                                      {quantity}
+                                    </span>
+
+                                    <button
+                                      type='button'
+                                      onClick={() => increaseItem(item)}
+                                      className='bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center'
+                                    >
+                                      +
+                                    </button>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                </div>
+              </div>
+            ))}
+
+            
+          <div>
+            <div className='bg-gray-100 p-4'>
+              <h2 className='text-base font-semibold text-gray-800'>
+                Special Requests
+              </h2>
+            </div>
+
+            <div className='bg-white p-5 border-gray-300'>
+              <div className='flex items-center'>
+                <MessageSquareText className='w-5 h-5 text-gray-500 mr-3' />
+
+                <input
+                  type='text'
+                  placeholder='Enter Your Special Requests'
+                  className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
+                />
               </div>
             </div>
-          ))}
+          </div>
         </div>
 
         {/* Bottom Bar */}
@@ -468,20 +556,60 @@ const PackageDetails = () => {
             onClick={() => {
               if (!validateSelections()) return
 
+              const formattedSelections = {}
+
+              packageData?.package?.categories?.forEach(category => {
+                if (category.name === 'Addittional Services') return
+
+                const selected = selectedOptions[category.id]
+                if (!selected) return
+
+                if (Array.isArray(selected)) {
+                  formattedSelections[category.name] = category.items
+                    .filter(item => selected.includes(item.id))
+                    .map(item => item.name)
+                } else {
+                  const found = category.items.find(
+                    item => item.id === selected
+                  )
+                  if (found) {
+                    formattedSelections[category.name] = found.name
+                  }
+                }
+              })
+
+              const formattedAdditionalServices = {}
+
+              const additionalCategory = packageData?.package?.categories?.find(
+                cat => cat.name === 'Addittional Services'
+              )
+
+              Object.entries(selectedItems).forEach(([itemId, qty]) => {
+                const item = additionalCategory?.items?.find(
+                  i => i.id === itemId
+                )
+
+                if (item) {
+                  formattedAdditionalServices[item.name] = {
+                    quantity: qty,
+                    price: item.price
+                  }
+                }
+              })
+
               const cartPayload = {
                 cartItemId: packageData.package.id,
                 packageId: packageData.package.id,
                 name: packageData.package.name,
                 date: selectedDate,
                 time: selectedSlot,
-                image: `${ImagePath}${packageData.package.images?.[0]}`,
-                selections: selectedOptions,
-                additionalServices: selectedItems,
+                image: packageData.package.images?.[0],
+                selections: formattedSelections,
+                additionalServices: formattedAdditionalServices,
                 price: finalTotal,
                 quantity: 1
               }
 
-              // addToCart must come from useCart()
               addToCart(cartPayload)
 
               navigate('/shoopingcart')

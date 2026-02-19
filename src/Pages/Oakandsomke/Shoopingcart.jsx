@@ -91,6 +91,29 @@ const ShoppingCartPage = () => {
     fetchRemarkStatus()
   }, [])
 
+  const formatCartDate = date => {
+    const d = new Date(date)
+    return d.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: '2-digit'
+    })
+  }
+
+  const getEndTime = time24 => {
+    const [hour, minute] = time24.split(':')
+    const date = new Date()
+    date.setHours(hour)
+    date.setMinutes(minute)
+    date.setHours(date.getHours() + 1)
+
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
+  }
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar (40% on desktop, full on mobile) */}
@@ -198,11 +221,11 @@ const ShoppingCartPage = () => {
                     className='border-b border-gray-200 pb-4 last:border-b-0'
                   >
                     {/* Edit Button (optional for combo) */}
-                    {item.type === 'combo' && (
+                    {/* {item.type === 'combo' && (
                       <button className='text-[#FA0303] text-sm font-medium mb-2'>
                         edit
                       </button>
-                    )}
+                    )} */}
 
                     <div className='flex items-center justify-between'>
                       {/* Image */}
@@ -217,8 +240,56 @@ const ShoppingCartPage = () => {
                       />
 
                       {/* Name */}
-                      <div className='flex-1 px-4 mb-9'>
+                      <div className='flex-1 px-4 mb-6'>
                         <h2 className='text-lg font-semibold'>{item.name}</h2>
+
+                        {/* DATE & TIME */}
+                        {item.date && item.time && (
+                          <p className='text-sm text-gray-500 mt-1'>
+                            {formatCartDate(item.date)} - {item.time} to{' '}
+                            {getEndTime(item.time)}
+                          </p>
+                        )}
+
+                        {/* SELECTED MENU ITEMS */}
+                        <div className='mt-2 space-y-1 text-sm text-gray-700'>
+                          {item.selections &&
+                            Object.entries(item.selections).map(
+                              ([category, value]) => (
+                                <div key={category}>
+                                  {Array.isArray(value) ? (
+                                    value.map((name, index) => (
+                                      <div key={index}>
+                                        {name}{' '}
+                                        <span className='text-gray-400'>
+                                          x1
+                                        </span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div>
+                                      {value}{' '}
+                                      <span className='text-gray-400'>x1</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            )}
+
+                          {/* ADDITIONAL SERVICES */}
+                          {item.additionalServices &&
+                            Object.entries(item.additionalServices).map(
+                              ([name, data]) => (
+                                <div key={name}>
+                                  {name}{' '}
+                                  <span className='text-gray-400'>
+                                    x{data.quantity}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                        </div>
+
                         {item.type === 'combo' && (
                           <p className='text-xs text-gray-500'>Combo item</p>
                         )}
