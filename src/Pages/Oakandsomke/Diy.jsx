@@ -3,10 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useEffect, useState } from 'react'
+import { useCart } from '../../Context/CartContext'
 
 const Diy = () => {
   const navigate = useNavigate()
   const [subProducts, setSubProducts] = useState([])
+  const { cart, addToCart, updateQuantity } = useCart()
+  const brandId = localStorage.getItem('brandId')
+
+  const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
+    localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
+  )
 
   const getAllSubProducts = async () => {
     try {
@@ -63,7 +70,7 @@ const Diy = () => {
                 className='relative rounded-md overflow-hidden p-4 flex flex-col h-full'
               >
                 {/* Image */}
-                <div>
+                <div className='w-full h-56 mb-2 overflow-hidden rounded-sm relative'>
                   <img
                     src={`${ImagePath}${item.image}`}
                     alt={item.name}
@@ -83,10 +90,43 @@ const Diy = () => {
                 <div className='text-[#FA0303] font-bold text-right mb-3'>
                   {item.price} KD
                 </div>
+
+                <button className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'>
+                  + Add
+                </button>
               </div>
             ))}
           </div>
         </div>
+
+        {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
+          // Location not selected — show "Select your location"
+          <div className='p-3 bg-white flex-shrink-0'>
+            <button
+              onClick={() => navigate('/pickupdeviler')}
+              className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3 rounded-lg transition-colors'
+            >
+              Select your location
+            </button>
+          </div>
+        ) : (
+          // Location selected — show "Review Order"
+          <div className='p-3 bg-white flex-shrink-0'>
+            <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
+              {/* Left - Items Count */}
+              <div className='flex items-center'>
+                <span className='bg-white/20 rounded-sm w-6 h-6 flex items-center justify-center text-sm'>
+                  {cart.length}
+                </span>
+              </div>
+              {/* Center - Review Order Text */}
+              <span>Review Order</span>
+
+              {/* Right - Total Price */}
+              <span>KD</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right Content Area */}

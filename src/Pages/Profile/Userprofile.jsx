@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
-import {
-  ArrowLeft,
-  ShoppingCart,
-  FileText,
-  Clock,
-  MapPin,
-  Trash2
-} from 'lucide-react'
+import { ArrowLeft, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
 import { toast } from 'react-toastify'
@@ -202,9 +195,7 @@ const Userprofile = () => {
 
             <div className='flex-1'>
               <h2 className='text-base font-semibold text-gray-900 mb-1'>
-                {profile?.firstName || profile?.lastName
-                  ? `${profile.firstName} ${profile.lastName}`
-                  : ''}
+                {profile?.name || 'User Name'}
               </h2>
               <p className='text-md text-gray-600 mb-0.5'>{profile?.email}</p>
               {profile?.mobileNumber && (

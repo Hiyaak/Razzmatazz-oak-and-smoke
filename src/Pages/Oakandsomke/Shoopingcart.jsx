@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ArrowLeft,
   Plus,
@@ -15,9 +15,10 @@ import { RiShoppingBasketLine } from 'react-icons/ri'
 const ShoppingCartPage = () => {
   const navigate = useNavigate()
   const { cart, updateQuantity, removeFromCart } = useCart()
+  const [specialRemark, setSpecialRemark] = useState('')
+  const [isSpecialRemarksEnabled, setIsSpecialRemarksEnabled] = useState(false)
 
-
-  console.log('Cart Items:', cart) 
+  // console.log('Cart Items:', cart)
 
   const brandId = localStorage.getItem('brandId')
 
@@ -47,7 +48,6 @@ const ShoppingCartPage = () => {
     )
 
     if (!guestUserId && !registredUserId) {
-      // User not logged in
       navigate('/login')
       return
     }
@@ -56,8 +56,13 @@ const ShoppingCartPage = () => {
 
     try {
       const { data } = await ApiService.get(`getAddressesByUser/${userId}`)
+
       if (data.status && data.addresses.length > 0) {
-        navigate('/placeorder')
+        navigate('/placeorder', {
+          state: {
+            specialRemark: specialRemark
+          }
+        })
       } else {
         navigate('/adress')
       }
@@ -66,6 +71,24 @@ const ShoppingCartPage = () => {
       toast.error('Something went wrong while fetching your addresses.')
     }
   }
+
+  useEffect(() => {
+    const fetchRemarkStatus = async () => {
+      try {
+        const brandId = localStorage.getItem('brandId')
+
+        const { data } = await ApiService.get(`getRemarkByBrand/${brandId}`)
+
+        if (data.status) {
+          setIsSpecialRemarksEnabled(data.isSpecialRemarksEnabled)
+        }
+      } catch (error) {
+        console.error('Remark API error:', error)
+      }
+    }
+
+    fetchRemarkStatus()
+  }, [])
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
@@ -91,21 +114,18 @@ const ShoppingCartPage = () => {
 
         {/* Scrollable Content */}
         <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
-          {/* Promotions Section */}
-          <div>
+          {/* <div>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
                 Promotions
               </h2>
             </div>
 
-            {/* White Box Container */}
+         
             <div className='bg-white p-5 border-gray-300'>
               <div className='flex items-center'>
-                {/* Tag Icon */}
                 <PenLine className='w-5 h-5 text-gray-500 mr-3' />
 
-                {/* Input Field */}
                 <input
                   type='text'
                   placeholder='Enter promotion code'
@@ -113,31 +133,32 @@ const ShoppingCartPage = () => {
                 />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Special Remarks Section */}
-          <div>
-            <div className='bg-gray-100 p-4'>
-              <h2 className='text-base font-semibold text-gray-800'>
-                Special Remarks
-              </h2>
-            </div>
+          {isSpecialRemarksEnabled && (
+            <div>
+              <div className='bg-gray-100 p-4'>
+                <h2 className='text-base font-semibold text-gray-800'>
+                  Special Remarks
+                </h2>
+              </div>
 
-            {/* White Box Container */}
-            <div className='bg-white p-5 border-gray-300'>
-              <div className='flex items-center'>
-                {/* Message Icon */}
-                <MessageSquareText className='w-5 h-5 text-gray-500 mr-3' />
+              <div className='bg-white p-5 border-gray-300'>
+                <div className='flex items-center'>
+                  <MessageSquareText className='w-5 h-5 text-gray-500 mr-3' />
 
-                {/* Input Field */}
-                <input
-                  type='text'
-                  placeholder='Enter Your Special Remarks'
-                  className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
-                />
+                  <input
+                    type='text'
+                    value={specialRemark}
+                    onChange={e => setSpecialRemark(e.target.value)}
+                    placeholder='Enter Your Special Remarks'
+                    className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Items Section */}
           <div>

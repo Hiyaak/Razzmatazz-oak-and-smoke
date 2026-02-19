@@ -61,8 +61,8 @@ const Subproducts = () => {
               <ArrowLeft className='w-5 h-5 text-gray-600' />
             </button>
 
-            <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              {decodeURIComponent(name || 'Packages').toUpperCase()}
+            <h1 className='text-xl font-semibold text-gray-900 text-center flex-1'>
+             Catering - Set Menu's
             </h1>
 
             <div className='w-9' />
@@ -91,7 +91,7 @@ const Subproducts = () => {
                   </div>
 
                   {/* Name */}
-                  <h2 className='text-lg font-semibold mb-3'>{item.name}</h2>
+                  <h2 className='text-md font-bold mb-3'>{item.name}</h2>
 
                   {/* Description */}
                   <p className='text-gray-600 text-sm mb-2 line-clamp-2 flex-1'>
@@ -144,7 +144,7 @@ const Subproducts = () => {
         </div>
 
         {/* Bottom Button */}
-        {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
+        {/* {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
           <div className='p-3 bg-white flex-shrink-0'>
             <button
               onClick={() => navigate('/pickupdeviler')}
@@ -176,7 +176,7 @@ const Subproducts = () => {
               </span>
             </button>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Right Panel */}
