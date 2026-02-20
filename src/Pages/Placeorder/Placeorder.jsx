@@ -201,6 +201,65 @@ const Placeorder = () => {
 
   const finalTotal = Math.max(subtotal - discount + deliveryCharges, 0)
 
+  // const handlePlaceOrder = async () => {
+  //   try {
+  //     const storedBrandId = localStorage.getItem('brandId')
+  //     if (!storedBrandId) return toast.error('No brand selected')
+
+  //     const userId =
+  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+  //       localStorage.getItem(`registredUserId_${storedBrandId}`)
+
+  //     if (!userId) return toast.error('Please login or continue as guest')
+
+  //     const locationData = JSON.parse(
+  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+  //     )
+
+  //     const { selectedMethod, selectedGovernateId, selectedAreaId } =
+  //       locationData
+
+  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+  //       return toast.error('Please select your location')
+
+  //     const payload = {
+  //       user_id: userId,
+  //       deliveryType: selectedMethod,
+  //       governateId: selectedGovernateId,
+  //       areaId: selectedAreaId,
+  //       deliveryCharge: Number(deliveryCharges), // FIXED
+
+  //       couponId: selectedCoupon?._id || null,
+  //       couponCode: selectedCoupon?.code || '',
+  //       discountPercentage: selectedCoupon?.discountPercentage || 0,
+  //       flatAmount: selectedCoupon?.flatAmount || 0,
+
+  //       products: cart.map(item => ({
+  //         subproduct_id: item._id,
+  //         subProduct_img: item.image,
+  //         subProduct_name: item.name,
+  //         price: Number(item.price),
+  //         quantity: item.quantity,
+  //         description: item.description || ''
+  //       }))
+  //     }
+
+  //     const { data } = await ApiService.post('placeOrder', payload)
+  //     console.log('Place Order Response:', data)
+
+  //     if (data.status) {
+  //       toast.success('Order placed successfully!')
+  //       navigate('/myorders')
+  //     } else {
+  //       toast.error(data.message || 'Order failed.')
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     console.log('PLACE ORDER ERROR:', error?.response?.data || error)
+  //     toast.error('Something went wrong while placing your order.')
+  //   }
+  // }
+
   const handlePlaceOrder = async () => {
     try {
       const storedBrandId = localStorage.getItem('brandId')
@@ -227,7 +286,10 @@ const Placeorder = () => {
         deliveryType: selectedMethod,
         governateId: selectedGovernateId,
         areaId: selectedAreaId,
-        deliveryCharge: Number(deliveryCharges), // FIXED
+        deliveryCharge: Number(deliveryCharges),
+
+        // 🔥 STATIC PAYMENT METHOD
+        paymentMethod: 'online',
 
         couponId: selectedCoupon?._id || null,
         couponCode: selectedCoupon?.code || '',
@@ -246,14 +308,21 @@ const Placeorder = () => {
 
       const { data } = await ApiService.post('placeOrder', payload)
 
+      console.log('Place Order Response:', data)
+
       if (data.status) {
-        toast.success('Order placed successfully!')
-        navigate('/myorders')
+        toast.success('Redirecting to payment...')
+
+        // ✅ Redirect to Tap Payment URL
+        if (data.payment_url) {
+          window.location.href = data.payment_url
+        } else {
+          toast.error('Payment URL not received')
+        }
       } else {
         toast.error(data.message || 'Order failed.')
       }
     } catch (error) {
-      console.log(error)
       console.log('PLACE ORDER ERROR:', error?.response?.data || error)
       toast.error('Something went wrong while placing your order.')
     }
