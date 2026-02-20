@@ -180,6 +180,14 @@ const PackageDetails = () => {
 
   const finalTotal = basePrice + additionalTotal
 
+  const formatDateToAPI = date => {
+    return date.toISOString().split('T')[0]
+  }
+
+  const isDateBlocked = packageData?.blockedDates?.some(
+    blocked => blocked.date === formatDateToAPI(selectedDate)
+  )
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* LEFT PANEL */}
@@ -233,56 +241,54 @@ const PackageDetails = () => {
             </div>
 
             <div className='p-4'>
-              {!packageData?.dateAvailable && (
-                <p className='text-red-500 text-sm mb-3'>Date not available</p>
-              )}
-
               <div className='flex items-center gap-2'>
-                {/* LEFT ARROW */}
-                <button
-                  onClick={scrollLeft}
-                  className='p-2 rounded-full border bg-white hover:bg-gray-100'
-                >
-                  <ChevronLeft className='w-5 h-5' />
-                </button>
+                {/* LEFT ARROW (only if not blocked) */}
+                {!isDateBlocked && (
+                  <button
+                    onClick={scrollLeft}
+                    className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                  >
+                    <ChevronLeft className='w-5 h-5' />
+                  </button>
+                )}
 
-                {/* TIME SLOTS */}
-                <div
-                  ref={timeScrollRef}
-                  className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
-                >
-                  {packageData?.allTimeSlots?.map((slot, index) => {
-                    const isAvailable =
-                      packageData?.availableTimeSlots?.includes(slot)
-
-                    return (
+                {/* TIME SLOTS OR BLOCK MESSAGE */}
+                {isDateBlocked ? (
+                  <div className='flex-1 text-red-500 text-center font-medium py-2'>
+                    This date is blocked for booking
+                  </div>
+                ) : (
+                  <div
+                    ref={timeScrollRef}
+                    className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
+                  >
+                    {packageData?.allTimeSlots?.map((slot, index) => (
                       <button
                         key={index}
-                        disabled={!isAvailable}
                         onClick={() => setSelectedSlot(slot)}
                         className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
-            ${
-              selectedSlot === slot
-                ? 'bg-green-600 text-white'
-                : isAvailable
-                ? 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-            }
-          `}
+              ${
+                selectedSlot === slot
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+              }
+            `}
                       >
                         {formatTo12Hour(slot)} - {getEndTime(slot)}
                       </button>
-                    )
-                  })}
-                </div>
+                    ))}
+                  </div>
+                )}
 
-                {/* RIGHT ARROW */}
-                <button
-                  onClick={scrollRight}
-                  className='p-2 rounded-full border bg-white hover:bg-gray-100'
-                >
-                  <ChevronRight className='w-5 h-5' />
-                </button>
+                {/* RIGHT ARROW (only if not blocked) */}
+                {!isDateBlocked && (
+                  <button
+                    onClick={scrollRight}
+                    className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                  >
+                    <ChevronRight className='w-5 h-5' />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -528,7 +534,6 @@ const PackageDetails = () => {
               </div>
             ))}
 
-            
           <div>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>

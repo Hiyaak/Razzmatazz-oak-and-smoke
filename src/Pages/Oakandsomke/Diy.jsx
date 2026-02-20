@@ -7,37 +7,43 @@ import { useCart } from '../../Context/CartContext'
 
 const Diy = () => {
   const navigate = useNavigate()
-  const [subProducts, setSubProducts] = useState([])
-  const { cart, addToCart, updateQuantity } = useCart()
+  const [products, setProducts] = useState([])
   const brandId = localStorage.getItem('brandId')
 
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
     localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
 
-  const getAllSubProducts = async () => {
+  const getProducts = async () => {
     try {
       const response = await ApiService.get(
-        'getAllSubProductByBrandName/Oak and Smoke'
+        'getAllProductByBrandName1/Oak and Smoke'
       )
 
       const data = response.data
+      console.log('response', data)
 
       if (data.status) {
-        setSubProducts(data.subproducts)
+        setProducts(data.products)
       } else {
-        setSubProducts([])
-        console.log('No subproducts found')
+        setProducts([])
+        console.log('No products found')
       }
     } catch (error) {
-      console.log('Error fetching subproducts:', error)
-      setSubProducts([])
+      console.log('Error fetching products:', error)
+      setProducts([])
     }
   }
 
   useEffect(() => {
-    getAllSubProducts()
+    getProducts()
   }, [])
+
+  const handleProduct = (productId, productName) => {
+    navigate(
+      `/diyproducts/${encodeURIComponent(productName)}?productId=${productId}`
+    )
+  }
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
@@ -62,68 +68,38 @@ const Diy = () => {
         </div>
 
         {/* Subproducts - Scrollable */}
-        <div className='flex-1 overflow-y-auto px-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
-          <div className='grid grid-cols-2 gap-4 cursor-pointer mt-8 pb-4'>
-            {subProducts.map(item => (
+        <div className='flex-1 overflow-y-auto px-2 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+          <div className='grid grid-cols-2 gap-2 cursor-pointer mt-8 pb-4'>
+            {products.map(item => (
               <div
                 key={item._id}
-                className='relative rounded-md overflow-hidden p-4 flex flex-col h-full'
+                className='relative rounded-lg overflow-hidden shadow'
+                 onClick={() => handleProduct(item._id, item.productName)}
               >
-                {/* Image */}
-                <div className='w-full h-56 mb-2 overflow-hidden rounded-sm relative'>
-                  <img
-                    src={`${ImagePath}${item.image}`}
-                    alt={item.name}
-                    className='w-full h-full object-cover'
-                  />
+                <img
+                  src={`${ImagePath}${item.product_img?.[0]}`}
+                  alt={item.productName}
+                  className='w-full h-60 object-cover'
+                />
+
+                <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'>
+                    {item.productName?.toUpperCase()}
+                  </h3>
                 </div>
-
-                {/* Name */}
-                <h2 className='text-lg font-semibold mb-3'>{item.name}</h2>
-
-                {/* Description - Added flex-1 here */}
-                <p className='text-gray-600 text-sm mb-2 line-clamp-2 flex-1'>
-                  {item.description}
-                </p>
-
-                {/* Price moved here (just above Add button) */}
-                <div className='text-[#FA0303] font-bold text-right mb-3'>
-                  {item.price} KD
-                </div>
-
-                <button className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'>
-                  + Add
-                </button>
               </div>
             ))}
           </div>
         </div>
 
-        {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
-          // Location not selected — show "Select your location"
-          <div className='p-3 bg-white flex-shrink-0'>
+        {/* Fixed Button at Bottom */}
+        {!(selectedMethod && (selectedArea || selectedGovernate)) && (
+          <div className='p-2 border-t border-gray-200 bg-white flex-shrink-0'>
             <button
               onClick={() => navigate('/pickupdeviler')}
-              className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3 rounded-lg transition-colors'
+              className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white py-3 rounded-lg transition-colors'
             >
               Select your location
-            </button>
-          </div>
-        ) : (
-          // Location selected — show "Review Order"
-          <div className='p-3 bg-white flex-shrink-0'>
-            <button className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-between px-6'>
-              {/* Left - Items Count */}
-              <div className='flex items-center'>
-                <span className='bg-white/20 rounded-sm w-6 h-6 flex items-center justify-center text-sm'>
-                  {cart.length}
-                </span>
-              </div>
-              {/* Center - Review Order Text */}
-              <span>Review Order</span>
-
-              {/* Right - Total Price */}
-              <span>KD</span>
             </button>
           </div>
         )}

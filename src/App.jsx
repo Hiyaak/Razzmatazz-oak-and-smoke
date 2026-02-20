@@ -182,6 +182,10 @@ const PackagesDetails = lazy(() =>
 )
 const Combos = lazy(() => import('./Pages/Oakandsomke/Combo'))
 const Diy = lazy(() => import('./Pages/Oakandsomke/Diy'))
+const DiyProducts = lazy(() => import('./Pages/Oakandsomke/DiyProducts'))
+const DiyProductDetails = lazy(() =>
+  import('./Pages/Oakandsomke/DiyProductDetails')
+)
 
 function App () {
   return (
@@ -194,6 +198,8 @@ function App () {
             <Route path='/otpverification' element={<Otpverification />} />
             <Route path='/combo' element={<Combos />} />
             <Route path='/diy' element={<Diy />} />
+           <Route path="/diyproductdetails/:id" element={<DiyProductDetails />} />
+            <Route path='/diyproducts/:name' element={<DiyProducts />} />
             <Route path='/subproduct/:name' element={<Subproducts />} />
             <Route path='/shoopingcart' element={<Shoopingcart />} />
             <Route path='/adress' element={<Adress />} />
