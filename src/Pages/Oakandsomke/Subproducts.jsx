@@ -53,6 +53,12 @@ const Subproducts = () => {
     return cartItem ? cartItem.quantity : 0
   }
 
+  const handleNavigate = item => {
+  navigate(`/subproductdetails/${item._id}`, {
+    state: { product: item }
+  })
+}
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
@@ -87,11 +93,18 @@ const Subproducts = () => {
                 >
                   {/* Image */}
                   <div className='w-full h-56 mb-2 overflow-hidden rounded-sm relative'>
-                    <img
+                    {/* <img
                       src={`${ImagePath}${item.image}`}
                       alt={item.name}
                       className='w-full h-full object-cover'
-                    />
+                    /> */}
+
+                    <img
+  src={`${ImagePath}${item.image}`}
+  alt={item.name}
+  className='w-full h-full object-cover cursor-pointer'
+  onClick={() => handleNavigate(item)}
+/>
 
                     {/* Light gray strip at the bottom of image for timeToPrepare */}
                     {item.timeToPrepare && (
@@ -119,17 +132,38 @@ const Subproducts = () => {
 
                   {quantity === 0 ? (
                     <button
-                      onClick={() =>
-                        addToCart({
-                          cartItemId: `product-${item._id}`,
-                          _id: item._id, 
-                          product_id: item.product_id, 
-                          type: 'product',
-                          name: item.name,
-                          price: item.price,
-                          image: item.image
-                        })
-                      }
+                      // onClick={() =>
+                      //   addToCart({
+                      //     cartItemId: `product-${item._id}`,
+                      //     _id: item._id, 
+                      //     product_id: item.product_id, 
+                      //     type: 'product',
+                      //     name: item.name,
+                      //     price: item.price,
+                      //     image: item.image
+                      //   })
+                      // }
+                    onClick={() => {
+  // Make sure brandId exists
+  if (!localStorage.getItem("brandId")) {
+    localStorage.setItem("brandId", item.brandId)
+  }
+
+  addToCart({
+    cartItemId: `product-${item._id}`,
+    _id: item._id,
+    brandId: item.brandId, // also include this
+    product_id: item.product_id,
+    type: 'product',
+    name: item.name,
+    price: item.price,
+    image: item.image
+  })
+
+  navigate(`/subproductdetails/${item._id}`, {
+    state: { product: item }
+  })
+}}
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                     >
                       + Add

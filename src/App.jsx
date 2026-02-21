@@ -160,6 +160,7 @@ const Profile = lazy(() => import('./Pages/Profile/Profile'))
 const Otpverification = lazy(() => import('./Pages/Profile/Otpverification'))
 const Subproducts = lazy(() => import('./Pages/Oakandsomke/Subproducts'))
 const SubProductView = lazy(() => import('./Pages/Oakandsomke/SubProductView'))
+const SubproductDetails = lazy(() => import('./Pages/Oakandsomke/SubproductDetails'))
 const Shoopingcart = lazy(() => import('./Pages/Oakandsomke/Shoopingcart'))
 const Adress = lazy(() => import('./Pages/Oakandsomke/Adress'))
 const Contact = lazy(() => import('./Pages/Contact/Contact'))
@@ -201,6 +202,7 @@ function App () {
            <Route path="/diyproductdetails/:id" element={<DiyProductDetails />} />
             <Route path='/diyproducts/:name' element={<DiyProducts />} />
             <Route path='/subproduct/:name' element={<Subproducts />} />
+            <Route path='/subproductdetails/:id' element={<SubproductDetails />} />
             <Route path='/shoopingcart' element={<Shoopingcart />} />
             <Route path='/adress' element={<Adress />} />
             <Route path='/contact' element={<Contact />} />
