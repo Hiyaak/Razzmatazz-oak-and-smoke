@@ -561,28 +561,74 @@ const PackageDetails = () => {
             onClick={() => {
               if (!validateSelections()) return
 
+              if (!selectedDate || !selectedSlot) {
+                return toast.error('Please select date and time')
+              }
+
+              // ===============================
+              // ✅ STORE ID + NAME
+              // ===============================
               const formattedSelections = {}
 
               packageData?.package?.categories?.forEach(category => {
                 if (category.name === 'Addittional Services') return
 
                 const selected = selectedOptions[category.id]
-                if (!selected) return
+                if (selected === undefined) return
 
-                if (Array.isArray(selected)) {
-                  formattedSelections[category.name] = category.items
-                    .filter(item => selected.includes(item.id))
-                    .map(item => item.name)
-                } else {
+                // YES / NO CATEGORY
+                if (category.items?.[0]?.isYesNoType) {
+                  const item = category.items[0]
+
+                  formattedSelections[category.id] = {
+                    name: category.name,
+                    items: [
+                      {
+                        id: item.id,
+                        name: item.name,
+                        isYesNoType: true,
+                        selectedValue: selected // ✅ TRUE or FALSE
+                      }
+                    ]
+                  }
+                }
+
+                // NORMAL CATEGORY
+                else if (Array.isArray(selected)) {
+                  formattedSelections[category.id] = {
+                    name: category.name,
+                    items: category.items
+                      .filter(item => selected.includes(item.id))
+                      .map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        isYesNoType: false
+                      }))
+                  }
+                }
+
+                // SINGLE SELECTION
+                else {
                   const found = category.items.find(
                     item => item.id === selected
                   )
                   if (found) {
-                    formattedSelections[category.name] = found.name
+                    formattedSelections[category.id] = {
+                      name: category.name,
+                      items: [
+                        {
+                          id: found.id,
+                          name: found.name,
+                          isYesNoType: false
+                        }
+                      ]
+                    }
                   }
                 }
               })
-
+              // ===============================
+              // ✅ ADDITIONAL SERVICES (ID + NAME)
+              // ===============================
               const formattedAdditionalServices = {}
 
               const additionalCategory = packageData?.package?.categories?.find(
@@ -590,33 +636,44 @@ const PackageDetails = () => {
               )
 
               Object.entries(selectedItems).forEach(([itemId, qty]) => {
-                const item = additionalCategory?.items?.find(
-                  i => i.id === itemId
-                )
+                if (qty > 0) {
+                  const item = additionalCategory?.items?.find(
+                    i => i.id === itemId
+                  )
 
-                if (item) {
-                  formattedAdditionalServices[item.name] = {
-                    quantity: qty,
-                    price: item.price
+                  if (item) {
+                    formattedAdditionalServices[itemId] = {
+                      name: item.name,
+                      quantity: qty,
+                      price: item.price
+                    }
                   }
                 }
               })
 
               const cartPayload = {
-                cartItemId: packageData.package.id,
+                cartItemId: `catering-${packageData.package.id}`,
+                type: 'catering',
+                orderType: 'catering',
+
                 packageId: packageData.package.id,
+                brandId: packageData.brand?.id,
+               persons: packageData.package.persons,
+
                 name: packageData.package.name,
-                date: selectedDate,
-                time: selectedSlot,
                 image: packageData.package.images?.[0],
+
                 selections: formattedSelections,
                 additionalServices: formattedAdditionalServices,
+
+                date: selectedDate,
+                time: selectedSlot,
+
                 price: finalTotal,
                 quantity: 1
               }
 
               addToCart(cartPayload)
-
               navigate('/shoopingcart')
             }}
             className='relative w-full bg-[#FA0303] text-white py-3 rounded-lg font-bold'

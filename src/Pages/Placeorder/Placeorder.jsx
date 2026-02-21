@@ -13,6 +13,8 @@ const Placeorder = () => {
   const navigate = useNavigate()
   const { cart } = useCart()
 
+  console.log('Cart in Placeorder:', cart)
+
   const location = useLocation()
 
   const specialRemark = location.state?.specialRemark || ''
@@ -35,9 +37,10 @@ const Placeorder = () => {
   )
   const userId = registredUserId || guestUserId
 
-  const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
-    localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-  )
+  const { selectedMethod, selectedGovernate, selectedArea, selectedAreaId } =
+    JSON.parse(
+      localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+    )
 
   const handleEditProfile = () => {
     navigate('/usercheckout', { state: { profile } })
@@ -75,21 +78,33 @@ const Placeorder = () => {
     }
   }
 
-  const getdeliverycharges = async () => {
+  const getDeliveryCharges = async () => {
     try {
-      const { data } = await ApiService.get(
-        `getdeliverychargesByBrandId/${storedBrandId}`
+      const locationData = JSON.parse(
+        localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
       )
-      if (data.status && data.data.length > 0) {
-        setDeliveryCharges(data.data[0].deliveryCharges ?? 0)
+
+      const { selectedMethod, selectedAreaId } = locationData
+
+      // Only call API if delivery method selected
+      if (selectedMethod === 'delivery' && selectedAreaId) {
+        const { data } = await ApiService.get(
+          `getDeliveryChargeByArea/${selectedAreaId}`
+        )
+
+        if (data.status) {
+          setDeliveryCharges(data.deliveryCharge ?? 0)
+        } else {
+          setDeliveryCharges(0)
+        }
       } else {
         setDeliveryCharges(0)
       }
     } catch (error) {
+      console.log('Error fetching delivery charge:', error)
       setDeliveryCharges(0)
     }
   }
-
   const fetchCoupons = async () => {
     try {
       setLoadingCoupons(true)
@@ -170,7 +185,7 @@ const Placeorder = () => {
   useEffect(() => {
     fetchAdress()
     fetchProfile()
-    getdeliverycharges()
+    getDeliveryCharges()
   }, [])
 
   useEffect(() => {
@@ -201,65 +216,6 @@ const Placeorder = () => {
 
   const finalTotal = Math.max(subtotal - discount + deliveryCharges, 0)
 
-  // const handlePlaceOrder = async () => {
-  //   try {
-  //     const storedBrandId = localStorage.getItem('brandId')
-  //     if (!storedBrandId) return toast.error('No brand selected')
-
-  //     const userId =
-  //       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-  //       localStorage.getItem(`registredUserId_${storedBrandId}`)
-
-  //     if (!userId) return toast.error('Please login or continue as guest')
-
-  //     const locationData = JSON.parse(
-  //       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-  //     )
-
-  //     const { selectedMethod, selectedGovernateId, selectedAreaId } =
-  //       locationData
-
-  //     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-  //       return toast.error('Please select your location')
-
-  //     const payload = {
-  //       user_id: userId,
-  //       deliveryType: selectedMethod,
-  //       governateId: selectedGovernateId,
-  //       areaId: selectedAreaId,
-  //       deliveryCharge: Number(deliveryCharges), // FIXED
-
-  //       couponId: selectedCoupon?._id || null,
-  //       couponCode: selectedCoupon?.code || '',
-  //       discountPercentage: selectedCoupon?.discountPercentage || 0,
-  //       flatAmount: selectedCoupon?.flatAmount || 0,
-
-  //       products: cart.map(item => ({
-  //         subproduct_id: item._id,
-  //         subProduct_img: item.image,
-  //         subProduct_name: item.name,
-  //         price: Number(item.price),
-  //         quantity: item.quantity,
-  //         description: item.description || ''
-  //       }))
-  //     }
-
-  //     const { data } = await ApiService.post('placeOrder', payload)
-  //     console.log('Place Order Response:', data)
-
-  //     if (data.status) {
-  //       toast.success('Order placed successfully!')
-  //       navigate('/myorders')
-  //     } else {
-  //       toast.error(data.message || 'Order failed.')
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //     console.log('PLACE ORDER ERROR:', error?.response?.data || error)
-  //     toast.error('Something went wrong while placing your order.')
-  //   }
-  // }
-
   const handlePlaceOrder = async () => {
     try {
       const storedBrandId = localStorage.getItem('brandId')
@@ -281,39 +237,182 @@ const Placeorder = () => {
       if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
         return toast.error('Please select your location')
 
-      const payload = {
-        user_id: userId,
-        deliveryType: selectedMethod,
-        governateId: selectedGovernateId,
-        areaId: selectedAreaId,
-        deliveryCharge: Number(deliveryCharges),
+      // 🔥 Detect order types correctly
+      const comboItem = cart.find(item => item.type === 'combo')
 
-        // 🔥 STATIC PAYMENT METHOD
-        paymentMethod: 'online',
+      const cateringItem = cart.find(item => item.orderType === 'catering')
 
-        couponId: selectedCoupon?._id || null,
-        couponCode: selectedCoupon?.code || '',
-        discountPercentage: selectedCoupon?.discountPercentage || 0,
-        flatAmount: selectedCoupon?.flatAmount || 0,
+      const diyItems = cart.filter(item => item.type === 'diycombo')
 
-        products: cart.map(item => ({
-          subproduct_id: item._id,
-          subProduct_img: item.image,
-          subProduct_name: item.name,
-          price: Number(item.price),
-          quantity: item.quantity,
-          description: item.description || ''
-        }))
+      let payload
+
+      // ====================================================
+      // 🟠 CATERING ORDER
+      // ====================================================
+      if (cateringItem) {
+        const primaryAddress = userAdress?.[0]
+
+        if (!primaryAddress) return toast.error('Please add delivery address')
+
+        if (!profile) return toast.error('Profile not loaded')
+
+        // ✅ Format selections to ID array
+        const formattedSelections = {}
+
+        Object.entries(cateringItem.selections || {}).forEach(
+          ([categoryId, categoryData]) => {
+            const ids = categoryData.items
+              .filter(item =>
+                item.isYesNoType ? item.selectedValue === true : true
+              )
+              .map(item => item.id)
+
+            if (ids.length > 0) {
+              formattedSelections[categoryId] = ids
+            }
+          }
+        )
+
+        // ✅ Format additional services → id : quantity
+        const formattedAdditionalServices = {}
+
+        Object.entries(cateringItem.additionalServices || {}).forEach(
+          ([serviceId, serviceData]) => {
+            if (serviceData.quantity > 0) {
+              formattedAdditionalServices[serviceId] = serviceData.quantity
+            }
+          }
+        )
+
+        payload = {
+          user_id: userId,
+          orderType: 'catering',
+
+          packageId: cateringItem.packageId,
+          brandId: storedBrandId,
+          persons: cateringItem.persons,
+
+          totalAmount: cateringItem.price,
+
+          selections: formattedSelections,
+          additionalServices: formattedAdditionalServices,
+
+          date: new Date(cateringItem.date).toISOString().split('T')[0],
+
+          time: cateringItem.time,
+
+          address: `${primaryAddress.Block}, ${primaryAddress.Street}, ${primaryAddress.Avenue}, House ${primaryAddress.house}`,
+
+          contactPhone: profile.mobileNumber,
+          contactName: profile.name,
+          specialInstructions: cateringItem.specialInstructions || '',
+
+          paymentMethod: 'online'
+        }
       }
 
-      const { data } = await ApiService.post('placeOrder', payload)
+      // ====================================================
+      // 🟣 DIY COMBO ORDER
+      // ====================================================
+      else if (diyItems.length > 0) {
+        const diyDate = diyItems[0]?.selectedDate
+        const diyTime = diyItems[0]?.selectedSlot
 
-      console.log('Place Order Response:', data)
+        if (!diyTime) return toast.error('Please select time for DIY combo')
+
+        payload = {
+          user_id: userId,
+          orderType: 'diyCombo',
+
+          diyDate: new Date(diyDate).toISOString().split('T')[0],
+
+          diyTime: diyTime,
+
+          products: diyItems.map(item => ({
+            subproduct_id: item._id,
+            subProduct_img: item.image,
+            subProduct_name: item.name,
+            price: Number(item.price),
+            quantity: item.quantity,
+            description: item.description || ''
+          })),
+
+          deliveryType: selectedMethod,
+          governateId: selectedGovernateId,
+          areaId: selectedAreaId,
+          deliveryCharge: Number(deliveryCharges),
+
+          paymentMethod: 'online',
+
+          couponId: selectedCoupon?._id || null,
+          couponCode: selectedCoupon?.code || '',
+          discountPercentage: selectedCoupon?.discountPercentage || 0,
+          flatAmount: selectedCoupon?.flatAmount || 0
+        }
+      }
+
+      // ====================================================
+      // 🔵 FIXED COMBO ORDER
+      // ====================================================
+      else if (comboItem) {
+        payload = {
+          user_id: userId,
+          orderType: 'fixedCombo',
+
+          fixedComboId: comboItem._id,
+          quantity: comboItem.quantity,
+
+          deliveryType: selectedMethod,
+          governateId: selectedGovernateId,
+          areaId: selectedAreaId,
+          deliveryCharge: Number(deliveryCharges),
+
+          paymentMethod: 'online',
+
+          couponId: selectedCoupon?._id || null,
+          couponCode: selectedCoupon?.code || '',
+          discountPercentage: selectedCoupon?.discountPercentage || 0,
+          flatAmount: selectedCoupon?.flatAmount || 0
+        }
+      }
+
+      // ====================================================
+      // 🟢 NORMAL PRODUCT ORDER
+      // ====================================================
+      else {
+        payload = {
+          user_id: userId,
+
+          products: cart.map(item => ({
+            subproduct_id: item._id,
+            subProduct_img: item.image,
+            subProduct_name: item.name,
+            price: Number(item.price),
+            quantity: item.quantity,
+            description: item.description || ''
+          })),
+
+          deliveryType: selectedMethod,
+          governateId: selectedGovernateId,
+          areaId: selectedAreaId,
+          deliveryCharge: Number(deliveryCharges),
+
+          paymentMethod: 'online',
+
+          couponId: selectedCoupon?._id || null,
+          couponCode: selectedCoupon?.code || '',
+          discountPercentage: selectedCoupon?.discountPercentage || 0,
+          flatAmount: selectedCoupon?.flatAmount || 0
+        }
+      }
+
+      console.log('Place Order Payload:', payload)
+
+      const { data } = await ApiService.post('placeOrder', payload)
 
       if (data.status) {
         toast.success('Redirecting to payment...')
 
-        // ✅ Redirect to Tap Payment URL
         if (data.payment_url) {
           window.location.href = data.payment_url
         } else {
@@ -513,3 +612,62 @@ const Placeorder = () => {
 }
 
 export default Placeorder
+
+// const handlePlaceOrder = async () => {
+//   try {
+//     const storedBrandId = localStorage.getItem('brandId')
+//     if (!storedBrandId) return toast.error('No brand selected')
+
+//     const userId =
+//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
+//       localStorage.getItem(`registredUserId_${storedBrandId}`)
+
+//     if (!userId) return toast.error('Please login or continue as guest')
+
+//     const locationData = JSON.parse(
+//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
+//     )
+
+//     const { selectedMethod, selectedGovernateId, selectedAreaId } =
+//       locationData
+
+//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
+//       return toast.error('Please select your location')
+
+//     const payload = {
+//       user_id: userId,
+//       deliveryType: selectedMethod,
+//       governateId: selectedGovernateId,
+//       areaId: selectedAreaId,
+//       deliveryCharge: Number(deliveryCharges), // FIXED
+
+//       couponId: selectedCoupon?._id || null,
+//       couponCode: selectedCoupon?.code || '',
+//       discountPercentage: selectedCoupon?.discountPercentage || 0,
+//       flatAmount: selectedCoupon?.flatAmount || 0,
+
+//       products: cart.map(item => ({
+//         subproduct_id: item._id,
+//         subProduct_img: item.image,
+//         subProduct_name: item.name,
+//         price: Number(item.price),
+//         quantity: item.quantity,
+//         description: item.description || ''
+//       }))
+//     }
+
+//     const { data } = await ApiService.post('placeOrder', payload)
+//     console.log('Place Order Response:', data)
+
+//     if (data.status) {
+//       toast.success('Order placed successfully!')
+//       navigate('/myorders')
+//     } else {
+//       toast.error(data.message || 'Order failed.')
+//     }
+//   } catch (error) {
+//     console.log(error)
+//     console.log('PLACE ORDER ERROR:', error?.response?.data || error)
+//     toast.error('Something went wrong while placing your order.')
+//   }
+// }
