@@ -246,7 +246,7 @@ const Myorders = () => {
                 {order.deliveryType === 'delivery' && (
                   <div className='flex justify-between mt-2'>
                     <span>Delivery Charges</span>
-                    <span>{formatPrice(order.deliveryCharges)} KD</span>
+                    <span>{formatPrice(order.deliveryCharge)} KD</span>
                   </div>
                 )}
 

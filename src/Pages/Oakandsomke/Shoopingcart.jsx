@@ -251,26 +251,43 @@ const ShoppingCartPage = () => {
                           </p>
                         )}
 
+                       
                         {/* SELECTED MENU ITEMS */}
                         <div className='mt-2 space-y-1 text-sm text-gray-700'>
                           {item.selections &&
                             Object.entries(item.selections).map(
-                              ([category, value]) => (
-                                <div key={category}>
-                                  {Array.isArray(value) ? (
-                                    value.map((name, index) => (
-                                      <div key={index}>
-                                        {name}{' '}
-                                        <span className='text-gray-400'>
-                                          x1
-                                        </span>
+                              ([categoryId, categoryData]) => (
+                                <div key={categoryId}>
+                                  {/* Category Name */}
+                                  <p className='font-medium text-gray-800'>
+                                    {categoryData.name}
+                                  </p>
+
+                                  {/* Items */}
+                                  {categoryData.items.map(
+                                    (selectedItem, index) => (
+                                      <div key={selectedItem.id || index}>
+                                        {selectedItem.name}
+
+                                        {/* ✅ YES / NO DISPLAY */}
+                                        {selectedItem.isYesNoType && (
+                                          <span className='ml-2 text-gray-500'>
+                                            -{' '}
+                                            {selectedItem.selectedValue
+                                              ? 'Yes'
+                                              : 'No'}
+                                          </span>
+                                        )}
+
+                                        {/* Normal items */}
+                                        {!selectedItem.isYesNoType && (
+                                          <span className='text-gray-400'>
+                                            {' '}
+                                            x1
+                                          </span>
+                                        )}
                                       </div>
-                                    ))
-                                  ) : (
-                                    <div>
-                                      {value}{' '}
-                                      <span className='text-gray-400'>x1</span>
-                                    </div>
+                                    )
                                   )}
                                 </div>
                               )
@@ -279,11 +296,11 @@ const ShoppingCartPage = () => {
                           {/* ADDITIONAL SERVICES */}
                           {item.additionalServices &&
                             Object.entries(item.additionalServices).map(
-                              ([name, data]) => (
-                                <div key={name}>
-                                  {name}{' '}
+                              ([serviceId, serviceData]) => (
+                                <div key={serviceId}>
+                                  {serviceData.name}{' '}
                                   <span className='text-gray-400'>
-                                    x{data.quantity}
+                                    x{serviceData.quantity}
                                   </span>
                                 </div>
                               )

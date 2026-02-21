@@ -1,20 +1,23 @@
-import { ArrowLeft } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { ImagePath } from '../../Services/Apiservice'
 import Calendar from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
 import { useCart } from '../../Context/CartContext'
 
 const DiyProductDetails = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const [quantity, setQuantity] = useState(1)
+  const timeScrollRef = useRef(null)
+  const [quantity, setQuantity] = useState(0)
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedSlot, setSelectedSlot] = useState(null)
   const [disabledDates, setDisabledDates] = useState([])
   const product = location.state?.product
 
-    const { cart, addToCart, updateQuantity } = useCart()
+  const { cart, addToCart, updateQuantity } = useCart()
   const brandId = localStorage.getItem('brandId')
 
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
@@ -25,7 +28,7 @@ const DiyProductDetails = () => {
     const fetchMonthlyReport = async () => {
       try {
         const year = selectedDate.getFullYear()
-        const month = selectedDate.getMonth() + 1 // JS month starts from 0
+        const month = selectedDate.getMonth() + 1
 
         const response = await ApiService.post('getMonthlyDiyComboReport', {
           brandId: product?.brandId,
@@ -53,6 +56,45 @@ const DiyProductDetails = () => {
   const handleReviewOrder = () => {
     navigate('/shoopingcart')
   }
+
+  const staticTimeSlots = [
+    { start: '12:00 PM', end: '1:00 PM' },
+    { start: '1:00 PM', end: '2:00 PM' },
+    { start: '2:00 PM', end: '3:00 PM' },
+    { start: '3:00 PM', end: '4:00 PM' },
+    { start: '4:00 PM', end: '5:00 PM' },
+    { start: '6:00 PM', end: '7:00 PM' },
+    { start: '7:00 PM', end: '8:00 PM' }
+  ]
+
+  const scrollLeft = () => {
+    if (timeScrollRef.current) {
+      timeScrollRef.current.scrollBy({
+        left: -200,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  const scrollRight = () => {
+    if (timeScrollRef.current) {
+      timeScrollRef.current.scrollBy({
+        left: 200,
+        behavior: 'smooth'
+      })
+    }
+  }
+  useEffect(() => {
+    const existingItem = cart.find(
+      item => item.cartItemId === `diycombo-${product?._id}`
+    )
+
+    if (existingItem) {
+      setQuantity(existingItem.quantity)
+    } else {
+      setQuantity(0)
+    }
+  }, [cart, product])
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
@@ -103,22 +145,53 @@ const DiyProductDetails = () => {
               </div>
 
               {/* Right Side - Quantity Control */}
-              <div className='flex items-center border rounded-full overflow-hidden '>
-                <button
-                  onClick={() => setQuantity(prev => (prev > 1 ? prev - 1 : 1))}
-                  className='px-3 py-1 text-red-600 font-bold'
-                >
-                  -
-                </button>
+              <div className='mr-4'>
+                {quantity === 0 ? (
+                  <button
+                    onClick={() => {
+                      if (!selectedDate || !selectedSlot) {
+                        return toast.error('Please select date and time')
+                      }
 
-                <span className='px-4 py-1'>{quantity}</span>
+                      addToCart({
+                        cartItemId: `diycombo-${product._id}`,
+                        _id: product._id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        type: 'diycombo',
+                        quantity: 1,
+                        selectedDate,
+                        selectedSlot
+                      })
+                    }}
+                    className='border border-[#FA0303] text-[#FA0303] px-4 py-1 rounded-full hover:bg-red-50 transition-colors font-medium'
+                  >
+                    + Add
+                  </button>
+                ) : (
+                  <div className='flex items-center border rounded-full overflow-hidden'>
+                    <button
+                      onClick={() =>
+                        updateQuantity(`diycombo-${product._id}`, quantity - 1)
+                      }
+                      className='px-3 py-1 text-red-600 font-bold'
+                    >
+                      -
+                    </button>
 
-                <button
-                  onClick={() => setQuantity(prev => prev + 1)}
-                  className='px-3 py-1 text-red-600 font-bold'
-                >
-                  +
-                </button>
+                    <span className='px-4 py-1 font-medium'>{quantity}</span>
+
+                    <button
+                      onClick={() =>
+                        updateQuantity(`diycombo-${product._id}`, quantity + 1)
+                      }
+                      className='px-3 py-1 text-red-600 font-bold'
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -135,14 +208,76 @@ const DiyProductDetails = () => {
                   onChange={setSelectedDate}
                   value={selectedDate}
                   minDate={new Date()}
+                  tileClassName={({ date }) =>
+                    disabledDates.some(
+                      disabled =>
+                        date.toDateString() === disabled.toDateString()
+                    )
+                      ? 'bg-red-200 text-red-600 font-semibold'
+                      : null
+                  }
                   tileDisabled={({ date }) =>
                     disabledDates.some(
                       disabled =>
                         date.toDateString() === disabled.toDateString()
                     )
                   }
-                  className='w-full border-0'
                 />
+              </div>
+            </div>
+
+            {/* Time Slots */}
+            <div className='border-b border-gray-200'>
+              <div className='bg-gray-100 p-4'>
+                <h2 className='text-base font-semibold text-gray-800'>
+                  Select Time
+                </h2>
+              </div>
+
+              <div className='p-4'>
+                <div className='flex items-center gap-2'>
+                  {/* LEFT ARROW */}
+                  <button
+                    onClick={scrollLeft}
+                    className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                  >
+                    <ChevronLeft className='w-5 h-5' />
+                  </button>
+
+                  {/* TIME SLOTS */}
+                  <div
+                    ref={timeScrollRef}
+                    className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
+                  >
+                    {staticTimeSlots.map((slot, index) => {
+                      const slotLabel = `${slot.start} - ${slot.end}`
+
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedSlot(slotLabel)}
+                          className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
+                ${
+                  selectedSlot === slotLabel
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+                }
+              `}
+                        >
+                          {slotLabel}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {/* RIGHT ARROW */}
+                  <button
+                    onClick={scrollRight}
+                    className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                  >
+                    <ChevronRight className='w-5 h-5' />
+                  </button>
+                </div>
               </div>
             </div>
 
