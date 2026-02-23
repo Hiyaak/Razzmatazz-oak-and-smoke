@@ -1,5 +1,3 @@
-
-
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const CartContext = createContext()
@@ -16,7 +14,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([])
   const [brandId, setBrandId] = useState(localStorage.getItem('brandId'))
 
-  // 🔄 Watch brand change (multi-brand support)
+  //  Watch brand change (multi-brand support)
   useEffect(() => {
     const handleStorageChange = () => {
       const newBrandId = localStorage.getItem('brandId')
@@ -29,7 +27,7 @@ export const CartProvider = ({ children }) => {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [brandId])
 
-  // 📦 Load cart for brand
+  //  Load cart for brand
   useEffect(() => {
     if (!brandId) return
 
@@ -46,7 +44,7 @@ export const CartProvider = ({ children }) => {
     }
   }, [brandId])
 
-  // 💾 Persist cart
+  // Persist cart
   useEffect(() => {
     if (brandId) {
       localStorage.setItem(`shoppingCart_${brandId}`, JSON.stringify(cart))
@@ -54,7 +52,7 @@ export const CartProvider = ({ children }) => {
   }, [cart, brandId])
 
   // ===============================
-  // 🛒 CART ACTIONS (PRODUCT + COMBO)
+  //  CART ACTIONS (PRODUCT + COMBO)
   // ===============================
 
   // ➕ Add product or combo
@@ -76,12 +74,12 @@ export const CartProvider = ({ children }) => {
     })
   }
 
-  // ❌ Remove product or combo
+  //  Remove product or combo
   const removeFromCart = cartItemId => {
     setCart(prevCart => prevCart.filter(item => item.cartItemId !== cartItemId))
   }
 
-  // 🔢 Update quantity
+  // Update quantity
   const updateQuantity = (cartItemId, newQuantity) => {
     if (newQuantity < 1) {
       removeFromCart(cartItemId)
@@ -97,7 +95,7 @@ export const CartProvider = ({ children }) => {
     )
   }
 
-  // 🧹 Clear cart
+  //  Clear cart
   const clearCart = () => {
     setCart([])
     if (brandId) {
@@ -105,7 +103,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // 💰 Totals
+  //  Totals
   const getCartTotal = () =>
     cart.reduce((total, item) => total + item.price * item.quantity, 0)
 

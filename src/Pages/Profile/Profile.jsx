@@ -40,7 +40,8 @@ const MenuPage = () => {
       .required('Name is required'),
 
     mobileNumber: Yup.string()
-      .matches(/^[0-9]{10}$/, 'Enter valid 10 digit mobile number')
+      .trim()
+      .matches(/^\d{8}$/, 'Enter valid 8 digit mobile number')
       .required('Mobile number is required'),
 
     email: Yup.string()
@@ -351,13 +352,31 @@ const MenuPage = () => {
                         <label className='block text-sm text-gray-500 mb-2'>
                           Mobile Number *
                         </label>
+
                         <input
                           type='tel'
                           name='mobileNumber'
                           value={values.mobileNumber}
-                          onChange={handleChange}
+                          onChange={e => {
+                            const onlyNumbers = e.target.value.replace(
+                              /\D/g,
+                              ''
+                            ) // remove non-digits
+                            if (onlyNumbers.length <= 8) {
+                              handleChange({
+                                target: {
+                                  name: 'mobileNumber',
+                                  value: onlyNumbers
+                                }
+                              })
+                            }
+                          }}
+                          maxLength={8}
+                          inputMode='numeric'
+                          pattern='\d*'
                           className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
                         />
+
                         {errors.mobileNumber && touched.mobileNumber && (
                           <p className='text-red-500 text-sm mt-1'>
                             {errors.mobileNumber}

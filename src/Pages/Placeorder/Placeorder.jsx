@@ -18,11 +18,16 @@ const Placeorder = () => {
   const location = useLocation()
 
   const specialRemark = location.state?.specialRemark || ''
-  // console.log('specialRemark in Placeorder:', specialRemark)
+  console.log('specialRemark in Placeorder:', specialRemark)
 
   const [userAdress, setUserAdress] = useState([])
   const [deliveryCharges, setDeliveryCharges] = useState(0)
   const [profile, setProfile] = useState(null)
+  const [carDetails, setCarDetails] = useState({
+    make: '',
+    color: '',
+    plate: ''
+  })
 
   const [coupons, setCoupons] = useState([])
   const [couponInput, setCouponInput] = useState('')
@@ -180,6 +185,21 @@ const Placeorder = () => {
 
     setSelectedCoupon(coupon)
     toast.success(`Coupon ${coupon.code} applied`)
+  }
+
+  const handleRemoveCoupon = () => {
+    setSelectedCoupon(null)
+    setCouponInput('')
+    toast.success('Coupon removed')
+  }
+
+  const handleCarChange = e => {
+    const { name, value } = e.target
+
+    setCarDetails(prev => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
   useEffect(() => {
@@ -450,7 +470,7 @@ const Placeorder = () => {
           <div>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Deliver to
+                {selectedMethod === 'pickup' ? 'Pickup from' : 'Deliver to'}
               </h2>
             </div>
 
@@ -469,11 +489,19 @@ const Placeorder = () => {
 
               <div className='flex items-center justify-between'>
                 <LuContact className='text-gray-500 text-xl' />
-                <div className='flex-1 text-center'>
-                  <p className='text-gray-800 font-medium'>
-                    {profile?.name || 'User Name'}
+
+                <div className='flex-1 flex items-center justify-center gap-3'>
+                  <p className='text-gray-600 '>
+                    {profile?.name || 'User Name'},
+                  </p>
+
+                  <p className='text-gray-900 font-bold'>
+                    {profile?.mobileNumber
+                      ? `+965 ${profile.mobileNumber}`
+                      : 'Mobile Number'}
                   </p>
                 </div>
+
                 <button
                   onClick={handleEditProfile}
                   className='text-gray-600 hover:text-[#FA0303]'
@@ -483,6 +511,45 @@ const Placeorder = () => {
               </div>
             </div>
           </div>
+
+          {selectedMethod === 'pickup' && (
+            <>
+              <div className='bg-gray-100 p-4'>
+                <h2 className='text-gray-700 font-medium'>
+                  Car details (optional)
+                </h2>
+              </div>
+
+              <div className='bg-white p-5 border-b border-gray-300 space-y-4'>
+                <input
+                  type='text'
+                  name='model'
+                  value={carDetails.model}
+                  onChange={handleCarChange}
+                  placeholder='Name'
+                  className='w-full border-b border-gray-300 outline-none py-2'
+                />
+
+                <input
+                  type='text'
+                  name='color'
+                  value={carDetails.color}
+                  onChange={handleCarChange}
+                  placeholder='Color'
+                  className='w-full border-b border-gray-300 outline-none py-2'
+                />
+
+                <input
+                  type='text'
+                  name='plateNumber'
+                  value={carDetails.plateNumber}
+                  onChange={handleCarChange}
+                  placeholder='Plate number'
+                  className='w-full border-b border-gray-300 outline-none py-2'
+                />
+              </div>
+            </>
+          )}
 
           {/* Item List */}
           <div>
@@ -526,15 +593,25 @@ const Placeorder = () => {
                   value={couponInput}
                   onChange={e => setCouponInput(e.target.value)}
                   placeholder='Enter promotion code'
-                  className='flex-1 border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1'
+                  disabled={!!selectedCoupon} // disable when applied
+                  className='flex-1 border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1 disabled:opacity-60'
                 />
 
-                <button
-                  onClick={handleApplyCoupon}
-                  className='bg-[#FA0303] text-white px-4 py-1 rounded text-sm'
-                >
-                  Apply
-                </button>
+                {selectedCoupon ? (
+                  <button
+                    onClick={handleRemoveCoupon}
+                    className='bg-gray-500 text-white px-4 py-1 rounded text-sm'
+                  >
+                    Remove
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleApplyCoupon}
+                    className='bg-[#FA0303] text-white px-4 py-1 rounded text-sm'
+                  >
+                    Apply
+                  </button>
+                )}
               </div>
 
               {/* Available Coupons */}
@@ -557,7 +634,16 @@ const Placeorder = () => {
                       <div>
                         <p className='font-semibold text-sm'>{coupon.code}</p>
                         <p className='text-xs text-gray-500'>
-                          Flat {coupon.flatAmount} KD off
+                          {coupon.discountPercentage > 0 && (
+                            <span>{coupon.discountPercentage}% OFF</span>
+                          )}
+
+                          {coupon.discountPercentage > 0 &&
+                            coupon.flatAmount > 0 && <span> • </span>}
+
+                          {coupon.flatAmount > 0 && (
+                            <span>{coupon.flatAmount} KD OFF</span>
+                          )}
                         </p>
                       </div>
 
@@ -612,62 +698,3 @@ const Placeorder = () => {
 }
 
 export default Placeorder
-
-// const handlePlaceOrder = async () => {
-//   try {
-//     const storedBrandId = localStorage.getItem('brandId')
-//     if (!storedBrandId) return toast.error('No brand selected')
-
-//     const userId =
-//       sessionStorage.getItem(`guestUserId_${storedBrandId}`) ||
-//       localStorage.getItem(`registredUserId_${storedBrandId}`)
-
-//     if (!userId) return toast.error('Please login or continue as guest')
-
-//     const locationData = JSON.parse(
-//       localStorage.getItem(`selectedLocation_${storedBrandId}`) || '{}'
-//     )
-
-//     const { selectedMethod, selectedGovernateId, selectedAreaId } =
-//       locationData
-
-//     if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-//       return toast.error('Please select your location')
-
-//     const payload = {
-//       user_id: userId,
-//       deliveryType: selectedMethod,
-//       governateId: selectedGovernateId,
-//       areaId: selectedAreaId,
-//       deliveryCharge: Number(deliveryCharges), // FIXED
-
-//       couponId: selectedCoupon?._id || null,
-//       couponCode: selectedCoupon?.code || '',
-//       discountPercentage: selectedCoupon?.discountPercentage || 0,
-//       flatAmount: selectedCoupon?.flatAmount || 0,
-
-//       products: cart.map(item => ({
-//         subproduct_id: item._id,
-//         subProduct_img: item.image,
-//         subProduct_name: item.name,
-//         price: Number(item.price),
-//         quantity: item.quantity,
-//         description: item.description || ''
-//       }))
-//     }
-
-//     const { data } = await ApiService.post('placeOrder', payload)
-//     console.log('Place Order Response:', data)
-
-//     if (data.status) {
-//       toast.success('Order placed successfully!')
-//       navigate('/myorders')
-//     } else {
-//       toast.error(data.message || 'Order failed.')
-//     }
-//   } catch (error) {
-//     console.log(error)
-//     console.log('PLACE ORDER ERROR:', error?.response?.data || error)
-//     toast.error('Something went wrong while placing your order.')
-//   }
-// }
