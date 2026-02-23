@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { toast } from 'react-toastify'
+import { useCart } from '../../Context/CartContext'
 
 const Myorders = () => {
   const navigate = useNavigate()
+  const { clearCart } = useCart()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancellingId, setCancellingId] = useState(null)
@@ -21,11 +23,13 @@ const Myorders = () => {
       if (data.status) {
         setPaymentStatus(data.payment_status)
 
-        toast.success(
-          data.payment_status === 'CAPTURED'
-            ? 'Payment Successful'
-            : 'Payment Failed'
-        )
+        if (data.payment_status === 'CAPTURED') {
+          toast.success('Payment Successful')
+
+          clearCart()
+        } else {
+          toast.error('Payment Failed')
+        }
 
         await getOrders()
 

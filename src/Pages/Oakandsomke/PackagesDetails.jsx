@@ -180,14 +180,17 @@ const PackageDetails = () => {
 
   const finalTotal = basePrice + additionalTotal
 
-  const formatDateToAPI = date => {
-    return date.toISOString().split('T')[0]
+  const formatDateOnly = date => {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
   }
 
   const isDateBlocked = packageData?.blockedDates?.some(
-    blocked => blocked.date === formatDateToAPI(selectedDate)
+    blocked => blocked.date === formatDateOnly(selectedDate)
   )
-
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* LEFT PANEL */}
@@ -658,7 +661,7 @@ const PackageDetails = () => {
 
                 packageId: packageData.package.id,
                 brandId: packageData.brand?.id,
-               persons: packageData.package.persons,
+                persons: packageData.package.persons,
 
                 name: packageData.package.name,
                 image: packageData.package.images?.[0],
