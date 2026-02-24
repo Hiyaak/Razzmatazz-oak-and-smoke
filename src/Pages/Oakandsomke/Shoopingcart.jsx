@@ -11,12 +11,16 @@ import { useCart } from '../../Context/CartContext'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { RiShoppingBasketLine } from 'react-icons/ri'
+import { useTranslation } from 'react-i18next'
+
+
 
 const ShoppingCartPage = () => {
   const navigate = useNavigate()
   const { cart, updateQuantity, removeFromCart } = useCart()
   const [specialRemark, setSpecialRemark] = useState('')
   const [isSpecialRemarksEnabled, setIsSpecialRemarksEnabled] = useState(false)
+  const { t } = useTranslation()
 
   useEffect(() => {
     console.log('Cart Data:', cart)
@@ -121,7 +125,8 @@ const ShoppingCartPage = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              Shopping Cart
+              {/* Shopping Cart */}
+              {t('ShoopingCart.ShoppingCart')}
             </h1>
 
             <div className='w-9' />
@@ -156,7 +161,7 @@ const ShoppingCartPage = () => {
             <div>
               <div className='bg-gray-100 p-4'>
                 <h2 className='text-base font-semibold text-gray-800'>
-                  Special Remarks
+                  {t('ShoopingCart.Special Remarks')}
                 </h2>
               </div>
 
@@ -168,7 +173,7 @@ const ShoppingCartPage = () => {
                     type='text'
                     value={specialRemark}
                     onChange={e => setSpecialRemark(e.target.value)}
-                    placeholder='Enter Your Special Remarks'
+                    placeholder={t('ShoopingCart.placeholder')}
                     className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
                   />
                 </div>
@@ -179,7 +184,7 @@ const ShoppingCartPage = () => {
           {/* Items Section */}
           <div>
             <div className='bg-gray-100 p-4 border-b border-gray-200'>
-              <h2 className='text-base font-semibold text-gray-800'>Items</h2>
+              <h2 className='text-base font-semibold text-gray-800'>{t('ShoopingCart.Item')}</h2>
             </div>
 
             {cart.length === 0 ? (
@@ -191,16 +196,19 @@ const ShoppingCartPage = () => {
                 {/* Right: Text + Button */}
                 <div>
                   <p className='text-gray-800 font-semibold mb-1'>
-                    Your cart is empty.
+                    {/* Your cart is empty. */}
+                    {t('ShoopingCart.cartEmpty')}
                   </p>
                   <p className='text-gray-500 text-sm mb-4'>
-                    Add some items to your cart.
+                    {/* Add some items to your cart. */}
+                    {t('ShoopingCart.addToCart')}
                   </p>
                   <button
                     onClick={() => navigate('/')}
                     className='px-5 py-2 border border-[#FA0303] text-[#FA0303] font-medium rounded-md hover:bg-red-50 transition-colors'
                   >
-                    Start Shopping
+                    {/* Start Shopping */}
+                    {t('ShoopingCart.startShopping')}
                   </button>
                 </div>
               </div>
