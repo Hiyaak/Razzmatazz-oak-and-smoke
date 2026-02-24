@@ -1,6 +1,13 @@
 {
   "brand": {
     "name": "البلوط والدخان",
-    "tagline": "تدخين اللحم كل يوم"
+    "tagline": "تدخين اللحم كل يوم",
+    "location": "الاستلام",
+    "Location":"التوصيل",
+    "Pickupfrom":"الاستلام من",
+    "Deliverto":"التوصيل إلى",
+    "Edit":"تعديل",
+    "Earliestarrival":"أقرب وصول"
+
   }
 }
