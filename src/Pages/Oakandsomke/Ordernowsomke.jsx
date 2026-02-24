@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Instagram
 } from 'lucide-react'
-import {  useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
 import CateringImage from '../../assets/CateringImage.jpg'
 import ComboImage from '../../assets/ComboImage.png'
@@ -17,8 +17,10 @@ import oak from '../../assets/oaklogo1.png'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { LuBike } from 'react-icons/lu'
+import { useTranslation } from 'react-i18next'
 
 const FoodDeliveryApp = () => {
+  const { t } = useTranslation()
   const [productCategories, setproductCategories] = useState([])
   const [managementStatus, setManagementStatus] = useState({
     deliveryStatus: true,
@@ -142,10 +144,12 @@ const FoodDeliveryApp = () => {
                   />
                   <div>
                     <h1 className='font-quicksand font-bold text-[16px] leading-tight text-gray-900 tracking-wide'>
-                      Oak and Smoke
+                      {t('brand.name')}
                     </h1>
 
-                    <p className='text-sm text-gray-500'>Smoke Meat Everyday</p>
+                    <p className='text-sm text-gray-500'>
+                      {t('brand.tagline')}
+                    </p>
                   </div>
                 </div>
 
