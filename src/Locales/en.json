@@ -4,9 +4,41 @@
     "tagline": "Smoke Meat Everyday",
     "location": "Pickup",
     "Location": "Delivery",
-    "Pickupfrom":"Pickup from",
-    "Deliverto":"Deliver to",
-    "Edit":"Edit",
-    "Earliestarrival":"Earliest Arrival"
+    "Pickupfrom": "Pickup from",
+    "Deliverto": "Deliver to",
+    "Edit": "Edit",
+    "Earliestarrival": "Earliest Arrival",
+    "Chooselocation": "Choose Location",
+    "Selectlocation": "Select Your Location",
+    "Delivery": "Delivery",
+    "Pickup": "Pickup",
+    "Choose": "Choose a Store",
+    "Method": "Method",
+    "Search": "Search ..."
+  },
+  "profile": {
+    "Menu": "Menu",
+    "Sign": " Sign in with",
+    "My Cart": "My Cart",
+    "My Orders": "My Orders",
+    "Email": "Email",
+    "Apple": "Apple",
+    "Google": "Google",
+    "Login": "Login",
+    "Register": "Register",
+    "Name": "Name",
+    "Password": "Password",
+    "Mobile Number": "Mobile Number",
+    "Continue": "Login with"
+  },
+  "ShoopingCart": {
+    "ShoppingCart": "Shopping Cart",
+    "Special Remarks": "Special Remarks",
+    "Item": "Items",
+    "checkout": "Go to checkout",
+    "cartEmpty": "Your cart is empty.",
+    "addToCart": "Add some items to your cart.",
+    "startShopping": "Start Shopping",
+    "placeholder": "Enter Your Special Remarks"
   }
 }

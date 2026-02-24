@@ -3,11 +3,42 @@
     "name": "البلوط والدخان",
     "tagline": "تدخين اللحم كل يوم",
     "location": "الاستلام",
-    "Location":"التوصيل",
-    "Pickupfrom":"الاستلام من",
-    "Deliverto":"التوصيل إلى",
-    "Edit":"تعديل",
-    "Earliestarrival":"أقرب وصول"
-
+    "Location": "التوصيل",
+    "Pickupfrom": "الاستلام من",
+    "Deliverto": "التوصيل إلى",
+    "Edit": "تعديل",
+    "Earliestarrival": "أقرب وصول",
+    "Chooselocation": "اختر الموقع",
+    "Selectlocation": "اختر موقعك",
+    "Delivery": "توصيل",
+    "Pickup": "استلام",
+    "Choose": "اختر متجرًا",
+    "Method": "اختر طريقة التسليم",
+    "Search": "ابحث عن وجبتك المفضلة ..."
+  },
+  "profile": {
+    "Menu": "القائمة",
+    "Sign": "تسجيل الدخول باستخدام",
+    "My Cart": "سلتي",
+    "My Orders": "طلباتي",
+    "Email": "البريد الإلكتروني",
+    "Apple": "أبل",
+    "Google": "جوجل",
+    "Login": "تسجيل الدخول",
+    "Register": "تسجيل",
+    "Name": "الاسم",
+    "Password": "كلمة المرور",
+    "Mobile Number": "رقم الهاتف المحمول",
+    "Continue": "تسجيل الدخول باستخدام"
+  },
+  "ShoopingCart": {
+    "ShoppingCart": "عربة التسوق",
+    "Special Remarks": "ملاحظات خاصة",
+    "Item": "أغراض",
+    "checkout": "اذهب إلى الدفع",
+    "cartEmpty": "عربة التسوق فارغة.",
+    "addToCart": "أضف بعض العناصر إلى عربة التسوق الخاصة بك.",
+    "startShopping": "ابدأ التسوق",
+    "placeholder": "أدخل ملاحظاتك الخاصة"
   }
 }
