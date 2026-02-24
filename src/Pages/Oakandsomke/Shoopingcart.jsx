@@ -27,14 +27,6 @@ const ShoppingCartPage = () => {
     localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
 
-  const handleQuantityChange = (productId, newQuantity) => {
-    if (newQuantity < 1) {
-      removeFromCart(productId)
-    } else {
-      updateQuantity(productId, newQuantity)
-    }
-  }
-
   const handleGotocheckout = async () => {
     const storedBrandId = localStorage.getItem('brandId')
 
@@ -251,7 +243,6 @@ const ShoppingCartPage = () => {
                           </p>
                         )}
 
-                       
                         {/* SELECTED MENU ITEMS */}
                         <div className='mt-2 space-y-1 text-sm text-gray-700'>
                           {item.selections &&
@@ -338,9 +329,16 @@ const ShoppingCartPage = () => {
 
                           <button
                             onClick={() =>
+                              item.type !== 'catering' &&
                               updateQuantity(item.cartItemId, item.quantity + 1)
                             }
-                            className='w-4 h-4 flex items-center justify-center border-2 border-[#FA0303] rounded-full text-[#FA0303] hover:bg-red-50 transition-colors'
+                            disabled={item.type === 'catering'}
+                            className={`w-4 h-4 flex items-center justify-center border-2 rounded-full transition-colors
+    ${
+      item.type === 'catering'
+        ? 'border-gray-300 text-gray-300 cursor-not-allowed'
+        : 'border-[#FA0303] text-[#FA0303] hover:bg-red-50'
+    }`}
                           >
                             <Plus className='w-3 h-3' />
                           </button>

@@ -2,17 +2,18 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
-import { ImagePath } from '../../Services/Apiservice'
+import ApiService, { ImagePath } from '../../Services/Apiservice'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import { useCart } from '../../Context/CartContext'
+import { toast } from 'react-toastify'
 
 const DiyProductDetails = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const timeScrollRef = useRef(null)
   const [quantity, setQuantity] = useState(0)
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(null)
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [disabledDates, setDisabledDates] = useState([])
   const product = location.state?.product
@@ -39,9 +40,13 @@ const DiyProductDetails = () => {
         if (response.data.status) {
           const exceededDates = response.data.report
             .filter(item => item.exceeded)
-            .map(item => new Date(item._id))
+            .map(item => {
+              const [year, month, day] = item._id.split('-')
+              return new Date(year, month - 1, day)
+            })
 
           setDisabledDates(exceededDates)
+          console.log('exceeddates:-', exceededDates)
         }
       } catch (error) {
         console.log('Report API error:', error)
@@ -96,6 +101,18 @@ const DiyProductDetails = () => {
     }
   }, [cart, product])
 
+  const isDateDisabled = selectedDate
+    ? disabledDates.some(
+        disabled => disabled.toDateString() === selectedDate.toDateString()
+      )
+    : false
+
+  useEffect(() => {
+    if (isDateDisabled) {
+      setSelectedSlot(null)
+    }
+  }, [selectedDate])
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
@@ -149,8 +166,16 @@ const DiyProductDetails = () => {
                 {quantity === 0 ? (
                   <button
                     onClick={() => {
-                      if (!selectedDate || !selectedSlot) {
-                        return toast.error('Please select date and time')
+                      if (!selectedDate) {
+                        return toast.error('Please select a date')
+                      }
+
+                      if (isDateDisabled) {
+                        return toast.error('Order limit reached for this date')
+                      }
+
+                      if (!selectedSlot) {
+                        return toast.error('Please select time')
                       }
 
                       addToCart({
@@ -165,7 +190,14 @@ const DiyProductDetails = () => {
                         selectedSlot
                       })
                     }}
-                    className='border border-[#FA0303] text-[#FA0303] px-4 py-1 rounded-full hover:bg-red-50 transition-colors font-medium'
+                    disabled={isDateDisabled}
+                    className={`border px-4 py-1 rounded-full font-medium transition-colors
+    ${
+      isDateDisabled
+        ? 'border-gray-300 text-gray-300 cursor-not-allowed'
+        : 'border-[#FA0303] text-[#FA0303] hover:bg-red-50'
+    }
+  `}
                   >
                     + Add
                   </button>
@@ -208,18 +240,21 @@ const DiyProductDetails = () => {
                   onChange={setSelectedDate}
                   value={selectedDate}
                   minDate={new Date()}
-                  tileClassName={({ date }) =>
-                    disabledDates.some(
+                  tileClassName={({ date }) => {
+                    const isDisabled = disabledDates.some(
                       disabled =>
-                        date.toDateString() === disabled.toDateString()
+                        disabled.getTime() === date.setHours(0, 0, 0, 0)
                     )
+
+                    return isDisabled
                       ? 'bg-red-200 text-red-600 font-semibold'
                       : null
-                  }
+                  }}
                   tileDisabled={({ date }) =>
                     disabledDates.some(
                       disabled =>
-                        date.toDateString() === disabled.toDateString()
+                        disabled.getTime() ===
+                        new Date(date).setHours(0, 0, 0, 0)
                     )
                   }
                 />
@@ -227,59 +262,61 @@ const DiyProductDetails = () => {
             </div>
 
             {/* Time Slots */}
-            <div className='border-b border-gray-200'>
-              <div className='bg-gray-100 p-4'>
-                <h2 className='text-base font-semibold text-gray-800'>
-                  Select Time
-                </h2>
-              </div>
+            {!isDateDisabled && (
+              <div className='border-b border-gray-200'>
+                <div className='bg-gray-100 p-4'>
+                  <h2 className='text-base font-semibold text-gray-800'>
+                    Select Time
+                  </h2>
+                </div>
 
-              <div className='p-4'>
-                <div className='flex items-center gap-2'>
-                  {/* LEFT ARROW */}
-                  <button
-                    onClick={scrollLeft}
-                    className='p-2 rounded-full border bg-white hover:bg-gray-100'
-                  >
-                    <ChevronLeft className='w-5 h-5' />
-                  </button>
+                <div className='p-4'>
+                  <div className='flex items-center gap-2'>
+                    {/* LEFT ARROW */}
+                    <button
+                      onClick={scrollLeft}
+                      className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                    >
+                      <ChevronLeft className='w-5 h-5' />
+                    </button>
 
-                  {/* TIME SLOTS */}
-                  <div
-                    ref={timeScrollRef}
-                    className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
-                  >
-                    {staticTimeSlots.map((slot, index) => {
-                      const slotLabel = `${slot.start} - ${slot.end}`
+                    {/* TIME SLOTS */}
+                    <div
+                      ref={timeScrollRef}
+                      className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
+                    >
+                      {staticTimeSlots.map((slot, index) => {
+                        const slotLabel = `${slot.start} - ${slot.end}`
 
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedSlot(slotLabel)}
-                          className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedSlot(slotLabel)}
+                            className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
                 ${
                   selectedSlot === slotLabel
                     ? 'bg-green-600 text-white'
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
                 }
               `}
-                        >
-                          {slotLabel}
-                        </button>
-                      )
-                    })}
-                  </div>
+                          >
+                            {slotLabel}
+                          </button>
+                        )
+                      })}
+                    </div>
 
-                  {/* RIGHT ARROW */}
-                  <button
-                    onClick={scrollRight}
-                    className='p-2 rounded-full border bg-white hover:bg-gray-100'
-                  >
-                    <ChevronRight className='w-5 h-5' />
-                  </button>
+                    {/* RIGHT ARROW */}
+                    <button
+                      onClick={scrollRight}
+                      className='p-2 rounded-full border bg-white hover:bg-gray-100'
+                    >
+                      <ChevronRight className='w-5 h-5' />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Description Section */}
             <div className='border-b border-gray-200'>
