@@ -174,7 +174,8 @@ const FoodDeliveryApp = () => {
                         : 'bg-white text-gray-700 border border-gray-400 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    Delivery
+                    {/* Delivery */}
+                     {t('brand.Location')}
                   </button>
                 )}
 
@@ -191,7 +192,8 @@ const FoodDeliveryApp = () => {
                         : 'bg-white text-gray-700 border border-gray-400 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    Pickup
+                    {/* Pickup */}
+                    {t('brand.location')}
                   </button>
                 )}
               </div>
@@ -204,8 +206,8 @@ const FoodDeliveryApp = () => {
                   <LuBike className='w-5 h-5 text-gray-400' />
                   <p className='text-sm text-gray-600'>
                     {selectedMethod === 'delivery'
-                      ? 'Deliver to'
-                      : 'Pickup from'}
+                      ? t('brand.Deliverto')
+                      : t('brand.Pickupfrom')}
                   </p>
                 </div>
 
@@ -219,7 +221,8 @@ const FoodDeliveryApp = () => {
                         onClick={() => navigate('/pickupdeviler')}
                         className='text-sm text-red-500 hover:text-red-600'
                       >
-                        Edit
+                        {/* Edit */}
+                        {t('brand.Edit')}
                       </button>
                     </>
                   ) : (
@@ -236,7 +239,7 @@ const FoodDeliveryApp = () => {
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-10 pl-4'>
                   <Clock className='w-5 h-5 text-gray-400' />
-                  <p className='text-sm text-gray-600'>Earliest arrival</p>
+                  <p className='text-sm text-gray-600'>{t('brand.Earliestarrival')}</p>
                 </div>
               </div>
             </div>
@@ -446,7 +449,7 @@ const FoodDeliveryApp = () => {
                         onClick={() => navigate('/pickupdeviler')}
                         className='text-sm text-red-500 hover:text-red-600'
                       >
-                        Edit
+                        {t('brand.Edit')}
                       </button>
                     </>
                   ) : (
@@ -462,7 +465,7 @@ const FoodDeliveryApp = () => {
 
               <div className='flex items-center gap-6'>
                 <Clock className='w-5 h-5 text-gray-400' />
-                <p className='text-sm text-gray-600'>Earliest arrival</p>
+                <p className='text-sm text-gray-600'>{t('brand.Earliestarrival')}</p>
               </div>
             </div>
 

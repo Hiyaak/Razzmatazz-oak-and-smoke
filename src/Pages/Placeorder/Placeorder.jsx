@@ -426,6 +426,20 @@ const Placeorder = () => {
         }
       }
 
+      if (selectedMethod === 'pickup') {
+
+  if (!carDetails?.model || !carDetails?.color || !carDetails?.plateNumber) {
+    return toast.error('Please enter car model, color and plate number')
+  }
+
+  payload.pickupDetails = {
+    location: "Main Branch", // 🔹 You can make this dynamic later
+    carName: carDetails.model,
+    carColor: carDetails.color,
+    carPlate: carDetails.plateNumber
+  }
+}
+
       console.log('Place Order Payload:', payload)
 
       const { data } = await ApiService.post('placeOrder', payload)
@@ -516,7 +530,7 @@ const Placeorder = () => {
             <>
               <div className='bg-gray-100 p-4'>
                 <h2 className='text-gray-700 font-medium'>
-                  Car details (optional)
+                  Car details
                 </h2>
               </div>
 
@@ -526,7 +540,7 @@ const Placeorder = () => {
                   name='model'
                   value={carDetails.model}
                   onChange={handleCarChange}
-                  placeholder='Name'
+                  placeholder='Car Model'
                   className='w-full border-b border-gray-300 outline-none py-2'
                 />
 
@@ -535,7 +549,7 @@ const Placeorder = () => {
                   name='color'
                   value={carDetails.color}
                   onChange={handleCarChange}
-                  placeholder='Color'
+                  placeholder='Car Color'
                   className='w-full border-b border-gray-300 outline-none py-2'
                 />
 
@@ -544,7 +558,7 @@ const Placeorder = () => {
                   name='plateNumber'
                   value={carDetails.plateNumber}
                   onChange={handleCarChange}
-                  placeholder='Plate number'
+                  placeholder='Car Plate number'
                   className='w-full border-b border-gray-300 outline-none py-2'
                 />
               </div>

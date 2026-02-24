@@ -1,6 +1,12 @@
 {
   "brand": {
     "name": "Oak and Smoke",
-    "tagline": "Smoke Meat Everyday"
+    "tagline": "Smoke Meat Everyday",
+    "location": "Pickup",
+    "Location": "Delivery",
+    "Pickupfrom":"Pickup from",
+    "Deliverto":"Deliver to",
+    "Edit":"Edit",
+    "Earliestarrival":"Earliest Arrival"
   }
 }
