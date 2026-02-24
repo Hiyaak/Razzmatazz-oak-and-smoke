@@ -5,8 +5,10 @@ import { FaCarSide, FaWalking } from 'react-icons/fa'
 
 import ApiService from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { useTranslation } from 'react-i18next'
 
 const HeroSection = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const brandId = localStorage.getItem('brandId')
@@ -59,7 +61,7 @@ const HeroSection = () => {
 
       if (data.status && data.data) {
         setManagementStatus({
-          deliveryStatus: data.data.deliveryStatus ?? true, 
+          deliveryStatus: data.data.deliveryStatus ?? true,
           pickupStatus: data.data.pickupStatus ?? true
         })
       }
@@ -248,12 +250,12 @@ const HeroSection = () => {
         {/* Scrollable Content */}
         <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
           {/* Method Selection */}
-          <div className='space-y-6  border-gray-200'>
+          <div className='flex flex-col gap-6 border-gray-200'>
             <h2 className='font-medium text-gray-700 bg-gray-100 px-6 py-3 border-b border-gray-200'>
-              Method
+              {t('brand.Method')}
             </h2>
             <div className='px-5 pb-6 border-b border-gray-200'>
-              <div className='flex space-x-4'>
+              <div className='flex gap-4'>
                 {managementStatus.deliveryStatus && (
                   <button
                     onClick={() => handleMethodChange('delivery')}
@@ -264,7 +266,7 @@ const HeroSection = () => {
                     }`}
                   >
                     <FaCarSide className='w-5 h-5' />
-                    Delivery
+                    {t('brand.Delivery')}
                   </button>
                 )}
 
@@ -278,7 +280,7 @@ const HeroSection = () => {
                     }`}
                   >
                     <FaWalking className='w-5 h-5' />
-                    Pickup
+                    {t('brand.Pickup')} 
                   </button>
                 )}
               </div>
@@ -289,7 +291,7 @@ const HeroSection = () => {
           <div className='pb-6'>
             <div className='flex items-center bg-gray-100 space-x-2 mb-3 border-b border-gray-300 py-4 px-6 w-full'>
               <span className='text-gray-700 font-medium'>
-                {selectedMethod === 'delivery' ? 'Location' : 'Choose a store'}
+                {selectedMethod === 'delivery' ? t('brand.Selectlocation') : t('brand.Choose')}
               </span>
             </div>
 
@@ -299,7 +301,7 @@ const HeroSection = () => {
                 <Search className='absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
                 <input
                   type='text'
-                  placeholder='Search...'
+                  placeholder={t('brand.Search')}
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   className='w-full pl-10 pr-6 py-3 border-b border-gray-200 outline-none focus:border-red-500 transition-colors'

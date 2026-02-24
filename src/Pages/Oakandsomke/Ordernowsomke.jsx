@@ -136,7 +136,7 @@ const FoodDeliveryApp = () => {
             >
               <div className='flex items-center justify-between px-6 py-4 hover:bg-gray-100'>
                 {/* Left side - logo and text */}
-                <div className='flex items-center space-x-3'>
+                <div className='flex items-center gap-3'>
                   <img
                     src={oak}
                     alt='Logo'
@@ -175,7 +175,7 @@ const FoodDeliveryApp = () => {
                     }`}
                   >
                     {/* Delivery */}
-                     {t('brand.Location')}
+                    {t('brand.Location')}
                   </button>
                 )}
 
@@ -230,7 +230,7 @@ const FoodDeliveryApp = () => {
                       onClick={() => navigate('/pickupdeviler')}
                       className='text-sm font-medium text-gray-900 hover:text-gray-700'
                     >
-                      Choose location
+                      {t('brand.Chooselocation')}
                     </button>
                   )}
                 </div>
@@ -239,7 +239,9 @@ const FoodDeliveryApp = () => {
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-10 pl-4'>
                   <Clock className='w-5 h-5 text-gray-400' />
-                  <p className='text-sm text-gray-600'>{t('brand.Earliestarrival')}</p>
+                  <p className='text-sm text-gray-600'>
+                    {t('brand.Earliestarrival')}
+                  </p>
                 </div>
               </div>
             </div>
@@ -319,7 +321,7 @@ const FoodDeliveryApp = () => {
                 onClick={() => navigate('/pickupdeviler')}
                 className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white py-3 rounded-lg transition-colors'
               >
-                Select your location
+                {t('brand.Selectlocation')}
               </button>
             </div>
           )}
@@ -465,7 +467,9 @@ const FoodDeliveryApp = () => {
 
               <div className='flex items-center gap-6'>
                 <Clock className='w-5 h-5 text-gray-400' />
-                <p className='text-sm text-gray-600'>{t('brand.Earliestarrival')}</p>
+                <p className='text-sm text-gray-600'>
+                  {t('brand.Earliestarrival')}
+                </p>
               </div>
             </div>
 

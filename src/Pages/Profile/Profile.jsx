@@ -10,9 +10,11 @@ import { getToken } from 'firebase/messaging'
 import { messaging } from '../../firebase/firebaseConfig'
 import * as Yup from 'yup'
 import { Formik, Form } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 const MenuPage = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [activeView, setActiveView] = useState('menu')
   const [activeTab, setActiveTab] = useState('register')
   const [showPassword, setShowPassword] = useState(false)
@@ -136,17 +138,17 @@ const MenuPage = () => {
   const menuItems = [
     {
       icon: <FaShoppingCart className='w-5 h-5 text-gray-600 font-semibold' />,
-      label: 'My Cart',
+      label: t('profile.My Cart'),
       path: '/shoopingcart'
     },
     {
       icon: <MdMenuBook className='w-5 h-5 text-gray-600' />,
-      label: 'Menu',
+      label: t('profile.Menu'),
       path: '/'
     },
     {
       icon: <MdOutlineMoreTime className='w-5 h-5 text-gray-600' />,
-      label: 'My Orders',
+      label: t('profile.My Orders'),
       path: '/myorders'
     }
   ]
@@ -176,7 +178,9 @@ const MenuPage = () => {
             {/* Menu Header */}
             <div className='p-4 border-b border-gray-200'>
               <div className='flex items-center justify-between mb-1'>
-                <h1 className='text-2xl font-semibold text-gray-900'>Menu</h1>
+                <h1 className='text-2xl font-semibold text-gray-900'>
+                  {t('profile.Menu')}
+                </h1>
                 <div className='w-9' />
               </div>
             </div>
@@ -186,7 +190,7 @@ const MenuPage = () => {
                 <button
                   key={i}
                   onClick={() => navigate(item.path)} // ✅ navigate to route
-                  className={`w-full p-3 flex items-center space-x-3 text-left hover:bg-gray-50 transition ${
+                  className={`w-full p-3 flex items-center gap-3 text-left hover:bg-gray-50 transition ${
                     i !== arr.length - 1 ? 'border-b border-gray-200' : ''
                   }`}
                 >
@@ -201,7 +205,7 @@ const MenuPage = () => {
             <div className='p-4'>
               <div className='flex items-center justify-between mb-1'>
                 <h1 className='text-2xl font-semibold text-gray-900'>
-                  Sign in with
+                  {t('profile.Sign')}
                 </h1>
                 <div className='w-9' />
               </div>
@@ -215,7 +219,7 @@ const MenuPage = () => {
                       <Mail className='w-4 h-4 text-white' />
                     </div>
                   ),
-                  label: 'Email',
+                  label: t('profile.Email'),
                   onClick: () => setActiveView('form')
                 },
                 {
@@ -230,7 +234,7 @@ const MenuPage = () => {
                       </svg>
                     </div>
                   ),
-                  label: 'Apple'
+                  label: t('profile.Apple')
                 },
                 {
                   icon: (
@@ -255,13 +259,13 @@ const MenuPage = () => {
                       </svg>
                     </div>
                   ),
-                  label: 'Google'
+                  label: t('profile.Google')
                 }
               ].map((item, i) => (
                 <button
                   key={i}
                   onClick={item.onClick}
-                  className='w-full flex items-center space-x-4 p-3 text-left hover:bg-gray-50 transition'
+                  className='w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50 transition'
                 >
                   {item.icon}
                   <span className='text-gray-700 font-medium'>
@@ -303,7 +307,7 @@ const MenuPage = () => {
                           : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
                       }`}
                     >
-                      Login
+                      {t('profile.Login')}
                     </button>
 
                     <button
@@ -315,12 +319,14 @@ const MenuPage = () => {
                           : 'bg-white text-cyan-500 border-2 border-[#0099CC]'
                       }`}
                     >
-                      Register
+                      {t('profile.Register')}
                     </button>
                   </div>
 
                   <h2 className='text-2xl font-bold text-gray-700 mb-8'>
-                    {activeTab === 'login' ? 'Login' : 'Register'}
+                    {activeTab === 'login'
+                      ? t('profile.Login')
+                      : t('profile.Register')}
                   </h2>
 
                   {/* --- FORM FIELDS --- */}
@@ -329,7 +335,7 @@ const MenuPage = () => {
                     {activeTab === 'register' && (
                       <div>
                         <label className='block text-sm text-gray-500 mb-2'>
-                          Name *
+                          {t('profile.Name')} *
                         </label>
                         <input
                           type='text'
@@ -350,7 +356,7 @@ const MenuPage = () => {
                     {activeTab === 'register' && (
                       <div>
                         <label className='block text-sm text-gray-500 mb-2'>
-                          Mobile Number *
+                          {t('profile.Mobile Number')} *
                         </label>
 
                         <input
@@ -388,7 +394,7 @@ const MenuPage = () => {
                     {/* Email */}
                     <div>
                       <label className='block text-sm text-gray-500 mb-2'>
-                        Email *
+                        {t('profile.Email')} *
                       </label>
                       <input
                         type='email'
@@ -407,7 +413,7 @@ const MenuPage = () => {
                     {/* Password */}
                     <div>
                       <label className='block text-sm text-gray-500 mb-2'>
-                        Password *
+                        {t('profile.Password')} *
                       </label>
                       <div className='relative'>
                         <input
@@ -439,7 +445,7 @@ const MenuPage = () => {
                     {/* SOCIAL LOGIN UI stays same */}
                     <div>
                       <h3 className='text-lg font-bold text-gray-700 mb-4'>
-                        Login with
+                        {t('profile.Continue')}
                       </h3>
                       <div className='space-y-4'>
                         {/* Apple */}
@@ -448,7 +454,7 @@ const MenuPage = () => {
                           className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
                         >
                           {/* ICON SVG remains */}
-                          Apple
+                          {t('profile.Apple')}
                         </button>
 
                         {/* Google */}
@@ -457,7 +463,7 @@ const MenuPage = () => {
                           className='w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
                         >
                           {/* ICON SVG remains */}
-                          Google
+                          {t('profile.Google')}
                         </button>
                       </div>
                     </div>
@@ -470,7 +476,7 @@ const MenuPage = () => {
                     type='submit'
                     className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors text-center'
                   >
-                    {activeTab === 'login' ? 'Login' : 'Register'}
+                    {activeTab === 'login' ? t('profile.Login') : t('profile.Register')}
                   </button>
                 </div>
               </Form>

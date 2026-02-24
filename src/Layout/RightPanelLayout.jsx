@@ -9,6 +9,7 @@ import { LanguageContext } from '../Context/LanguageContext'
 const RightPanelLayout = () => {
   const navigate = useNavigate()
   const { language, changeLanguage } = useContext(LanguageContext)
+
   const handleMenuClick = () => {
     const storedBrandId = localStorage.getItem('brandId')
     const guestUserId = sessionStorage.getItem(`guestUserId_${storedBrandId}`)
@@ -31,7 +32,7 @@ const RightPanelLayout = () => {
       {/* Top Navigation — hidden on mobile */}
       <div className='hidden md:absolute md:top-4 md:left-6 md:right-6 md:z-10 md:block'>
         <div className='flex justify-between items-center'>
-          <div className='flex space-x-6'>
+          <div className='flex gap-6'>
             <button
               onClick={handleMenuClick}
               className='w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
@@ -63,7 +64,7 @@ const RightPanelLayout = () => {
 
             <button
               onClick={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
-              className='px-3 h-10 bg-white text-black rounded-full flex items-center gap-2 hover:bg-gray-100 transition-all'
+              className='w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
             >
               <Languages className='w-4 h-4' />
               {language === 'en' ? 'EN' : 'AR'}
