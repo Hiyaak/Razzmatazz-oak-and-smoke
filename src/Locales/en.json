@@ -40,5 +40,21 @@
     "addToCart": "Add some items to your cart.",
     "startShopping": "Start Shopping",
     "placeholder": "Enter Your Special Remarks"
+  },
+ 
+  "Contact": {
+    "ourBranches": "Our branches",
+    "nobranchesavailable": "No branches available",
+    "youropinionmatters": "Your opinion matters",
+    "leaveFeedback": "Leave Feedback",
+    "customerreviews": "Customer reviews",
+    "viewmore": "View more",
+    "noreviewsavailable": "No reviews available",
+    "connectwithus": "Connect with us",
+    "name": "Name",
+    "phoneOptional": "Phone (Optional)",
+    "leaveusacomment": "Leave us a comment",
+    "SEND": "SEND"
   }
+
 }

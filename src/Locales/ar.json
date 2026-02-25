@@ -40,5 +40,21 @@
     "addToCart": "أضف بعض العناصر إلى عربة التسوق الخاصة بك.",
     "startShopping": "ابدأ التسوق",
     "placeholder": "أدخل ملاحظاتك الخاصة"
+  },
+  
+  "Contact": {
+    "ourBranches": "فروعنا",
+    "nobranchesavailable": "لا توجد فروع متاحة",
+    "youropinionmatters": "رأيك مهم",
+    "leaveFeedback": "اترك تعليقًا",
+    "customerreviews": "مراجعات العملاء",
+    "viewmore": "عرض المزيد",
+    "noreviewsavailable": "لا توجد مراجعات متاحة",
+    "connectwithus": "تواصل معنا",
+    "name": "الاسم",
+    "phoneOptional": "الهاتف (اختياري)",
+    "leaveusacomment": "اترك لنا تعليقًا",
+    "SEND": "إرسال"
   }
+
 }
