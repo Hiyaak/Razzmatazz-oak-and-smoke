@@ -18,7 +18,10 @@
   },
   "profile": {
     "Menu": "Menu",
+    "Profile": "Profile",
+    "Edit": "Edit ",
     "Sign": " Sign in with",
+    "signout": "Sign out",
     "My Cart": "My Cart",
     "My Orders": "My Orders",
     "Email": "Email",
@@ -29,7 +32,9 @@
     "Name": "Name",
     "Password": "Password",
     "Mobile Number": "Mobile Number",
-    "Continue": "Login with"
+    "Continue": "Login with",
+    "Delivery addresses": "Delivery addresses",
+    "Delete account": "Delete account"
   },
   "ShoopingCart": {
     "ShoppingCart": "Shopping Cart",
@@ -39,9 +44,10 @@
     "cartEmpty": "Your cart is empty.",
     "addToCart": "Add some items to your cart.",
     "startShopping": "Start Shopping",
-    "placeholder": "Enter Your Special Remarks"
+    "placeholder": "Enter Your Special Remarks",
+    "KD": "KD",
+    "remove": "remove"
   },
- 
   "Contact": {
     "ourBranches": "Our branches",
     "nobranchesavailable": "No branches available",
@@ -55,6 +61,33 @@
     "phoneOptional": "Phone (Optional)",
     "leaveusacomment": "Leave us a comment",
     "SEND": "SEND"
+  },
+  "PlaceOrder": {
+    "Pickupfrom": "Pickup from",
+    "Deliverto": "Deliver to",
+    "Items": "Items",
+    "Promotions": "Promotions",
+    "Total": "To Pay",
+    "Subtotal": "Subtotal",
+    "PlaceOrder": "Place Order",
+    "Delivery Services": "Delivery Services",
+    "Available Coupons": "Available Coupons",
+    "Apply": "Apply",
+    "No coupons available": "No coupons available",
+    "Remove": "Remove",
+    "Enter promotion code": "Enter promotion code",
+    "KD OFF": "KD OFF",
+    "OFF": "OFF"
+  },
+  "MyOrders": {
+    "MyOrders": "My Orders",
+    "Qty": "Qty",
+    "Order ID": "Order ID",
+    "NoOrders": "No orders found.",
+    "Total": "Total",
+    "Status": "Status",
+    "Delivery Charges": "Delivery Charges",
+    "Cancel Order": "Cancel Order",
+    "Cancelling": "Cancelling..."
   }
-
 }

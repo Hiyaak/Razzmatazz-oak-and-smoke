@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react'
 import { LuContact } from 'react-icons/lu'
 import { FaBuilding } from 'react-icons/fa'
 import { HiPencil } from 'react-icons/hi'
+import { useTranslation } from 'react-i18next'
 
 const Placeorder = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { cart } = useCart()
 
@@ -427,18 +429,21 @@ const Placeorder = () => {
       }
 
       if (selectedMethod === 'pickup') {
+        if (
+          !carDetails?.model ||
+          !carDetails?.color ||
+          !carDetails?.plateNumber
+        ) {
+          return toast.error('Please enter car model, color and plate number')
+        }
 
-  if (!carDetails?.model || !carDetails?.color || !carDetails?.plateNumber) {
-    return toast.error('Please enter car model, color and plate number')
-  }
-
-  payload.pickupDetails = {
-    location: "Main Branch", // 🔹 You can make this dynamic later
-    carName: carDetails.model,
-    carColor: carDetails.color,
-    carPlate: carDetails.plateNumber
-  }
-}
+        payload.pickupDetails = {
+          location: 'Main Branch', // 🔹 You can make this dynamic later
+          carName: carDetails.model,
+          carColor: carDetails.color,
+          carPlate: carDetails.plateNumber
+        }
+      }
 
       console.log('Place Order Payload:', payload)
 
@@ -484,7 +489,9 @@ const Placeorder = () => {
           <div>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                {selectedMethod === 'pickup' ? 'Pickup from' : 'Deliver to'}
+                {selectedMethod === 'pickup'
+                  ? t('PlaceOrder.Pickupfrom')
+                  : t('PlaceOrder.Deliverto')}
               </h2>
             </div>
 
@@ -529,9 +536,7 @@ const Placeorder = () => {
           {selectedMethod === 'pickup' && (
             <>
               <div className='bg-gray-100 p-4'>
-                <h2 className='text-gray-700 font-medium'>
-                  Car details
-                </h2>
+                <h2 className='text-gray-700 font-medium'>Car details</h2>
               </div>
 
               <div className='bg-white p-5 border-b border-gray-300 space-y-4'>
@@ -568,7 +573,9 @@ const Placeorder = () => {
           {/* Item List */}
           <div>
             <div className='bg-gray-100 p-4'>
-              <h2 className='text-base font-semibold text-gray-800'>Items</h2>
+              <h2 className='text-base font-semibold text-gray-800'>
+                {t('PlaceOrder.Items')}
+              </h2>
             </div>
 
             {cart.length === 0 ? (
@@ -584,7 +591,8 @@ const Placeorder = () => {
                   </div>
                   <div className='text-center text-gray-800'>{item.name}</div>
                   <div className='text-right text-red-500 font-semibold'>
-                    {(item.price * item.quantity).toFixed(3)} KD
+                    {(item.price * item.quantity).toFixed(3)}{' '}
+                    {t('ShoopingCart.KD')}
                   </div>
                 </div>
               ))
@@ -595,7 +603,7 @@ const Placeorder = () => {
           <div>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Promotions
+                {t('PlaceOrder.Promotions')}
               </h2>
             </div>
 
@@ -606,7 +614,7 @@ const Placeorder = () => {
                   type='text'
                   value={couponInput}
                   onChange={e => setCouponInput(e.target.value)}
-                  placeholder='Enter promotion code'
+                  placeholder={t('PlaceOrder.Enter promotion code')}
                   disabled={!!selectedCoupon} // disable when applied
                   className='flex-1 border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 text-sm pb-1 disabled:opacity-60'
                 />
@@ -616,14 +624,14 @@ const Placeorder = () => {
                     onClick={handleRemoveCoupon}
                     className='bg-gray-500 text-white px-4 py-1 rounded text-sm'
                   >
-                    Remove
+                    {t('PlaceOrder.Remove')}
                   </button>
                 ) : (
                   <button
                     onClick={handleApplyCoupon}
                     className='bg-[#FA0303] text-white px-4 py-1 rounded text-sm'
                   >
-                    Apply
+                    {t('PlaceOrder.Apply')}
                   </button>
                 )}
               </div>
@@ -632,7 +640,7 @@ const Placeorder = () => {
               {coupons.length > 0 && (
                 <div className='space-y-2'>
                   <p className='text-sm font-medium text-gray-700'>
-                    Available Coupons
+                    {t('PlaceOrder.Available Coupons')}
                   </p>
 
                   {coupons.map(coupon => (
@@ -649,19 +657,25 @@ const Placeorder = () => {
                         <p className='font-semibold text-sm'>{coupon.code}</p>
                         <p className='text-xs text-gray-500'>
                           {coupon.discountPercentage > 0 && (
-                            <span>{coupon.discountPercentage}% OFF</span>
+                            <span>
+                              {coupon.discountPercentage}% {t('PlaceOrder.OFF')}
+                            </span>
                           )}
 
                           {coupon.discountPercentage > 0 &&
                             coupon.flatAmount > 0 && <span> • </span>}
 
                           {coupon.flatAmount > 0 && (
-                            <span>{coupon.flatAmount} KD OFF</span>
+                            <span>
+                              {coupon.flatAmount} {t('PlaceOrder.KD OFF')}
+                            </span>
                           )}
                         </p>
                       </div>
 
-                      <span className='text-green-600 text-sm'>Apply</span>
+                      <span className='text-green-600 text-sm'>
+                        {t('PlaceOrder.Apply')}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -673,34 +687,42 @@ const Placeorder = () => {
         {/* Bottom Summary + Place Order */}
         <div className='absolute bottom-0 left-0 w-full border-t border-gray-200 bg-white p-4 space-y-2 shadow-lg'>
           <div className='flex justify-between text-gray-800'>
-            <span>Subtotal</span>
-            <span>{subtotal.toFixed(3)} KD</span>
+            <span>{t('PlaceOrder.Subtotal')}</span>
+            <span>
+              {subtotal.toFixed(3)} {t('ShoopingCart.KD')}
+            </span>
           </div>
 
           <div className='flex justify-between text-gray-800'>
-            <span>Delivery Services</span>
-            <span>{deliveryCharges.toFixed(3)} KD</span>
+            <span>{t('PlaceOrder.Delivery Services')}</span>
+            <span>
+              {deliveryCharges.toFixed(3)} {t('ShoopingCart.KD')}
+            </span>
           </div>
 
           {selectedCoupon && (
             <div className='flex justify-between text-green-700 font-medium'>
               <span>Coupon ({selectedCoupon.code})</span>
-              <span>- {discount.toFixed(3)} KD</span>
+              <span>
+                - {discount.toFixed(3)} {t('ShoopingCart.KD')}
+              </span>
             </div>
           )}
 
           <hr className='my-2' />
 
           <div className='flex justify-between text-gray-900 font-bold text-lg'>
-            <span>To Pay</span>
-            <span>{finalTotal.toFixed(3)} KD</span>
+            <span>{t('PlaceOrder.Total')}</span>
+            <span>
+              {finalTotal.toFixed(3)} {t('ShoopingCart.KD')}
+            </span>
           </div>
 
           <button
             onClick={handlePlaceOrder}
             className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg'
           >
-            Place Order
+            {t('PlaceOrder.PlaceOrder')}
           </button>
         </div>
       </div>

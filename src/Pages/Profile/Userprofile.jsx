@@ -11,8 +11,10 @@ import {
   MdDelete,
   MdApartment
 } from 'react-icons/md'
+import { useTranslation } from 'react-i18next'
 
 const Userprofile = () => {
+  const { t } = useTranslation()
   const [profile, setProfile] = useState(null)
   const [userAdress, setUserAdress] = useState([])
   const [showAddressModal, setShowAddressModal] = useState(false)
@@ -124,27 +126,27 @@ const Userprofile = () => {
   const menuItems = [
     {
       icon: <FaShoppingCart className='w-5 h-5 text-gray-600 font-semibold' />,
-      label: 'My cart',
+      label: t('profile.My Cart'),
       path: '/shoopingcart'
     },
     {
       icon: <MdMenuBook className='w-5 h-5 text-gray-600' />,
-      label: 'Menu',
+      label: t('profile.Menu'),
       path: '/'
     },
     {
       icon: <MdOutlineMoreTime className='w-5 h-5 text-gray-600' />,
-      label: 'My orders',
+      label: t('profile.My Orders'),
       path: '/myorders'
     },
     {
       icon: <MdApartment className='w-5 h-5 text-gray-600' />,
-      label: 'Delivery addresses',
+      label: t('profile.Delivery addresses'),
       onClick: () => setShowAddressModal(true)
     },
     {
       icon: <MdDelete className='w-5 h-5 text-[#FA0303]' />,
-      label: 'Delete account',
+      label: t('profile.Delete account'),
       isDelete: true,
       onClick: () => setShowDeleteModal(true) // ✅ OPEN MODAL
     }
@@ -169,12 +171,14 @@ const Userprofile = () => {
         {/* Profile Section */}
         <div className='p-4 border-gray-200 flex-shrink-0'>
           <div className='flex items-center justify-between mb-4'>
-            <h1 className='text-xl font-semibold text-gray-700'>Profile</h1>
+            <h1 className='text-xl font-semibold text-gray-700'>
+              {t('profile.Profile')}
+            </h1>
             <button
               onClick={handleSignOut}
               className='text-[#FA0303] font-semibold text-md '
             >
-              sign out
+              {t('profile.signout')}
             </button>
           </div>
 
@@ -207,14 +211,16 @@ const Userprofile = () => {
                 onClick={handleEditProfile}
                 className='text-[#FA0303] font-semibold text-md'
               >
-                edit
+                {t('profile.Edit')}
               </button>
             </div>
           </div>
         </div>
         {/* Menu Section */}
         <div className='px-6 py-3 flex-shrink-0'>
-          <h1 className='text-xl font-semibold text-gray-700'>Menu</h1>
+          <h1 className='text-xl font-semibold text-gray-700'>
+            {t('profile.Menu')}
+          </h1>
         </div>
         <div className='flex-1 overflow-y-auto border-t border-gray-200'>
           {menuItems.map((item, i) => (
