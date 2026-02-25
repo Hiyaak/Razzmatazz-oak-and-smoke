@@ -13,8 +13,6 @@ import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { RiShoppingBasketLine } from 'react-icons/ri'
 import { useTranslation } from 'react-i18next'
 
-
-
 const ShoppingCartPage = () => {
   const navigate = useNavigate()
   const { cart, updateQuantity, removeFromCart } = useCart()
@@ -166,8 +164,8 @@ const ShoppingCartPage = () => {
               </div>
 
               <div className='bg-white p-5 border-gray-300'>
-                <div className='flex items-center'>
-                  <MessageSquareText className='w-5 h-5 text-gray-500 mr-3' />
+                <div className='flex items-center gap-3'>
+                  <MessageSquareText className='w-5 h-5 text-gray-500' />
 
                   <input
                     type='text'
@@ -184,7 +182,9 @@ const ShoppingCartPage = () => {
           {/* Items Section */}
           <div>
             <div className='bg-gray-100 p-4 border-b border-gray-200'>
-              <h2 className='text-base font-semibold text-gray-800'>{t('ShoopingCart.Item')}</h2>
+              <h2 className='text-base font-semibold text-gray-800'>
+                {t('ShoopingCart.Item')}
+              </h2>
             </div>
 
             {cart.length === 0 ? (
@@ -314,7 +314,8 @@ const ShoppingCartPage = () => {
                       {/* Price & Quantity */}
                       <div className='flex flex-col items-end'>
                         <span className='text-[#FA0303] font-medium mb-5'>
-                          KD {(item.price * item.quantity).toFixed(3)}
+                          {(item.price * item.quantity).toFixed(3)}{' '}
+                          {t('ShoopingCart.KD')}
                         </span>
 
                         <div className='flex items-center gap-2'>
@@ -359,7 +360,7 @@ const ShoppingCartPage = () => {
                       onClick={() => removeFromCart(item.cartItemId)}
                       className='text-[#f34f4f] text-sm font-medium'
                     >
-                      remove
+                      {t('ShoopingCart.remove')}
                     </button>
                   </div>
                 ))}
@@ -377,7 +378,7 @@ const ShoppingCartPage = () => {
                 onClick={() => navigate('/pickupdeviler')}
                 className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors'
               >
-                Select your location
+                {t('brand.Selectlocation')}
               </button>
             </div>
           ) : (
@@ -395,7 +396,7 @@ const ShoppingCartPage = () => {
                 </div>
 
                 {/* Center - Checkout Text */}
-                <span>Go to checkout</span>
+                <span>{t('ShoopingCart.checkout')}</span>
 
                 {/* Right - Total Price */}
                 <span>
@@ -405,7 +406,7 @@ const ShoppingCartPage = () => {
                       0
                     )
                     .toFixed(3)}{' '}
-                  KD
+                  {t('ShoopingCart.KD')}
                 </span>
               </button>
             </div>

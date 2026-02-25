@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Menu, Search, BellMinus, Languages } from 'lucide-react'
+import { Menu, Search, BellMinus, Languages, Globe, Type } from 'lucide-react'
 import heroImage from '../assets/oak.jpg'
 import { Instagram } from 'lucide-react'
 import { RiShoppingBagLine } from 'react-icons/ri'
@@ -66,8 +66,11 @@ const RightPanelLayout = () => {
               onClick={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
               className='w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
             >
-              <Languages className='w-4 h-4' />
-              {language === 'en' ? 'EN' : 'AR'}
+              {language === 'en' ? (
+                <Globe className='w-5 h-5' />
+              ) : (
+                <Type className='w-5 h-5' />
+              )}
             </button>
           </div>
         </div>

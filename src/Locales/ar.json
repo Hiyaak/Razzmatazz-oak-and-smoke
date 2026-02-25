@@ -18,7 +18,10 @@
   },
   "profile": {
     "Menu": "القائمة",
+    "Profile": "الملف الشخصي",
+    "Edit": "تعديل ",
     "Sign": "تسجيل الدخول باستخدام",
+    "signout": "تسجيل الخروج",
     "My Cart": "سلتي",
     "My Orders": "طلباتي",
     "Email": "البريد الإلكتروني",
@@ -29,7 +32,9 @@
     "Name": "الاسم",
     "Password": "كلمة المرور",
     "Mobile Number": "رقم الهاتف المحمول",
-    "Continue": "تسجيل الدخول باستخدام"
+    "Continue": "تسجيل الدخول باستخدام",
+    "Delivery addresses": "عناوين التوصيل",
+    "Delete account": "حذف الحساب"
   },
   "ShoopingCart": {
     "ShoppingCart": "عربة التسوق",
@@ -39,9 +44,10 @@
     "cartEmpty": "عربة التسوق فارغة.",
     "addToCart": "أضف بعض العناصر إلى عربة التسوق الخاصة بك.",
     "startShopping": "ابدأ التسوق",
-    "placeholder": "أدخل ملاحظاتك الخاصة"
+    "placeholder": "أدخل ملاحظاتك الخاصة",
+    "KD": "د.ك",
+    "remove": "إزالة"
   },
-  
   "Contact": {
     "ourBranches": "فروعنا",
     "nobranchesavailable": "لا توجد فروع متاحة",
@@ -55,6 +61,33 @@
     "phoneOptional": "الهاتف (اختياري)",
     "leaveusacomment": "اترك لنا تعليقًا",
     "SEND": "إرسال"
+  },
+  "PlaceOrder": {
+    "Pickupfrom": "الاستلام من",
+    "Deliverto": "التوصيل إلى",
+    "Items": "العناصر",
+    "Promotions": "العروض الترويجية",
+    "Total": "المجموع",
+    "Subtotal": "المجموع الفرعي",
+    "PlaceOrder": "أرسل الطلب",
+    "Delivery Services": "خدمات التوصيل",
+    "Available Coupons": "القسائم المتاحة",
+    "Apply": "تطبيق",
+    "No coupons available": "لا توجد قسائم متاحة",
+    "Remove": "إزالة",
+    "Enter promotion code": "أدخل رمز الترويج",
+    "KD OFF": "د.ك خصم",
+    "OFF": "خصم"
+  },
+  "MyOrders": {
+    "MyOrders": "طلباتي",
+    "Qty": "الكمية",
+    "Order ID": "رقم الطلب",
+    "NoOrders": "لم يتم العثور على طلبات",
+    "Total": "المجموع",
+    "Status": "الحالة",
+    "Delivery Charges": "رسوم التوصيل",
+    "Cancel Order": "إلغاء الطلب",
+    "Cancelling": "جارٍ الإلغاء..."
   }
-
 }
