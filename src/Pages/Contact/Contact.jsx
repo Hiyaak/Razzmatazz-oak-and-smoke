@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import RightPanelLayout from '../../Layout/RightPanelLayout';
 import { IoSendSharp } from 'react-icons/io5';
 import { IoMdThumbsUp } from 'react-icons/io';
+import { useTranslation } from 'react-i18next'
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Contact = () => {
   const [showReviews, setShowReviews] = useState(false);
   const [locations, setLocations] = useState([]);
   const [branchDetails, setBranchDetails] = useState([]);
+  const { t } = useTranslation()
   const [feedback, setFeedback] = useState({
     name: '',
     phone: '',
@@ -180,6 +182,7 @@ const Contact = () => {
           <div className="border-b border-gray-200">
             <h2 className="px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100">
               Our branches
+              {t('Contact.ourBranches')}
             </h2>
 
             {locations && locations.length > 0 ? (
@@ -213,7 +216,8 @@ const Contact = () => {
               ))
             ) : (
               <div className="px-4 py-4 text-gray-500 text-sm">
-                No branches available
+                {/* No branches available */}
+                {t('Contact.nobranchesavailable')}
               </div>
             )}
           </div>
@@ -221,7 +225,7 @@ const Contact = () => {
           {/* Your Opinion Matters Section */}
           <div className="border-b border-gray-200">
             <h2 className="px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100">
-              Your opinion matters
+              {t('Contact.youropinionmatters')}
             </h2>
 
             <div className="px-4 py-6 flex justify-center border-t">
@@ -230,7 +234,7 @@ const Contact = () => {
                 className="flex items-center gap-2 text-[#FA0303] font-medium hover:text-red-600 hover:bg-red-50 transition-colors"
               >
                 <span className="uppercase text-sm tracking-wide">
-                  Leave Feedback
+                  {t('Contact.leaveFeedback')}
                 </span>
                 <IoMdThumbsUp className="w-5 h-5" />
               </button>
@@ -243,13 +247,13 @@ const Contact = () => {
             <div className="px-4 py-3 flex items-center justify-between bg-gray-100">
               <div className="flex items-center gap-2">
                 <h2 className="text-sm font-medium text-gray-700">
-                  Customer reviews
+                  {t('Contact.customerreviews')}
                 </h2>
                 <button
                   onClick={() => setShowReviews(true)}
                   className="text-[#FA0303] text-sm font-medium underline hover:text-red-600"
                 >
-                  View more
+                  {t('Contact.viewmore')}
                 </button>
               </div>
             </div>
@@ -325,7 +329,7 @@ const Contact = () => {
                 </>
               ) : (
                 <p className="text-center text-gray-500 py-4">
-                  No reviews available
+                  {t('Contact.noreviewsavailable')}
                 </p>
               )}
             </div>
@@ -351,7 +355,7 @@ const Contact = () => {
           {/* Connect With Us Section */}
           <div>
             <h2 className="px-4 py-3 text-sm font-medium text-gray-700 bg-gray-100">
-              Connect with us
+              {t('Contact.connectwithus')}
             </h2>
             <div className="px-4 py-6 flex justify-center gap-16 md:gap-16 lg:gap-28 border-t border-b">
               <button className="p-3 hover:bg-gray-50 rounded-lg transition-colors">
@@ -386,7 +390,7 @@ const Contact = () => {
           {/* Modal Content */}
           <div className="absolute bottom-0 left-0 right-0 md:w-[42%] bg-white max-h-[50vh] md:max-h-[60vh] rounded-t-lg md:rounded-lg shadow-xl flex flex-col overflow-hidden">
             <div className="p-4  flex items-center justify-between flex-shrink-0">
-              <h2 className="text-xl font-semibold">Leave feedback</h2>
+              <h2 className="text-xl font-semibold">{t('Contact.leaveFeedback')}</h2>
               <button
                 onClick={() => setShowFeedbackForm(false)}
                 className="p- hover:bg-gray-100 rounded-full"
@@ -416,7 +420,7 @@ const Contact = () => {
                 {/* Name Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-800 mb-2">
-                    Name
+                    {t('Contact.name')}
                   </label>
                   <input
                     type="text"
@@ -430,7 +434,7 @@ const Contact = () => {
                 {/* Phone Input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-800 mb-2">
-                    Phone (Optional)
+                    {t('Contact.phoneOptional')}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -448,7 +452,7 @@ const Contact = () => {
               {/* Comment Textarea */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-800 mb-2">
-                  Leave us a comment
+                  {t('Contact.leaveusacomment')}
                 </label>
                 <textarea
                   name="comment"
@@ -464,7 +468,7 @@ const Contact = () => {
                 onClick={handleSendFeedback}
                 className="w-full bg-[#FA0303] text-white py-2 rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center justify-center gap-2 "
               >
-                <span>SEND</span>
+                <span>{t('Contact.SEND')}</span>
                 <IoSendSharp className="w-4 h-4" />
               </button>
             </div>
@@ -477,7 +481,7 @@ const Contact = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg border border-gray-300 shadow-lg w-[550px] max-h-[90vh] flex flex-col">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-2xl font-bold flex-1">Customer reviews</h2>
+              <h2 className="text-2xl font-bold flex-1">{t('Contact.customerreviews')}</h2>
               <button
                 onClick={() => setShowReviews(false)}
                 className="p-2 hover:bg-gray-100 rounded-full"
@@ -511,7 +515,7 @@ const Contact = () => {
                 ))
               ) : (
                 <p className="text-center text-gray-500 py-4">
-                  No reviews available
+                  {t('Contact.noreviewsavailable')}
                 </p>
               )}
             </div>
