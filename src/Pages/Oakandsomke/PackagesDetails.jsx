@@ -11,10 +11,15 @@ import RightPanelLayout from '../../Layout/RightPanelLayout'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import { useCart } from '../../Context/CartContext'
+import { useLocation } from 'react-router-dom'
 
 const PackageDetails = () => {
   const { packageId } = useParams()
   const { cart, addToCart } = useCart()
+  const location = useLocation()
+
+// const cartItemId = location.state?.cartItemId
+const isEdit = location.state?.isEdit
 
   const [selectedItems, setSelectedItems] = useState({})
 

@@ -220,12 +220,22 @@ const ShoppingCartPage = () => {
                     key={item.cartItemId}
                     className='border-b border-gray-200 pb-4 last:border-b-0'
                   >
-                    {/* Edit Button (optional for combo) */}
-                    {/* {item.type === 'combo' && (
-                      <button className='text-[#FA0303] text-sm font-medium mb-2'>
+                    {/* Edit Button */}
+                    {item.type === 'catering' && (
+                      <button
+                        onClick={() =>
+                          navigate(`/package/${item.packageId}`, {
+                            state: {
+                              cartItemId: item.cartItemId,
+                              isEdit: true
+                            }
+                          })
+                        }
+                        className='text-[#FA0303] text-sm font-medium mb-2'
+                      >
                         edit
                       </button>
-                    )} */}
+                    )}
 
                     <div className='flex items-center justify-between'>
                       {/* Image */}

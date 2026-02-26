@@ -14,6 +14,7 @@ const Placeorder = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { cart } = useCart()
+  const isCatering = cart.some(item => item.orderType === 'catering')
 
   console.log('Cart in Placeorder:', cart)
 
@@ -224,7 +225,7 @@ const Placeorder = () => {
     (total, item) => total + item.price * item.quantity,
     0
   )
-  const total = subtotal + deliveryCharges
+  // const total = subtotal + deliveryCharges
 
   let discount = 0
 
@@ -236,7 +237,7 @@ const Placeorder = () => {
     }
   }
 
-  const finalTotal = Math.max(subtotal - discount + deliveryCharges, 0)
+  const finalTotal = subtotal - discount + (!isCatering ? deliveryCharges : 0)
 
   const handlePlaceOrder = async () => {
     try {
@@ -256,196 +257,127 @@ const Placeorder = () => {
       const { selectedMethod, selectedGovernateId, selectedAreaId } =
         locationData
 
-      if (!selectedMethod || !selectedGovernateId || !selectedAreaId)
-        return toast.error('Please select your location')
+      if (!selectedMethod) return toast.error('Please select delivery type')
 
-      // 🔥 Detect order types correctly
-      const comboItem = cart.find(item => item.type === 'combo')
-
-      const cateringItem = cart.find(item => item.orderType === 'catering')
-
-      const diyItems = cart.filter(item => item.type === 'diycombo')
-
-      let payload
-
-      // ====================================================
-      // 🟠 CATERING ORDER
-      // ====================================================
-      if (cateringItem) {
-        const primaryAddress = userAdress?.[0]
-
-        if (!primaryAddress) return toast.error('Please add delivery address')
-
-        if (!profile) return toast.error('Profile not loaded')
-
-        // ✅ Format selections to ID array
-        const formattedSelections = {}
-
-        Object.entries(cateringItem.selections || {}).forEach(
-          ([categoryId, categoryData]) => {
-            const ids = categoryData.items
-              .filter(item =>
-                item.isYesNoType ? item.selectedValue === true : true
-              )
-              .map(item => item.id)
-
-            if (ids.length > 0) {
-              formattedSelections[categoryId] = ids
+      const items = cart
+        .map(item => {
+          // 🟢 NORMAL PRODUCT
+          if (item.type === 'product') {
+            return {
+              itemType: 'subproduct',
+              subproduct_id: item._id,
+              quantity: item.quantity
             }
           }
-        )
 
-        // ✅ Format additional services → id : quantity
-        const formattedAdditionalServices = {}
-
-        Object.entries(cateringItem.additionalServices || {}).forEach(
-          ([serviceId, serviceData]) => {
-            if (serviceData.quantity > 0) {
-              formattedAdditionalServices[serviceId] = serviceData.quantity
+          // 🔵 FIXED COMBO
+          if (item.type === 'combo') {
+            return {
+              itemType: 'fixedCombo',
+              fixedComboId: item._id,
+              quantity: item.quantity
             }
           }
-        )
 
-        payload = {
-          user_id: userId,
-          orderType: 'catering',
+          // 🟣 DIY
+          if (item.type === 'diycombo') {
+            if (!item.selectedDate || !item.selectedSlot) {
+              toast.error('Please select date & time for DIY item')
+              return null
+            }
 
-          packageId: cateringItem.packageId,
-          brandId: storedBrandId,
-          persons: cateringItem.persons,
+            return {
+              itemType: 'diy',
+              subproduct_id: item._id,
+              quantity: item.quantity,
+              diyDate: new Date(item.selectedDate).toISOString().split('T')[0],
+              diyTime: item.selectedSlot
+            }
+          }
 
-          totalAmount: cateringItem.price,
+          // 🟠 CATERING
+          if (item.orderType === 'catering') {
+            const formattedSelections = {}
 
-          selections: formattedSelections,
-          additionalServices: formattedAdditionalServices,
+            Object.entries(item.selections || {}).forEach(
+              ([categoryId, categoryData]) => {
+                const ids = categoryData.items
+                  .filter(menu =>
+                    menu.isYesNoType ? menu.selectedValue === true : true
+                  )
+                  .map(menu => menu.id)
 
-          date: new Date(cateringItem.date).toISOString().split('T')[0],
+                if (ids.length > 0) {
+                  formattedSelections[categoryId] = ids
+                }
+              }
+            )
 
-          time: cateringItem.time,
+            return {
+              itemType: 'catering',
+              packageId: item.packageId,
+              persons: item.persons,
+              selections: formattedSelections,
+              eventDate: new Date(item.date).toISOString().split('T')[0],
+              eventTime: item.time,
+              address: item.address,
+              contactPhone: item.contactPhone,
+              contactName: item.contactName,
+              specialInstructions: item.specialInstructions || ''
+            }
+          }
 
-          address: `${primaryAddress.Block}, ${primaryAddress.Street}, ${primaryAddress.Avenue}, House ${primaryAddress.house}`,
+          return null
+        })
+        .filter(Boolean)
 
-          contactPhone: profile.mobileNumber,
-          contactName: profile.name,
-          specialInstructions: cateringItem.specialInstructions || '',
-
-          paymentMethod: 'online'
-        }
+      if (!items.length) {
+        return toast.error('Cart is empty')
       }
 
-      // ====================================================
-      // 🟣 DIY COMBO ORDER
-      // ====================================================
-      else if (diyItems.length > 0) {
-        const diyDate = diyItems[0]?.selectedDate
-        const diyTime = diyItems[0]?.selectedSlot
+      // =========================================
+      // 🔥 BUILD FINAL PAYLOAD (BACKEND FORMAT)
+      // =========================================
 
-        if (!diyTime) return toast.error('Please select time for DIY combo')
-
-        payload = {
-          user_id: userId,
-          orderType: 'diyCombo',
-
-          diyDate: new Date(diyDate).toISOString().split('T')[0],
-
-          diyTime: diyTime,
-
-          products: diyItems.map(item => ({
-            subproduct_id: item._id,
-            subProduct_img: item.image,
-            subProduct_name: item.name,
-            price: Number(item.price),
-            quantity: item.quantity,
-            description: item.description || ''
-          })),
-
-          deliveryType: selectedMethod,
-          governateId: selectedGovernateId,
-          areaId: selectedAreaId,
-          deliveryCharge: Number(deliveryCharges),
-
-          paymentMethod: 'online',
-
-          couponId: selectedCoupon?._id || null,
-          couponCode: selectedCoupon?.code || '',
-          discountPercentage: selectedCoupon?.discountPercentage || 0,
-          flatAmount: selectedCoupon?.flatAmount || 0
-        }
+      const payload = {
+        user_id: userId,
+        items: items,
+        finalTotal: Number(finalTotal),
+        deliveryType: selectedMethod,
+        branchId: storedBrandId,
+        paymentMethod: 'online'
       }
 
-      // ====================================================
-      // 🔵 FIXED COMBO ORDER
-      // ====================================================
-      else if (comboItem) {
-        payload = {
-          user_id: userId,
-          orderType: 'fixedCombo',
-
-          fixedComboId: comboItem._id,
-          quantity: comboItem.quantity,
-
-          deliveryType: selectedMethod,
-          governateId: selectedGovernateId,
-          areaId: selectedAreaId,
-          deliveryCharge: Number(deliveryCharges),
-
-          paymentMethod: 'online',
-
-          couponId: selectedCoupon?._id || null,
-          couponCode: selectedCoupon?.code || '',
-          discountPercentage: selectedCoupon?.discountPercentage || 0,
-          flatAmount: selectedCoupon?.flatAmount || 0
+      // 🔹 DELIVERY
+      if (selectedMethod === 'delivery') {
+        if (!selectedGovernateId || !selectedAreaId) {
+          return toast.error('Please select your location')
         }
+
+        payload.governateId = selectedGovernateId
+        payload.areaId = selectedAreaId
+        payload.deliveryCharge = Number(deliveryCharges)
       }
 
-      // ====================================================
-      // 🟢 NORMAL PRODUCT ORDER
-      // ====================================================
-      else {
-        payload = {
-          user_id: userId,
-
-          products: cart.map(item => ({
-            subproduct_id: item._id,
-            subProduct_img: item.image,
-            subProduct_name: item.name,
-            price: Number(item.price),
-            quantity: item.quantity,
-            description: item.description || ''
-          })),
-
-          deliveryType: selectedMethod,
-          governateId: selectedGovernateId,
-          areaId: selectedAreaId,
-          deliveryCharge: Number(deliveryCharges),
-
-          paymentMethod: 'online',
-
-          couponId: selectedCoupon?._id || null,
-          couponCode: selectedCoupon?.code || '',
-          discountPercentage: selectedCoupon?.discountPercentage || 0,
-          flatAmount: selectedCoupon?.flatAmount || 0
-        }
-      }
-
+      // 🔹 PICKUP
       if (selectedMethod === 'pickup') {
         if (
           !carDetails?.model ||
           !carDetails?.color ||
           !carDetails?.plateNumber
         ) {
-          return toast.error('Please enter car model, color and plate number')
+          return toast.error('Please enter car details')
         }
 
         payload.pickupDetails = {
-          location: 'Main Branch', // 🔹 You can make this dynamic later
+          location: 'Main Branch',
           carName: carDetails.model,
           carColor: carDetails.color,
           carPlate: carDetails.plateNumber
         }
       }
 
-      console.log('Place Order Payload:', payload)
+      console.log('FINAL PLACE ORDER PAYLOAD:', payload)
 
       const { data } = await ApiService.post('placeOrder', payload)
 
@@ -693,12 +625,14 @@ const Placeorder = () => {
             </span>
           </div>
 
-          <div className='flex justify-between text-gray-800'>
-            <span>{t('PlaceOrder.Delivery Services')}</span>
-            <span>
-              {deliveryCharges.toFixed(3)} {t('ShoopingCart.KD')}
-            </span>
-          </div>
+          {!isCatering && (
+            <div className='flex justify-between text-gray-800'>
+              <span>{t('PlaceOrder.Delivery Services')}</span>
+              <span>
+                {deliveryCharges.toFixed(3)} {t('ShoopingCart.KD')}
+              </span>
+            </div>
+          )}
 
           {selectedCoupon && (
             <div className='flex justify-between text-green-700 font-medium'>
