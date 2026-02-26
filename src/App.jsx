@@ -10,7 +10,6 @@ const Oakandsomke = lazy(() => import('./Pages/Oakandsomke/Ordernowsomke'))
 const Profile = lazy(() => import('./Pages/Profile/Profile'))
 const Otpverification = lazy(() => import('./Pages/Profile/Otpverification'))
 const Subproducts = lazy(() => import('./Pages/Oakandsomke/Subproducts'))
-const SubProductView = lazy(() => import('./Pages/Oakandsomke/SubProductView'))
 const SubproductDetails = lazy(() =>
   import('./Pages/Oakandsomke/SubproductDetails')
 )
