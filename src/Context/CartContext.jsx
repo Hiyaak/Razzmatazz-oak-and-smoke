@@ -58,19 +58,31 @@ export const CartProvider = ({ children }) => {
   // ➕ Add product or combo
   const addToCart = item => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(
+      const existingIndex = prevCart.findIndex(
         cartItem => cartItem.cartItemId === item.cartItemId
       )
 
-      if (existingItem) {
-        return prevCart.map(cartItem =>
-          cartItem.cartItemId === item.cartItemId
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        )
+      // ✅ If item already exists
+      if (existingIndex !== -1) {
+        const updatedCart = [...prevCart]
+
+        // 🔥 If catering → replace fully
+        if (item.type === 'catering') {
+          updatedCart[existingIndex] = item3
+        }
+        // 🔥 If normal product → increase quantity
+        else {
+          updatedCart[existingIndex] = {
+            ...updatedCart[existingIndex],
+            quantity: updatedCart[existingIndex].quantity + 1
+          }
+        }
+
+        return updatedCart
       }
 
-      return [...prevCart, { ...item, quantity: 1 }]
+      // ✅ If new item
+      return [...prevCart, { ...item, quantity: item.quantity || 1 }]
     })
   }
 
