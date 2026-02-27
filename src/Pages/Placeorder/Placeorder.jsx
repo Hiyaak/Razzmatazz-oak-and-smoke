@@ -128,6 +128,7 @@ const Placeorder = () => {
       if (data.success) {
         const now = new Date()
 
+        // ✅ Filter active + valid date coupons
         const validCoupons = data.coupons.filter(coupon => {
           if (!coupon.isActive) return false
 
@@ -141,28 +142,30 @@ const Placeorder = () => {
           return true
         })
 
-        const cartProductIds = cart.map(item => String(item.product_id))
+        // ✅ Get subproduct ids from cart
+        const cartSubProductIds = cart
+          .filter(item => item.type === 'product') // only normal products
+          .map(item => String(item._id))
 
-        // Product-specific coupons
-        const productCoupons = validCoupons.filter(coupon => {
-          if (!coupon.productIds || coupon.productIds.length === 0) return false
+        // ✅ Product-specific coupons (based on subProductIds)
+        const subProductCoupons = validCoupons.filter(coupon => {
+          if (!coupon.subProductIds || coupon.subProductIds.length === 0)
+            return false
 
-          const couponProductIds = coupon.productIds.map(id => String(id))
+          const couponSubIds = coupon.subProductIds.map(id => String(id))
 
-          return cartProductIds.some(id => couponProductIds.includes(id))
+          return cartSubProductIds.some(id => couponSubIds.includes(id))
         })
 
-        //  General coupons (productIds empty)
+        // ✅ General coupons (no subProductIds)
         const generalCoupons = validCoupons.filter(
-          coupon => !coupon.productIds || coupon.productIds.length === 0
+          coupon => !coupon.subProductIds || coupon.subProductIds.length === 0
         )
 
-        //  FINAL DECISION
-        if (productCoupons.length > 0) {
-          // If product-specific exists → show them only
-          setCoupons(productCoupons)
+        // ✅ Final decision logic
+        if (subProductCoupons.length > 0) {
+          setCoupons(subProductCoupons)
         } else {
-          // If no product coupon → show general coupons
           setCoupons(generalCoupons)
         }
       }
@@ -243,7 +246,6 @@ const Placeorder = () => {
 
   const handlePlaceOrder = async () => {
     try {
-      setPlacingOrder(true)
       const storedBrandId = localStorage.getItem('brandId')
       if (!storedBrandId) return toast.error('No brand selected')
 
@@ -261,6 +263,8 @@ const Placeorder = () => {
         locationData
 
       if (!selectedMethod) return toast.error('Please select delivery type')
+
+      setPlacingOrder(true)
 
       const items = cart
         .map(item => {
@@ -421,6 +425,8 @@ const Placeorder = () => {
     } catch (error) {
       console.log('PLACE ORDER ERROR:', error?.response?.data || error)
       toast.error('Something went wrong while placing your order.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
