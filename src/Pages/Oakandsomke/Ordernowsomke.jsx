@@ -308,7 +308,9 @@ const FoodDeliveryApp = () => {
                   />
                   <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
                     <h3 className='text-gray-100 font-bold text-lg text-center'>
-                      {item.productName.toUpperCase()}
+                      <h3 className='text-gray-100 font-bold text-lg text-center'>
+                        {(item.productName || item.name || '').toUpperCase()}
+                      </h3>
                     </h3>
                   </div>
                 </div>
@@ -491,7 +493,9 @@ const FoodDeliveryApp = () => {
                     />
                     <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
                       <h3 className='text-gray-100 font-bold text-lg text-center'>
-                        {item.productName.toUpperCase()}
+                      <h3 className='text-gray-100 font-bold text-lg text-center'>
+  {(item.productName || item.name || '').toUpperCase()}
+</h3>
                       </h3>
                     </div>
                   </div>

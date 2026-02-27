@@ -18,8 +18,7 @@ const PackageDetails = () => {
   const { cart, addToCart } = useCart()
   const location = useLocation()
 
-  // const cartItemId = location.state?.cartItemId
-  const isEdit = location.state?.isEdit
+  // const isEdit = location.state?.isEdit
 
   const [selectedItems, setSelectedItems] = useState({})
 
@@ -93,9 +92,10 @@ const PackageDetails = () => {
     })
   }
 
-  const cartItemId = packageData?.package?.id
+  const cartItemIdFromState = location.state?.cartItemId
+  const isEdit = location.state?.isEdit
 
-  const existingItem = cart.find(item => item.cartItemId === cartItemId)
+  // const existingItem = cart.find(item => item.cartItemId === cartItemId)
 
   const scrollLeft = () => {
     timeScrollRef.current?.scrollBy({
@@ -197,6 +197,44 @@ const PackageDetails = () => {
   const isDateBlocked = packageData?.blockedDates?.some(
     blocked => blocked.date === formatDateOnly(selectedDate)
   )
+
+  useEffect(() => {
+    if (!isEdit || !cartItemIdFromState) return
+
+    const existingItem = cart.find(
+      item => item.cartItemId === cartItemIdFromState
+    )
+
+    if (!existingItem) return
+
+    // 🔥 Prefill everything
+    setSelectedDate(new Date(existingItem.date))
+    setSelectedSlot(existingItem.time)
+    setSpecialRequest(existingItem.specialInstructions || '')
+
+    // selections
+    const prefilledOptions = {}
+    const prefilledAdditional = {}
+
+    Object.entries(existingItem.selections || {}).forEach(
+      ([categoryId, categoryData]) => {
+        if (categoryData.items[0]?.isYesNoType) {
+          prefilledOptions[categoryId] = categoryData.items[0].selectedValue
+        } else {
+          prefilledOptions[categoryId] = categoryData.items.map(item => item.id)
+        }
+      }
+    )
+
+    Object.entries(existingItem.additionalServices || {}).forEach(
+      ([itemId, service]) => {
+        prefilledAdditional[itemId] = service.quantity
+      }
+    )
+
+    setSelectedOptions(prefilledOptions)
+    setSelectedItems(prefilledAdditional)
+  }, [isEdit, cartItemIdFromState, cart])
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* LEFT PANEL */}
@@ -663,7 +701,9 @@ const PackageDetails = () => {
               })
 
               const cartPayload = {
-                cartItemId: `catering-${packageData.package.id}`,
+                cartItemId: isEdit
+                  ? cartItemIdFromState
+                  : `catering-${packageData.package.id}-${Date.now()}`,
                 type: 'catering',
                 orderType: 'catering',
 
@@ -685,13 +725,22 @@ const PackageDetails = () => {
                 quantity: 1
               }
 
-              addToCart(cartPayload)
+              if (isEdit) {
+                addToCart({
+                  ...cartPayload,
+                  cartItemId: cartItemIdFromState
+                })
+              } else {
+                addToCart(cartPayload)
+              }
               navigate('/shoopingcart')
             }}
             className='relative w-full bg-[#FA0303] text-white py-3 rounded-lg font-bold'
           >
             {/* Center Text */}
-            <span className='block text-center'>Add to Cart</span>
+            <span className='block text-center'>
+              {isEdit ? 'Update Cart' : 'Add to Cart'}
+            </span>
 
             {/* Right Side Price */}
             <span className='absolute right-4 top-1/2 -translate-y-1/2'>
