@@ -34,6 +34,7 @@ const PackageDetails = () => {
   const [specialRequest, setSpecialRequest] = useState('')
 
   const [packageData, setPackageData] = useState(null)
+  const [extraPersons, setExtraPersons] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -64,6 +65,23 @@ const PackageDetails = () => {
 
     fetchPackageDetails()
   }, [packageId, brandId])
+
+  const allowExtraPersons = packageData?.package?.allowExtraPersons
+  const extraPersonPrice = packageData?.package?.extraPersonPrice || 0
+  const maxExtraPersons = packageData?.package?.maxExtraPersons || 0
+
+  const increaseExtraPersons = () => {
+    if (extraPersons >= maxExtraPersons) {
+      toast.error(`Maximum ${maxExtraPersons} extra persons allowed`)
+      return
+    }
+    setExtraPersons(prev => prev + 1)
+  }
+
+  const decreaseExtraPersons = () => {
+    if (extraPersons <= 0) return
+    setExtraPersons(prev => prev - 1)
+  }
 
   const formatTo12Hour = time24 => {
     const [hour, minute] = time24.split(':')
@@ -182,9 +200,11 @@ const PackageDetails = () => {
     0
   )
 
-  const basePrice = packageData?.package?.basePricePerPerson || 0
+  const basePrice = packageData?.package?.packagePrice || 0
 
-  const finalTotal = basePrice + additionalTotal
+  const extraPersonsTotal = extraPersons * extraPersonPrice
+
+  const finalTotal = basePrice + additionalTotal + extraPersonsTotal
 
   const formatDateOnly = date => {
     const d = new Date(date)
@@ -212,6 +232,9 @@ const PackageDetails = () => {
     setSelectedSlot(existingItem.time)
     setSpecialRequest(existingItem.specialInstructions || '')
 
+    // ✅ Prefill Extra Persons
+    setExtraPersons(existingItem.extraPersons || 0)
+
     // selections
     const prefilledOptions = {}
     const prefilledAdditional = {}
@@ -235,6 +258,7 @@ const PackageDetails = () => {
     setSelectedOptions(prefilledOptions)
     setSelectedItems(prefilledAdditional)
   }, [isEdit, cartItemIdFromState, cart])
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* LEFT PANEL */}
@@ -602,6 +626,57 @@ const PackageDetails = () => {
               </div>
             </div>
           </div>
+          {allowExtraPersons && (
+            <div>
+              <div className='bg-gray-100 p-4'>
+                <h2 className='text-base font-semibold text-gray-800'>
+                  Add People
+                </h2>
+              </div>
+
+              <div className='bg-white p-5 border-gray-300 space-y-3'>
+                <div className='flex items-center justify-between text-sm text-gray-600'>
+                  <span>
+                    Extra Person Price: {extraPersonPrice}{' '}
+                    {packageData?.package?.currency}
+                  </span>
+
+                  <span>Max Extra Persons: {maxExtraPersons}</span>
+                </div>
+
+                <div className='flex flex-col items-center justify-center space-y-3'>
+                  <div className='flex items-center gap-4'>
+                    <button
+                      type='button'
+                      onClick={decreaseExtraPersons}
+                      className='bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center'
+                    >
+                      −
+                    </button>
+
+                    <span className='font-semibold text-lg'>
+                      {extraPersons}
+                    </span>
+
+                    <button
+                      type='button'
+                      onClick={increaseExtraPersons}
+                      className='bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center'
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {extraPersons > 0 && (
+                    <p className='text-sm text-green-600 font-medium'>
+                      + {extraPersonsTotal.toFixed(3)}{' '}
+                      {packageData?.package?.currency}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Bottom Bar */}
@@ -720,6 +795,8 @@ const PackageDetails = () => {
                 date: selectedDate,
                 time: selectedSlot,
                 specialInstructions: specialRequest,
+                extraPersons,
+                extraPersonPrice,
 
                 price: finalTotal,
                 quantity: 1

@@ -21,7 +21,7 @@ const Placeorder = () => {
   const location = useLocation()
 
   const specialRemark = location.state?.specialRemark || ''
-  console.log('specialRemark in Placeorder:', specialRemark)
+  // console.log('specialRemark in Placeorder:', specialRemark)
 
   const [userAdress, setUserAdress] = useState([])
   const [deliveryCharges, setDeliveryCharges] = useState(0)
@@ -394,17 +394,6 @@ const Placeorder = () => {
 
       const { data } = await ApiService.post('placeOrder', payload)
 
-      // if (data.status) {
-      //   toast.success('Redirecting to payment...')
-
-      //   if (data.payment_url) {
-      //     window.location.href = data.payment_url
-      //   } else {
-      //     toast.error('Payment URL not received')
-      //   }
-      // } else {
-      //   toast.error(data.message || 'Order failed.')
-      // }
       if (data.status) {
         // 🟢 CASH ON DELIVERY
         if (paymentMethod === 'cod') {
