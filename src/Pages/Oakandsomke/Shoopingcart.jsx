@@ -17,6 +17,7 @@ const ShoppingCartPage = () => {
   const navigate = useNavigate()
   const { cart, updateQuantity, removeFromCart } = useCart()
   const [specialRemark, setSpecialRemark] = useState('')
+  
   const [isSpecialRemarksEnabled, setIsSpecialRemarksEnabled] = useState(false)
   const { t } = useTranslation()
 
