@@ -18,8 +18,8 @@ const PackageDetails = () => {
   const { cart, addToCart } = useCart()
   const location = useLocation()
 
-// const cartItemId = location.state?.cartItemId
-const isEdit = location.state?.isEdit
+  // const cartItemId = location.state?.cartItemId
+  const isEdit = location.state?.isEdit
 
   const [selectedItems, setSelectedItems] = useState({})
 
@@ -32,6 +32,7 @@ const isEdit = location.state?.isEdit
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [selectedOptions, setSelectedOptions] = useState({})
   const [validationErrors, setValidationErrors] = useState({})
+  const [specialRequest, setSpecialRequest] = useState('')
 
   const [packageData, setPackageData] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -555,6 +556,8 @@ const isEdit = location.state?.isEdit
 
                 <input
                   type='text'
+                  value={specialRequest}
+                  onChange={e => setSpecialRequest(e.target.value)}
                   placeholder='Enter Your Special Requests'
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
                 />
@@ -676,6 +679,7 @@ const isEdit = location.state?.isEdit
 
                 date: selectedDate,
                 time: selectedSlot,
+                specialInstructions: specialRequest,
 
                 price: finalTotal,
                 quantity: 1

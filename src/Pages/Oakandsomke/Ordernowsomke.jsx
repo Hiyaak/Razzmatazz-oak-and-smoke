@@ -212,16 +212,18 @@ const FoodDeliveryApp = () => {
                 </div>
 
                 <div className='flex items-center gap-3'>
-                  {selectedGovernate && selectedArea ? (
+                  {selectedMethod && (selectedGovernate || selectedArea) ? (
                     <>
                       <p className='text-sm font-medium text-gray-900'>
-                        {selectedArea}
+                        {selectedMethod === 'delivery'
+                          ? selectedArea
+                          : selectedGovernate}
                       </p>
+
                       <button
                         onClick={() => navigate('/pickupdeviler')}
                         className='text-sm text-red-500 hover:text-red-600'
                       >
-                        {/* Edit */}
                         {t('brand.Edit')}
                       </button>
                     </>
