@@ -79,21 +79,28 @@ const Myorders = () => {
         const sanitizedOrders = Array.isArray(data.orders)
           ? data.orders.map(order => ({
               ...order,
-              deliveryCharges: order.deliveryCharges || 0,
-              totalPrice: order.totalPrice || 0,
+
+              // ✅ normalize totals safely
               finalTotal: order.finalTotal || 0,
               totalAmount: order.totalAmount || 0,
-              products: Array.isArray(order.products)
-                ? order.products.map(product => ({
-                    ...product,
-                    quantity: product.quantity || 0,
-                    price: product.price || 0
+              deliveryCharge: order.deliveryCharge || 0,
+
+              // ✅ IMPORTANT: use items instead of products
+              items: Array.isArray(order.items)
+                ? order.items.map(item => ({
+                    ...item,
+                    quantity: item.quantity || 0,
+                    price: item.price || 0,
+                    image: item.image || null,
+                    name: item.name || ''
                   }))
                 : []
             }))
           : []
 
         setOrders(sanitizedOrders)
+      } else {
+        setOrders([])
       }
     } catch (error) {
       console.log('Error fetching orders:', error)
@@ -246,31 +253,33 @@ const Myorders = () => {
                   </div>
 
                   {/* Products */}
-                  {order.products.map(product => (
+                  {order.items.map((item, index) => (
                     <div
-                      key={product._id}
+                      key={index}
                       className='flex items-center gap-3 border-b pb-2'
                     >
-                      <img
-                        src={
-                          product.subProduct_img
-                            ? `${ImagePath}${product.subProduct_img}`
-                            : '/placeholder-image.jpg'
-                        }
-                        className='w-12 h-12 rounded-md'
-                      />
+                      {/* ✅ Only show image if exists */}
+                      {item.image && (
+                        <img
+                          src={`${ImagePath}${item.image}`}
+                          alt={item.name || 'product'}
+                          className='w-12 h-12 rounded-md object-cover'
+                        />
+                      )}
 
                       <div className='flex-1'>
-                        <p className='font-medium'>{product.subProduct_name}</p>
+                        <p className='font-medium'>
+                          {item.name || item.itemType}
+                        </p>
 
                         <p className='text-sm'>
-                          {t('MyOrders.Qty')}: {product.quantity} x{' '}
-                          {formatPrice(product.price)} {t('ShoopingCart.KD')}
+                          {t('MyOrders.Qty')}: {item.quantity} x{' '}
+                          {formatPrice(item.price)} {t('ShoopingCart.KD')}
                         </p>
                       </div>
 
                       <p className='font-semibold'>
-                        {formatPrice(product.quantity * product.price)}{' '}
+                        {formatPrice(item.quantity * item.price)}{' '}
                         {t('ShoopingCart.KD')}
                       </p>
                     </div>

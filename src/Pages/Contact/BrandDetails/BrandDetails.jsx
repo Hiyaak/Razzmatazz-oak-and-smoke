@@ -140,28 +140,18 @@ const BrabdDetails = () => {
 
             <div className='space-y-2'>
               {brandDetails?.days?.length > 0 ? (
-                brandDetails.days.map((item, index) => {
-                  const formatTime = time => {
-                    const [h, m] = time.split(':')
-                    const hour = parseInt(h)
-                    const suffix = hour >= 12 ? 'PM' : 'AM'
-                    const formattedHour = hour % 12 === 0 ? 12 : hour % 12
-                    return `${formattedHour}:${m} ${suffix}`
-                  }
+                brandDetails.days.map((item, index) => (
+                  <div
+                    key={index}
+                    className='flex items-center justify-between py-1'
+                  >
+                    <span className='text-gray-700 text-sm'>{item.day}</span>
 
-                  return (
-                    <div
-                      key={index}
-                      className='flex items-center justify-between py-1 last:border-b-0'
-                    >
-                      <span className='text-gray-700 text-sm'>{item.day}</span>
-                      <span className='text-gray-600 text-sm'>
-                        {formatTime(item.startingTime)} -{' '}
-                        {formatTime(item.closingTime)}
-                      </span>
-                    </div>
-                  )
-                })
+                    <span className='text-gray-600 text-sm'>
+                      {item.startingTime} - {item.closingTime}
+                    </span>
+                  </div>
+                ))
               ) : (
                 <p className='text-gray-500 text-sm text-center py-2'>
                   No hours available
