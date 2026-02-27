@@ -62,7 +62,7 @@ const Subproducts = () => {
             </button>
 
             <h1 className='text-xl font-semibold text-gray-900 text-center flex-1'>
-             Catering - Set Menu's
+              Catering - Set Menu's
             </h1>
 
             <div className='w-9' />
@@ -100,7 +100,7 @@ const Subproducts = () => {
 
                   {/* Price */}
                   <div className='text-[#FA0303] font-bold text-right mb-3'>
-                    {item.basePricePerPerson} KD
+                    {item.pricing.packagePrice} KD
                   </div>
 
                   {/* Add / Quantity */}
@@ -109,7 +109,7 @@ const Subproducts = () => {
                       onClick={() =>
                         addToCart({
                           ...item,
-                          price: item.basePricePerPerson // normalize
+                          price: item.pricing.packagePrice // normalize
                         })
                       }
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
@@ -142,41 +142,6 @@ const Subproducts = () => {
             })}
           </div>
         </div>
-
-        {/* Bottom Button */}
-        {/* {!(selectedMethod && (selectedArea || selectedGovernate)) ? (
-          <div className='p-3 bg-white flex-shrink-0'>
-            <button
-              onClick={() => navigate('/pickupdeviler')}
-              className='w-full bg-[#FA0303] text-white font-semibold py-3 rounded-lg'
-            >
-              Select your location
-            </button>
-          </div>
-        ) : (
-          <div
-            className='p-3 bg-white flex-shrink-0'
-            onClick={handleReviewOrder}
-          >
-            <button className='w-full bg-[#FA0303] text-white font-bold py-3 rounded-lg flex justify-between px-6'>
-              <span className='bg-white/20 w-6 h-6 flex items-center justify-center text-sm'>
-                {cart.length}
-              </span>
-
-              <span>Review Order</span>
-
-              <span>
-                {cart
-                  .reduce(
-                    (total, item) => total + item.price * item.quantity,
-                    0
-                  )
-                  .toFixed(3)}{' '}
-                KD
-              </span>
-            </button>
-          </div>
-        )} */}
       </div>
 
       {/* Right Panel */}

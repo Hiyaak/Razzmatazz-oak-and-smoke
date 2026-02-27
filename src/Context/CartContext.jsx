@@ -68,7 +68,7 @@ export const CartProvider = ({ children }) => {
 
         // 🔥 If catering → replace fully
         if (item.type === 'catering') {
-          updatedCart[existingIndex] = item3
+          updatedCart[existingIndex] = item
         }
         // 🔥 If normal product → increase quantity
         else {
