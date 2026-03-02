@@ -56,7 +56,7 @@ function App () {
               element={<DiyProductDetails />}
             />
             <Route path='/diyproducts/:name' element={<DiyProducts />} />
-            <Route path='/subproduct/:name' element={<Subproducts />} />
+           <Route path='/subproduct/:productId' element={<Subproducts />} />
             <Route
               path='/subproductdetails/:id'
               element={<SubproductDetails />}

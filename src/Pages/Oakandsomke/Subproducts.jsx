@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AlarmClock, ArrowLeft, Clock } from 'lucide-react'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { Minus, Plus } from 'lucide-react'
+import { LanguageContext } from '../../Context/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 const Subproducts = () => {
-  const { name } = useParams()
+  const { t } = useTranslation()
 
+  const { language } = useContext(LanguageContext)
   const location = useLocation()
   const navigate = useNavigate()
   const { cart, addToCart, updateQuantity } = useCart()
@@ -19,14 +22,7 @@ const Subproducts = () => {
   )
 
   const [subProductCategories, setSubProductCategories] = useState([])
-  const searchParams = new URLSearchParams(location.search)
-  const productId = searchParams.get('productId')
-
-  useEffect(() => {
-    if (productId) {
-      getSubProductCategories(productId)
-    }
-  }, [productId])
+  const { productId } = useParams()
 
   const getSubProductCategories = async productId => {
     try {
@@ -42,6 +38,12 @@ const Subproducts = () => {
     }
   }
 
+  useEffect(() => {
+    if (productId) {
+      getSubProductCategories(productId)
+    }
+  }, [productId, language])
+
   const handleReviewOrder = () => {
     navigate('/shoopingcart')
   }
@@ -54,10 +56,10 @@ const Subproducts = () => {
   }
 
   const handleNavigate = item => {
-  navigate(`/subproductdetails/${item._id}`, {
-    state: { product: item }
-  })
-}
+    navigate(`/subproductdetails/${item._id}`, {
+      state: { product: item }
+    })
+  }
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
@@ -74,7 +76,7 @@ const Subproducts = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              {decodeURIComponent(name).toUpperCase()}
+              {subProductCategories[0]?.productName?.toUpperCase()}
             </h1>
 
             <div className='w-9' />
@@ -93,18 +95,12 @@ const Subproducts = () => {
                 >
                   {/* Image */}
                   <div className='w-full h-56 mb-2 overflow-hidden rounded-sm relative'>
-                    {/* <img
+                    <img
                       src={`${ImagePath}${item.image}`}
                       alt={item.name}
-                      className='w-full h-full object-cover'
-                    /> */}
-
-                    <img
-  src={`${ImagePath}${item.image}`}
-  alt={item.name}
-  className='w-full h-full object-cover cursor-pointer'
-  onClick={() => handleNavigate(item)}
-/>
+                      className='w-full h-full object-cover cursor-pointer'
+                      onClick={() => handleNavigate(item)}
+                    />
 
                     {/* Light gray strip at the bottom of image for timeToPrepare */}
                     {item.timeToPrepare && (
@@ -127,46 +123,35 @@ const Subproducts = () => {
 
                   {/* Price moved here (just above Add button) */}
                   <div className='text-[#FA0303] font-bold text-right mb-3'>
-                    {item.price} KD
-                  </div>           
+                    {item.price} {t('ShoopingCart.KD')}
+                  </div>
 
                   {quantity === 0 ? (
                     <button
-                      // onClick={() =>
-                      //   addToCart({
-                      //     cartItemId: `product-${item._id}`,
-                      //     _id: item._id, 
-                      //     product_id: item.product_id, 
-                      //     type: 'product',
-                      //     name: item.name,
-                      //     price: item.price,
-                      //     image: item.image
-                      //   })
-                      // }
-                    onClick={() => {
-  // Make sure brandId exists
-  if (!localStorage.getItem("brandId")) {
-    localStorage.setItem("brandId", item.brandId)
-  }
+                      onClick={() => {
+                        // Make sure brandId exists
+                        if (!localStorage.getItem('brandId')) {
+                          localStorage.setItem('brandId', item.brandId)
+                        }
 
-  addToCart({
-    cartItemId: `product-${item._id}`,
-    _id: item._id,
-    brandId: item.brandId, // also include this
-    product_id: item.product_id,
-    type: 'product',
-    name: item.name,
-    price: item.price,
-    image: item.image
-  })
+                        addToCart({
+                          cartItemId: `product-${item._id}`,
+                          _id: item._id,
+                          brandId: item.brandId, // also include this
+                          product_id: item.product_id,
+                          type: 'product',
+                          name: item.name,
+                          price: item.price,
+                          image: item.image
+                        })
 
-  navigate(`/subproductdetails/${item._id}`, {
-    state: { product: item }
-  })
-}}
+                        navigate(`/subproductdetails/${item._id}`, {
+                          state: { product: item }
+                        })
+                      }}
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                     >
-                      + Add
+                      + {t('ShoopingCart.Add')}
                     </button>
                   ) : (
                     <div className='flex items-center justify-between rounded-md px-2 py-1'>
@@ -207,7 +192,7 @@ const Subproducts = () => {
               onClick={() => navigate('/pickupdeviler')}
               className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3 rounded-lg transition-colors'
             >
-              Select your location
+              {t('brand.Selectlocation')}
             </button>
           </div>
         ) : (
@@ -225,7 +210,7 @@ const Subproducts = () => {
               </div>
 
               {/* Center - Review Order Text */}
-              <span>Review Order</span>
+              <span>{t('ShoopingCart.Review Order')}</span>
 
               {/* Right - Total Price */}
               <span>
@@ -235,7 +220,7 @@ const Subproducts = () => {
                     0
                   )
                   .toFixed(3)}{' '}
-                KD
+                {t('ShoopingCart.KD')}
               </span>
             </button>
           </div>

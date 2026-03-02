@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Clock,
   MapPin,
@@ -18,9 +18,11 @@ import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { LuBike } from 'react-icons/lu'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const FoodDeliveryApp = () => {
   const { t } = useTranslation()
+  const { language } = useContext(LanguageContext)
   const [productCategories, setproductCategories] = useState([])
   const [managementStatus, setManagementStatus] = useState({
     deliveryStatus: true,
@@ -69,7 +71,7 @@ const FoodDeliveryApp = () => {
 
   useEffect(() => {
     getProductCategories()
-  }, [])
+  }, [language])
 
   const {
     selectedMethod,
@@ -87,10 +89,12 @@ const FoodDeliveryApp = () => {
     selectedAreaId
   })
 
-  const handleProduct = (productId, productName) => {
-    navigate(
-      `/subproduct/${encodeURIComponent(productName)}?productId=${productId}`
-    )
+  // const handleProduct = (productId, productName) => {
+  //   navigate(
+  //     `/subproduct/${encodeURIComponent(productName)}?productId=${productId}`
+  //   )
+  const handleProduct = productId => {
+    navigate(`/subproduct/${productId}`)
   }
 
   const handleMenuClick = () => {
@@ -493,9 +497,9 @@ const FoodDeliveryApp = () => {
                     />
                     <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
                       <h3 className='text-gray-100 font-bold text-lg text-center'>
-                      <h3 className='text-gray-100 font-bold text-lg text-center'>
-  {(item.productName || item.name || '').toUpperCase()}
-</h3>
+                        <h3 className='text-gray-100 font-bold text-lg text-center'>
+                          {(item.productName || item.name || '').toUpperCase()}
+                        </h3>
                       </h3>
                     </div>
                   </div>

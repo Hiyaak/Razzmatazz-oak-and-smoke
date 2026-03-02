@@ -11,6 +11,12 @@ const axiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' }
 })
 
+axiosInstance.interceptors.request.use((config) => {
+  const language = localStorage.getItem('lang') || 'en'
+  config.headers['Accept-Language'] = language
+  return config
+})
+
 const ApiService = {
   get: (endpoint, params, token) =>
     axiosInstance.get(endpoint, {

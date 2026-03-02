@@ -46,7 +46,9 @@
     "startShopping": "ابدأ التسوق",
     "placeholder": "أدخل ملاحظاتك الخاصة",
     "KD": "د.ك",
-    "remove": "إزالة"
+    "remove": "إزالة",
+    "Add":"إضافة",
+    "Review Order": "مراجعة الطلب"
   },
   "Contact": {
     "ourBranches": "فروعنا",
@@ -77,7 +79,8 @@
     "Remove": "إزالة",
     "Enter promotion code": "أدخل رمز الترويج",
     "KD OFF": "د.ك خصم",
-    "OFF": "خصم"
+    "OFF": "خصم",
+    "Description": "الوصف"
   },
   "MyOrders": {
     "MyOrders": "طلباتي",
@@ -88,6 +91,9 @@
     "Status": "الحالة",
     "Delivery Charges": "رسوم التوصيل",
     "Cancel Order": "إلغاء الطلب",
-    "Cancelling": "جارٍ الإلغاء..."
+    "Cancelling": "جارٍ الإلغاء...",
+    "Request Refund": "طلب استرداد",
+    "Refund Requested": "تم طلب الاسترداد",
+    "Refunded": "تم الاسترداد"
   }
 }

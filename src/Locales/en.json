@@ -46,7 +46,9 @@
     "startShopping": "Start Shopping",
     "placeholder": "Enter Your Special Remarks",
     "KD": "KD",
-    "remove": "remove"
+    "remove": "remove",
+    "Add": "Add",
+    "Review Order": "Review Order"
   },
   "Contact": {
     "ourBranches": "Our branches",
@@ -77,7 +79,8 @@
     "Remove": "Remove",
     "Enter promotion code": "Enter promotion code",
     "KD OFF": "KD OFF",
-    "OFF": "OFF"
+    "OFF": "OFF",
+    "Description": "Description"
   },
   "MyOrders": {
     "MyOrders": "My Orders",
@@ -88,6 +91,9 @@
     "Status": "Status",
     "Delivery Charges": "Delivery Charges",
     "Cancel Order": "Cancel Order",
-    "Cancelling": "Cancelling..."
+    "Cancelling": "Cancelling...",
+    "Request Refund": "Request Refund",
+    "Refund Requested": "Refund Requested",
+    "Refunded": "Refunded"
   }
 }
