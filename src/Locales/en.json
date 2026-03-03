@@ -48,6 +48,7 @@
     "KD": "KD",
     "remove": "remove",
     "Add": "Add",
+    "Add Combo": "Add Combo",
     "Review Order": "Review Order"
   },
   "Contact": {
@@ -80,7 +81,10 @@
     "Enter promotion code": "Enter promotion code",
     "KD OFF": "KD OFF",
     "OFF": "OFF",
-    "Description": "Description"
+    "Description": "Description",
+    "DIY": "DIY",
+    "COMBOS": "COMBOS",
+    "Catering": "Catering - Set Menu's"
   },
   "MyOrders": {
     "MyOrders": "My Orders",
@@ -95,5 +99,18 @@
     "Request Refund": "Request Refund",
     "Refund Requested": "Refund Requested",
     "Refunded": "Refunded"
+  },
+  "Catering": {
+    "Select Date": "Select Date",
+    "Select Time": "Select Time",
+    "Special Requests": "Special Requests",
+    "Description": "Description",
+    "Add People": "Add People",
+    "Add to Cart": "Add to Cart",
+    "Update Cart": "Update Cart",
+    "placeholder": "Enter Your Special Requests",
+    "Per Person": "Extra Person Price",
+    "max people": "Max Extra Persons",
+    "Note": "*Please note that the set up may differ from the photo. Please contact us to request specific details relating to chafing dish & decor selection. We will try our best to accommodate your request."
   }
 }

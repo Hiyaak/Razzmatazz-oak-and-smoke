@@ -10,9 +10,9 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
-import CateringImage from '../../assets/CateringImage.jpg'
-import ComboImage from '../../assets/ComboImage.png'
-import ComboDIY from '../../assets/ComboDIY.png'
+import CateringImage from '../../assets/catering.jpg'
+import ComboImage from '../../assets/combo.jpg'
+import ComboDIY from '../../assets/diy.jpg'
 import oak from '../../assets/oaklogo1.png'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
@@ -93,6 +93,7 @@ const FoodDeliveryApp = () => {
   //   navigate(
   //     `/subproduct/${encodeURIComponent(productName)}?productId=${productId}`
   //   )
+
   const handleProduct = productId => {
     navigate(`/subproduct/${productId}`)
   }
@@ -265,7 +266,9 @@ const FoodDeliveryApp = () => {
                   className='w-full h-60 object-cover'
                 />
                 <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
-                  <h3 className='text-gray-100 font-bold text-lg text-center'></h3>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'>
+                    {t('PlaceOrder.Catering')}
+                  </h3>
                 </div>
               </div>
 
@@ -280,7 +283,9 @@ const FoodDeliveryApp = () => {
                   className='w-full h-60 object-cover'
                 />
                 <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
-                  <h3 className='text-gray-100 font-bold text-lg text-center'></h3>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'>
+                    {t('PlaceOrder.COMBOS')}
+                  </h3>
                 </div>
               </div>
 
@@ -295,7 +300,9 @@ const FoodDeliveryApp = () => {
                   className='w-full h-60 object-cover'
                 />
                 <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
-                  <h3 className='text-gray-100 font-bold text-lg text-center'></h3>
+                  <h3 className='text-gray-100 font-bold text-lg text-center'>
+                    {t('PlaceOrder.DIY')}
+                  </h3>
                 </div>
               </div>
 

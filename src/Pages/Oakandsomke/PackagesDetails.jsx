@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import {
@@ -12,14 +12,15 @@ import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
 import { useCart } from '../../Context/CartContext'
 import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const PackageDetails = () => {
   const { packageId } = useParams()
   const { cart, addToCart } = useCart()
   const location = useLocation()
-
-  // const isEdit = location.state?.isEdit
-
+  const { t } = useTranslation()
+  const { language } = useContext(LanguageContext)
   const [selectedItems, setSelectedItems] = useState({})
 
   const navigate = useNavigate()
@@ -289,7 +290,7 @@ const PackageDetails = () => {
           <div className='border-b border-gray-200'>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Select Date
+                {t('Catering.Select Date')}
               </h2>
             </div>
 
@@ -307,7 +308,7 @@ const PackageDetails = () => {
           <div className='border-b border-gray-200'>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Select Time
+                {t('Catering.Select Time')}
               </h2>
             </div>
 
@@ -369,7 +370,7 @@ const PackageDetails = () => {
             {/* Heading */}
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Description
+                {t('Catering.Description')}
               </h2>
             </div>
 
@@ -381,12 +382,7 @@ const PackageDetails = () => {
               </p>
 
               {/* Static Note */}
-              <p className='text-sm leading-relaxed'>
-                *Please note that the set up may differ from the photo. Please
-                contact us to request specific details relating to chafing dish
-                & decor selection. We will try our best to accommodate your
-                request.
-              </p>
+              <p className='text-sm leading-relaxed'>{t('Catering.Note')}</p>
             </div>
           </div>
 
@@ -608,7 +604,7 @@ const PackageDetails = () => {
           <div>
             <div className='bg-gray-100 p-4'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Special Requests
+                {t('Catering.Special Requests')}
               </h2>
             </div>
 
@@ -620,7 +616,7 @@ const PackageDetails = () => {
                   type='text'
                   value={specialRequest}
                   onChange={e => setSpecialRequest(e.target.value)}
-                  placeholder='Enter Your Special Requests'
+                  placeholder={t('Catering.placeholder')}
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none focus:ring-0 text-gray-700 placeholder-gray-500 text-sm pb-1'
                 />
               </div>
@@ -630,18 +626,20 @@ const PackageDetails = () => {
             <div>
               <div className='bg-gray-100 p-4'>
                 <h2 className='text-base font-semibold text-gray-800'>
-                  Add People
+                  {t('Catering.Add People')}
                 </h2>
               </div>
 
               <div className='bg-white p-5 border-gray-300 space-y-3'>
                 <div className='flex items-center justify-between text-sm text-gray-600'>
                   <span>
-                    Extra Person Price: {extraPersonPrice}{' '}
+                    {t('Catering.Per Person')}: {extraPersonPrice}{' '}
                     {packageData?.package?.currency}
                   </span>
 
-                  <span>Max Extra Persons: {maxExtraPersons}</span>
+                  <span>
+                    {t('Catering.max people')}: {maxExtraPersons}
+                  </span>
                 </div>
 
                 <div className='flex flex-col items-center justify-center space-y-3'>
@@ -816,7 +814,7 @@ const PackageDetails = () => {
           >
             {/* Center Text */}
             <span className='block text-center'>
-              {isEdit ? 'Update Cart' : 'Add to Cart'}
+              {isEdit ? t('Catering.Update Cart') : t('Catering.Add to Cart')}
             </span>
 
             {/* Right Side Price */}

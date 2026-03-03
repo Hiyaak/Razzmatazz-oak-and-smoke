@@ -1,26 +1,27 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AlarmClock, ArrowLeft, Minus, Plus } from 'lucide-react'
 import { useCart } from '../../Context/CartContext'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
+import { LanguageContext } from '../../Context/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 const DiyProducts = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  const { name } = useParams()
-
+  const { language } = useContext(LanguageContext)
   const location = useLocation()
   const { cart, addToCart, updateQuantity } = useCart()
 
   const [subProductCategories, setSubProductCategories] = useState([])
-  const searchParams = new URLSearchParams(location.search)
-  const productId = searchParams.get('productId')
+  const { productId } = useParams()
 
   useEffect(() => {
     if (productId) {
       getSubProductCategories(productId)
     }
-  }, [productId])
+  }, [productId, language])
 
   const getSubProductCategories = async productId => {
     try {
@@ -64,7 +65,7 @@ const DiyProducts = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              {decodeURIComponent(name).toUpperCase()}
+              {subProductCategories[0]?.productName?.toUpperCase()}
             </h1>
 
             <div className='w-9' />
@@ -110,14 +111,14 @@ const DiyProducts = () => {
 
                   {/* Price moved here (just above Add button) */}
                   <div className='text-[#FA0303] font-bold text-right mb-3'>
-                    {item.price} KD
+                    {item.price} {t('ShoopingCart.KD')}
                   </div>
 
                   <button
                     onClick={() => handleNavigate(item)}
                     className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                   >
-                    + Add
+                    + {t('ShoopingCart.Add')}
                   </button>
                 </div>
               )
