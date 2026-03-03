@@ -7,14 +7,13 @@ import {
   FaWalking,
   FaHome,
   FaBuilding,
-  FaBriefcase,
-  FaGreaterThan
+  FaBriefcase
 } from 'react-icons/fa'
 import ApiService from '../../Services/Apiservice'
-import { toast } from 'react-toastify'
-import { TbMathGreater } from 'react-icons/tb'
+import { useTranslation } from 'react-i18next'
 
 const Adress = () => {
+  const { t } = useTranslation()
   const [selectedType, setSelectedType] = useState('Home')
   const [locationData, setLocationData] = useState(null)
   const [formData, setFormData] = useState({
@@ -136,7 +135,7 @@ const Adress = () => {
                   }`}
                 >
                   <FaCarSide className='w-5 h-5' />
-                  Delivery
+                  {t(`brand.Delivery`)}
                 </button>
 
                 {/* Pickup */}
