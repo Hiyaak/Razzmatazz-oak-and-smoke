@@ -1,12 +1,16 @@
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
-import React, { use, useEffect, useState } from 'react'
+import React, { use, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { useCart } from '../../Context/CartContext'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
+import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const Combo = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+  const { language } = useContext(LanguageContext)
   const { cart, addToCart, updateQuantity } = useCart()
   const brandId = localStorage.getItem('brandId')
   const [combos, setCombos] = useState([])
@@ -24,7 +28,7 @@ const Combo = () => {
 
   useEffect(() => {
     getComboCategories()
-  }, [])
+  }, [language])
 
   useEffect(() => {
     fetchSubProducts()
@@ -90,7 +94,7 @@ const Combo = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              COMBOS
+              {t('PlaceOrder.COMBOS')}
             </h1>
 
             <div className='w-9' />
@@ -129,7 +133,7 @@ const Combo = () => {
 
                   {/* Price */}
                   <div className='text-[#FA0303] font-bold text-right mb-3'>
-                    {combo.price} KD
+                    {combo.price} {t('ShoopingCart.KD')}
                   </div>
 
                   {/* Add / Quantity */}
@@ -148,7 +152,7 @@ const Combo = () => {
                       }
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                     >
-                      + Add Combo
+                      + {t('ShoopingCart.Add Combo')}
                     </button>
                   ) : (
                     <div className='flex items-center justify-between rounded-md px-2 py-1'>
@@ -189,7 +193,7 @@ const Combo = () => {
               onClick={() => navigate('/pickupdeviler')}
               className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3 rounded-lg transition-colors'
             >
-              Select your location
+              {t('brand.Selectlocation')}
             </button>
           </div>
         ) : (
@@ -207,7 +211,7 @@ const Combo = () => {
               </div>
 
               {/* Center - Review Order Text */}
-              <span>Review Order</span>
+              <span>{t('ShoopingCart.Review Order')}</span>
 
               {/* Right - Total Price */}
               <span>
@@ -217,7 +221,7 @@ const Combo = () => {
                     0
                   )
                   .toFixed(3)}{' '}
-                KD
+                {t('ShoopingCart.KD')}
               </span>
             </button>
           </div>

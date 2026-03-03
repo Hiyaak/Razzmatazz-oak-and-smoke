@@ -27,14 +27,24 @@ const MenuPage = () => {
   })
 
   const loginSchema = Yup.object().shape({
+    name: Yup.string()
+      .trim()
+      .min(3, 'Name must be at least 3 characters')
+      .required('Name is required'),
+
+    mobileNumber: Yup.string()
+      .trim()
+      .matches(/^\d{8}$/, 'Enter valid 8 digit mobile number')
+      .required('Mobile number is required'),
+
     email: Yup.string()
       .email('Invalid email format')
       .required('Email is required'),
+
     password: Yup.string()
       .min(8, 'Password must be at least 8 characters')
       .required('Password is required')
   })
-
   const registerSchema = Yup.object().shape({
     name: Yup.string()
       .trim()
@@ -115,6 +125,8 @@ const MenuPage = () => {
   const handleLoginUser = async values => {
     try {
       const payload = {
+        name: values.name,
+        mobileNumber: Number(values.mobileNumber),
         email: values.email,
         password: values.password,
         brandId: storedBrandId
@@ -331,65 +343,58 @@ const MenuPage = () => {
 
                   {/* --- FORM FIELDS --- */}
                   <div className='space-y-4'>
-                    {/* Name - Register Only */}
-                    {activeTab === 'register' && (
-                      <div>
-                        <label className='block text-sm text-gray-500 mb-2'>
-                          {t('profile.Name')} *
-                        </label>
-                        <input
-                          type='text'
-                          name='name'
-                          value={values.name}
-                          onChange={handleChange}
-                          className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
-                        />
-                        {errors.name && touched.name && (
-                          <p className='text-red-500 text-sm mt-1'>
-                            {errors.name}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                    {/* Name */}
+                    <div>
+                      <label className='block text-sm text-gray-500 mb-2'>
+                        {t('profile.Name')} *
+                      </label>
+                      <input
+                        type='text'
+                        name='name'
+                        value={values.name}
+                        onChange={handleChange}
+                        className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
+                      />
+                      {errors.name && touched.name && (
+                        <p className='text-red-500 text-sm mt-1'>
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
 
-                    {/* Mobile Number - Register Only */}
-                    {activeTab === 'register' && (
-                      <div>
-                        <label className='block text-sm text-gray-500 mb-2'>
-                          {t('profile.Mobile Number')} *
-                        </label>
+                    {/* Mobile Number */}
+                    <div>
+                      <label className='block text-sm text-gray-500 mb-2'>
+                        {t('profile.Mobile Number')} *
+                      </label>
 
-                        <input
-                          type='tel'
-                          name='mobileNumber'
-                          value={values.mobileNumber}
-                          onChange={e => {
-                            const onlyNumbers = e.target.value.replace(
-                              /\D/g,
-                              ''
-                            ) // remove non-digits
-                            if (onlyNumbers.length <= 8) {
-                              handleChange({
-                                target: {
-                                  name: 'mobileNumber',
-                                  value: onlyNumbers
-                                }
-                              })
-                            }
-                          }}
-                          maxLength={8}
-                          inputMode='numeric'
-                          pattern='\d*'
-                          className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
-                        />
+                      <input
+                        type='tel'
+                        name='mobileNumber'
+                        value={values.mobileNumber}
+                        onChange={e => {
+                          const onlyNumbers = e.target.value.replace(/\D/g, '')
+                          if (onlyNumbers.length <= 8) {
+                            handleChange({
+                              target: {
+                                name: 'mobileNumber',
+                                value: onlyNumbers
+                              }
+                            })
+                          }
+                        }}
+                        maxLength={8}
+                        inputMode='numeric'
+                        pattern='\d*'
+                        className='w-full text-base border-0 border-b-2 border-gray-200 focus:border-gray-400 focus:ring-0 outline-none transition-colors'
+                      />
 
-                        {errors.mobileNumber && touched.mobileNumber && (
-                          <p className='text-red-500 text-sm mt-1'>
-                            {errors.mobileNumber}
-                          </p>
-                        )}
-                      </div>
-                    )}
+                      {errors.mobileNumber && touched.mobileNumber && (
+                        <p className='text-red-500 text-sm mt-1'>
+                          {errors.mobileNumber}
+                        </p>
+                      )}
+                    </div>
 
                     {/* Email */}
                     <div>
@@ -476,7 +481,9 @@ const MenuPage = () => {
                     type='submit'
                     className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-bold py-3 rounded-lg transition-colors text-center'
                   >
-                    {activeTab === 'login' ? t('profile.Login') : t('profile.Register')}
+                    {activeTab === 'login'
+                      ? t('profile.Login')
+                      : t('profile.Register')}
                   </button>
                 </div>
               </Form>

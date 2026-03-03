@@ -55,8 +55,8 @@ function App () {
               path='/diyproductdetails/:id'
               element={<DiyProductDetails />}
             />
-            <Route path='/diyproducts/:name' element={<DiyProducts />} />
-           <Route path='/subproduct/:productId' element={<Subproducts />} />
+            <Route path='/diyproducts/:productId' element={<DiyProducts />} />
+            <Route path='/subproduct/:productId' element={<Subproducts />} />
             <Route
               path='/subproductdetails/:id'
               element={<SubproductDetails />}

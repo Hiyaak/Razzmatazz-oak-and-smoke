@@ -2,11 +2,15 @@ import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useCart } from '../../Context/CartContext'
+import { LanguageContext } from '../../Context/LanguageContext'
+import { useTranslation } from 'react-i18next'
 
 const Diy = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
+  const { language } = useContext(LanguageContext)
   const [products, setProducts] = useState([])
   const brandId = localStorage.getItem('brandId')
 
@@ -37,12 +41,16 @@ const Diy = () => {
 
   useEffect(() => {
     getProducts()
-  }, [])
+  }, [language])
 
-  const handleProduct = (productId, productName) => {
-    navigate(
-      `/diyproducts/${encodeURIComponent(productName)}?productId=${productId}`
-    )
+  // const handleProduct = (productId, productName) => {
+  //   navigate(
+  //     `/diyproducts/${encodeURIComponent(productName)}?productId=${productId}`
+  //   )
+  // }
+
+  const handleProduct = productId => {
+    navigate(`/diyproducts/${productId}`)
   }
 
   return (
@@ -60,7 +68,7 @@ const Diy = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              DIY
+              {t('PlaceOrder.DIY')}
             </h1>
 
             <div className='w-9' />
@@ -74,7 +82,7 @@ const Diy = () => {
               <div
                 key={item._id}
                 className='relative rounded-lg overflow-hidden shadow'
-                 onClick={() => handleProduct(item._id, item.productName)}
+                onClick={() => handleProduct(item._id, item.productName)}
               >
                 <img
                   src={`${ImagePath}${item.product_img?.[0]}`}
