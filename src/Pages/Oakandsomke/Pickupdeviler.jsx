@@ -434,8 +434,8 @@ const HeroSection = () => {
             }`}
           >
             {selectedArea || selectedGovernate
-              ? 'Done'
-              : 'Select your location'}
+              ? t('brand.Done')
+              : t('brand.Selectlocation')}
           </button>
         </div>
       </div>
