@@ -14,7 +14,8 @@
     "Pickup": "Pickup",
     "Choose": "Choose a Store",
     "Method": "Method",
-    "Search": "Search ..."
+    "Search": "Search ...",
+     "Done": "Done"
   },
   "profile": {
     "Menu": "Menu",
@@ -112,5 +113,16 @@
     "Per Person": "Extra Person Price",
     "max people": "Max Extra Persons",
     "Note": "*Please note that the set up may differ from the photo. Please contact us to request specific details relating to chafing dish & decor selection. We will try our best to accommodate your request."
-  }
+  },
+  
+    "login":
+    {
+      "ContactInformation": "Contact Information",
+      "Saveyouraddresses": "Save your addresses",
+      "Saveyourcontactinformation": "Save your contact information",
+      "Onetapreordering": "One-tap re-ordering",
+      "OrcontinueasGuest": "Or continue as Guest",
+      "signup": "SIGN UP"
+    }
+  
 }

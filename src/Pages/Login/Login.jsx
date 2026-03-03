@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { MdOutlineMoreTime, MdContacts, MdApartment } from 'react-icons/md'
 import { IoIosContact } from 'react-icons/io'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { useTranslation } from 'react-i18next'
 
 const ContactInfoForm = () => {
   const [showGuestForm, setShowGuestForm] = useState(false)
@@ -15,6 +16,7 @@ const ContactInfoForm = () => {
     email: '',
     phone: ''
   })
+   const { t } = useTranslation()
 
   const storedBrandId = localStorage.getItem('brandId')
   console.log('Retrieved brandId:', storedBrandId)
@@ -116,7 +118,8 @@ const ContactInfoForm = () => {
 
                 {/* Title */}
                 <h2 className='text-2xl font-semibold text-gray-700 text-center mb-8'>
-                  Contact Information
+                  {/* Contact Information */}
+                  {t('login.ContactInformation')}
                 </h2>
 
                 {/* Benefits List - Perfectly Aligned */}
@@ -124,7 +127,8 @@ const ContactInfoForm = () => {
                   <div className='flex items-center justify-center gap-4'>
                     <MdApartment className='w-5 h-5 text-gray-700' />
                     <span className='text-gray-800 font-medium'>
-                      Save your addresses
+                      {/* Save your addresses */}
+                      {t('login.Saveyouraddresses')}
                     </span>
                   </div>
 
@@ -132,14 +136,15 @@ const ContactInfoForm = () => {
                   <div className='flex items-center justify-center gap-4'>
                     <MdContacts className='w-5 h-5 text-gray-700 translate-x-[34px]' />
                     <span className='text-gray-800 font-medium translate-x-[34px]'>
-                      Save your contact information
+                      {t('login.Saveyourcontactinformation')}
                     </span>
                   </div>
 
                   <div className='flex items-center justify-center gap-4'>
                     <MdOutlineMoreTime className='w-5 h-5 text-gray-700' />
                     <span className='text-gray-800 font-medium'>
-                      One-tap re-ordering
+                      {/* One-tap re-ordering */}
+                      {t('login.Onetapreordering')}
                     </span>
                   </div>
                 </div>
@@ -150,7 +155,8 @@ const ContactInfoForm = () => {
                     onClick={handleSignUp}
                     className='w-1/2 bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3 rounded-lg transition-colors shadow-sm'
                   >
-                    SIGN UP
+                    {/* SIGN UP */}
+                    {t('login.signup')}
                   </button>
                 </div>
 
@@ -160,7 +166,8 @@ const ContactInfoForm = () => {
                     onClick={handleContinueAsGuest}
                     className='text-gray-800 font-medium hover:text-gray-900 transition-colors border-b-2 border-red-600 pb-0.5'
                   >
-                    Or continue as Guest
+                    {/* Or continue as Guest */}
+                    {t('login.OrcontinueasGuest')}
                   </button>
                 </div>
               </div>
