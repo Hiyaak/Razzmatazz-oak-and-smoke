@@ -257,8 +257,7 @@ const ShoppingCartPage = () => {
                         {/* DATE & TIME */}
                         {item.date && item.time && (
                           <p className='text-sm text-gray-500 mt-1'>
-                            {formatCartDate(item.date)} - {item.time} to{' '}
-                            {getEndTime(item.time)}
+                            {formatCartDate(item.date)} - {item.time} 
                           </p>
                         )}
 

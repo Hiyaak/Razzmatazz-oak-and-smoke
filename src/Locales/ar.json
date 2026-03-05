@@ -44,7 +44,9 @@
     "Mobile Number": "رقم الهاتف المحمول",
     "Continue": "تسجيل الدخول باستخدام",
     "Delivery addresses": "عناوين التوصيل",
-    "Delete account": "حذف الحساب"
+    "Delete account": "حذف الحساب",
+    "Back": "رجوع",
+    "Note": "ملاحظة"
   },
   "ShoopingCart": {
     "ShoppingCart": "عربة التسوق",
@@ -103,7 +105,11 @@
     "Schedule Delivery": "جدولة التوصيل",
     "Schedule Order": "جدولة الطلب",
     "Cash on Delivery": "الدفع عند الاستلام",
-    "Online (TAP)": "عبر الإنترنت"
+    "Online (TAP)": "عبر الإنترنت",
+    "Required": "مطلوب",
+    "Optional": "اختياري",
+    "min": "الحد الأدنى",
+    "max": "الحد الأقصى"
   },
   "MyOrders": {
     "MyOrders": "طلباتي",

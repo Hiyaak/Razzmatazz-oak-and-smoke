@@ -146,8 +146,8 @@ const Combo = () => {
                           type: 'combo',
                           name: combo.comboName,
                           price: combo.price,
-                          image: combo.subproductIds?.[0]?.image,
-                          items: combo.subproductIds
+                          image: combo.comboImage,
+                          items: combo.subproducts
                         })
                       }
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'

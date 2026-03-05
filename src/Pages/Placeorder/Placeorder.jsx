@@ -9,6 +9,9 @@ import { LuContact } from 'react-icons/lu'
 import { FaBuilding } from 'react-icons/fa'
 import { HiPencil } from 'react-icons/hi'
 import { useTranslation } from 'react-i18next'
+import Calendar from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
+import { ChevronRight } from 'lucide-react'
 
 const Placeorder = () => {
   const { t } = useTranslation()
@@ -24,23 +27,31 @@ const Placeorder = () => {
   console.log('specialRemark in Placeorder:', specialRemark)
 
   const [userAdress, setUserAdress] = useState([])
+  const [selectedAddress, setSelectedAddress] = useState(null)
   const [deliveryCharges, setDeliveryCharges] = useState(0)
   const [profile, setProfile] = useState(null)
   const [placingOrder, setPlacingOrder] = useState(false)
+  const [hour, setHour] = useState('')
+  const [minute, setMinute] = useState('')
+  const [period, setPeriod] = useState('')
+  const [selectedBranchId, setSelectedBranchId] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [carDetails, setCarDetails] = useState({
     make: '',
     color: '',
     plate: ''
   })
+  const [branches, setBranches] = useState([])
+  const [showCalendar, setShowCalendar] = useState(false)
+  const [scheduledDate, setScheduledDate] = useState(null)
+  const [scheduledTime, setScheduledTime] = useState(
+    new Date().toTimeString().slice(0, 5)
+  )
   const [paymentOptions, setPaymentOptions] = useState({
     cod: false,
     online: false
   })
   const [orderType, setOrderType] = useState('now') // now | schedule
-  const [scheduledDate, setScheduledDate] = useState('')
-  const [scheduledTime, setScheduledTime] = useState('')
-
   const [coupons, setCoupons] = useState([])
   const [couponInput, setCouponInput] = useState('')
   const [selectedCoupon, setSelectedCoupon] = useState(null)
@@ -68,6 +79,10 @@ const Placeorder = () => {
       const { data } = await ApiService.get(`getAddressesByUser/${userId}`)
       if (data.status) {
         setUserAdress(data.addresses)
+
+        if (data.addresses.length > 0) {
+          setSelectedAddress(data.addresses[0]._id) // default address
+        }
       } else {
         toast.error('Failed to load address')
       }
@@ -92,6 +107,23 @@ const Placeorder = () => {
       }
     } catch (error) {
       toast.error('Something went wrong while loading your profile.')
+    }
+  }
+
+  const getBranchesByBrand = async () => {
+    try {
+      const { data } = await ApiService.get(
+        `getLocationsByBrand?brandId=${storedBrandId}`
+      )
+
+      if (data.status && data.locations) {
+        setBranches(data.locations)
+      } else {
+        setBranches([])
+      }
+    } catch (error) {
+      console.error('Error fetching branches:', error)
+      setBranches([])
     }
   }
 
@@ -256,6 +288,7 @@ const Placeorder = () => {
     fetchProfile()
     getDeliveryCharges()
     fetchSettings()
+    getBranchesByBrand()
   }, [])
 
   useEffect(() => {
@@ -286,6 +319,14 @@ const Placeorder = () => {
 
   const finalTotal = subtotal - discount + (!isCatering ? deliveryCharges : 0)
 
+  const formatDateOnly = date => {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   const handlePlaceOrder = async () => {
     try {
       const storedBrandId = localStorage.getItem('brandId')
@@ -306,7 +347,11 @@ const Placeorder = () => {
 
       if (!selectedMethod) return toast.error('Please select delivery type')
 
+      console.log('Selected Method:', selectedMethod)
+
       setPlacingOrder(true)
+
+      const hasCateringItem = cart.some(item => item.orderType === 'catering')
 
       const items = cart
         .map(item => {
@@ -395,38 +440,56 @@ const Placeorder = () => {
         deliveryType: selectedMethod,
         branchId: storedBrandId,
         specialRemarks: specialRemark,
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
+        ...(selectedMethod === 'delivery' && { address_id: selectedAddress })
       }
 
-      // 🔥 Add schedule only if selected
-      if (orderType === 'schedule') {
-        if (!scheduledDate || !scheduledTime) {
-          toast.error('Please select date and time')
-          setPlacingOrder(false)
-          return
-        }
+      // add schedule only if user selected
+      if (scheduledDate && hour && minute && period) {
+        payload.scheduledDate = formatDateOnly(scheduledDate)
+        payload.scheduledTime = `${hour}:${minute} ${period}`
+      }
 
-        payload.scheduledDate = scheduledDate
+      //  Add schedule only if selected
+      if (scheduledDate && scheduledTime) {
+        payload.scheduledDate = new Date(scheduledDate)
+          .toISOString()
+          .split('T')[0]
         payload.scheduledTime = scheduledTime
       }
 
-      // 🔹 DELIVERY
+      payload.branchId = selectedGovernateId
+      // if (selectedMethod === 'delivery') {
+      //   if (!selectedGovernateId || !selectedAreaId) {
+      //     return toast.error('Please select your location')
+      //   }
+
+      //   payload.governateId = selectedGovernateId
+      //   payload.areaId = selectedAreaId
+
+      //   //  Do not send delivery charge for catering
+      //   if (!hasCateringItem) {
+      //     payload.deliveryCharge = Number(deliveryCharges)
+      //   }
+      // }
       if (selectedMethod === 'delivery') {
-        if (!selectedGovernateId || !selectedAreaId) {
-          return toast.error('Please select your location')
+        if (!selectedBranchId) {
+          return toast.error('Please select branch')
         }
 
+        payload.branchId = selectedBranchId
         payload.governateId = selectedGovernateId
         payload.areaId = selectedAreaId
-        payload.deliveryCharge = Number(deliveryCharges)
+
+        if (!hasCateringItem) {
+          payload.deliveryCharge = Number(deliveryCharges)
+        }
       }
 
       if (selectedMethod === 'pickup') {
         if (!selectedGovernateId) {
           return toast.error('Please select branch')
         }
-
-        payload.branchId = selectedGovernateId
 
         // 🔹 Only add pickup details if user entered them
         if (carDetails?.model || carDetails?.color || carDetails?.plateNumber) {
@@ -603,8 +666,37 @@ const Placeorder = () => {
             )}
           </div>
 
-          {/* Payment Type */}
+          {/* branch list */}
+          {selectedMethod === 'delivery' && (
+            <div className='border-b border-gray-200'>
+              <div className='bg-gray-100 p-4'>
+                <h2 className='text-base font-semibold text-gray-800'>
+                  Select Branch
+                </h2>
+              </div>
 
+              <div className='p-4 space-y-2'>
+                {branches.map(branch => (
+                  <label
+                    key={branch._id}
+                    className='flex items-center justify-between border rounded-lg p-3 cursor-pointer hover:bg-gray-50'
+                  >
+                    <span>{branch.locname}</span>
+
+                    <input
+                      type='radio'
+                      name='branch'
+                      value={branch._id}
+                      checked={selectedBranchId === branch._id}
+                      onChange={() => setSelectedBranchId(branch._id)}
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Payment Type */}
           <div className='bg-white p-5 border-b border-gray-300 space-y-4'>
             {/* CASH ON DELIVERY */}
             {paymentOptions.cod && (
@@ -659,45 +751,75 @@ const Placeorder = () => {
           </div>
 
           {/* Order Type Selection */}
-
           <div className='bg-white p-5 border-b border-gray-300 space-y-4'>
             <h2 className='text-base font-semibold text-gray-800'>
               {t('PlaceOrder.Schedule Order')}
             </h2>
 
-            {/* Schedule Order */}
-            <label className='flex items-center justify-between border p-3 rounded-lg cursor-pointer'>
+            {/* Schedule Row */}
+            <div
+              onClick={() => setShowCalendar(!showCalendar)}
+              className='flex items-center justify-between border p-3 rounded-lg cursor-pointer hover:bg-gray-50'
+            >
               <span>{t('PlaceOrder.Schedule Order')}</span>
-              <input
-                type='radio'
-                name='orderType'
-                value='schedule'
-                checked={orderType === 'schedule'}
-                onChange={e => setOrderType(e.target.value)}
-              />
-            </label>
+              <ChevronRight size={20} />
+            </div>
 
-            {/* Show Date & Time only if scheduled */}
-            {orderType === 'schedule' && (
+            {/* Calendar Section */}
+            {showCalendar && (
               <div className='space-y-3 border p-4 rounded-lg bg-gray-50'>
-                <div>
-                  <label className='text-sm text-gray-600'>Select Date</label>
-                  <input
-                    type='date'
-                    value={scheduledDate}
-                    onChange={e => setScheduledDate(e.target.value)}
-                    className='w-full border p-2 rounded'
-                  />
-                </div>
+                <Calendar
+                  onChange={setScheduledDate}
+                  value={scheduledDate}
+                  minDate={new Date()} // prevents past dates
+                />
 
                 <div>
                   <label className='text-sm text-gray-600'>Select Time</label>
-                  <input
-                    type='time'
-                    value={scheduledTime}
-                    onChange={e => setScheduledTime(e.target.value)}
-                    className='w-full border p-2 rounded'
-                  />
+
+                  <div className='flex gap-2 mt-1'>
+                    {/* Hour */}
+                    <select
+                      value={hour}
+                      onChange={e => setHour(e.target.value)}
+                      className='border p-2 rounded'
+                    >
+                      <option value=''>HH</option>
+                      {[...Array(12)].map((_, i) => {
+                        const h = String(i + 1).padStart(2, '0')
+                        return (
+                          <option key={h} value={h}>
+                            {h}
+                          </option>
+                        )
+                      })}
+                    </select>
+
+                    {/* Minute */}
+                    <select
+                      value={minute}
+                      onChange={e => setMinute(e.target.value)}
+                      className='border p-2 rounded'
+                    >
+                      <option value=''>MM</option>
+                      {['00', '15', '30', '45'].map(m => (
+                        <option key={m} value={m}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* AM / PM */}
+                    <select
+                      value={period}
+                      onChange={e => setPeriod(e.target.value)}
+                      className='border p-2 rounded'
+                    >
+                      <option value=''>AM/PM</option>
+                      <option value='AM'>AM</option>
+                      <option value='PM'>PM</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}

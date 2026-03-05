@@ -65,7 +65,7 @@ const PackageDetails = () => {
     }
 
     fetchPackageDetails()
-  }, [packageId, brandId])
+  }, [packageId, brandId, language])
 
   const allowExtraPersons = packageData?.package?.allowExtraPersons
   const extraPersonPrice = packageData?.package?.extraPersonPrice || 0
@@ -208,15 +208,23 @@ const PackageDetails = () => {
   const finalTotal = basePrice + additionalTotal + extraPersonsTotal
 
   const formatDateOnly = date => {
+    if (!date) return null
+
     const d = new Date(date)
+    if (isNaN(d)) return null
+
     const year = d.getFullYear()
     const month = String(d.getMonth() + 1).padStart(2, '0')
     const day = String(d.getDate()).padStart(2, '0')
+
     return `${year}-${month}-${day}`
   }
 
+  const selectedDateFormatted = formatDateOnly(selectedDate)
+
   const isDateBlocked = packageData?.blockedDates?.some(
-    blocked => blocked.date === formatDateOnly(selectedDate)
+    blocked =>
+      blocked.date === selectedDateFormatted && blocked.timeSlots?.length === 0
   )
 
   useEffect(() => {
@@ -260,6 +268,13 @@ const PackageDetails = () => {
     setSelectedItems(prefilledAdditional)
   }, [isEdit, cartItemIdFromState, cart])
 
+  const blockedInfo = packageData?.blockedDates?.find(
+    d => d.date === selectedDateFormatted
+  )
+
+  const blockedSlots = blockedInfo?.timeSlots || []
+  const isFullDayBlocked = blockedInfo && blockedSlots.length === 0
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* LEFT PANEL */}
@@ -299,6 +314,25 @@ const PackageDetails = () => {
                 onChange={setSelectedDate}
                 value={selectedDate}
                 minDate={new Date()}
+                tileDisabled={({ date, view }) =>
+                  view === 'month' &&
+                  packageData?.blockedDates?.some(
+                    blocked =>
+                      blocked.date === formatDateOnly(date) &&
+                      blocked.timeSlots?.length === 0
+                  )
+                }
+                tileClassName={({ date, view }) => {
+                  const isFullDayBlocked =
+                    view === 'month' &&
+                    packageData?.blockedDates?.some(
+                      blocked =>
+                        blocked.date === formatDateOnly(date) &&
+                        blocked.timeSlots?.length === 0
+                    )
+
+                  if (isFullDayBlocked) return 'blocked-date'
+                }}
                 className='w-full border-0'
               />
             </div>
@@ -334,21 +368,28 @@ const PackageDetails = () => {
                     ref={timeScrollRef}
                     className='flex gap-3 overflow-x-auto whitespace-nowrap scroll-smooth [&::-webkit-scrollbar]:hidden'
                   >
-                    {packageData?.allTimeSlots?.map((slot, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedSlot(slot)}
-                        className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
-              ${
-                selectedSlot === slot
-                  ? 'bg-green-600 text-white'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
-              }
-            `}
-                      >
-                        {formatTo12Hour(slot)} - {getEndTime(slot)}
-                      </button>
-                    ))}
+                    {packageData?.availableTimeSlots?.map((slot, index) => {
+                      const isSlotBlocked = blockedSlots.includes(slot)
+
+                      return (
+                        <button
+                          key={index}
+                          disabled={isFullDayBlocked || isSlotBlocked}
+                          onClick={() => setSelectedSlot(slot)}
+                          className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
+    ${
+      isFullDayBlocked || isSlotBlocked
+        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+        : selectedSlot === slot
+        ? 'bg-green-600 text-white'
+        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+    }
+  `}
+                        >
+                          {slot}
+                        </button>
+                      )
+                    })}
                   </div>
                 )}
 
@@ -418,20 +459,22 @@ const PackageDetails = () => {
                     {/* Left Side */}
                     {category.name === 'Addittional Services' ? (
                       <p className='text-sm font-medium text-gray-700'>
-                        Optional
+                        {t('PlaceOrder.Optional')}
                       </p>
                     ) : category.minItems > 0 ? (
                       <p className='text-sm font-medium text-gray-700'>
-                        Required
+                        {t('PlaceOrder.Required')}
                       </p>
                     ) : null}
 
                     {/* Right Side */}
                     {(category.minItems > 0 || category.maxItems > 0) && (
                       <p className='text-sm text-gray-600'>
-                        {category.minItems > 0 && `min: ${category.minItems}`}
+                        {category.minItems > 0 &&
+                          `${t('PlaceOrder.min')}: ${category.minItems}`}
                         {category.minItems > 0 && category.maxItems > 0 && ', '}
-                        {category.maxItems > 0 && `max: ${category.maxItems}`}
+                        {category.maxItems > 0 &&
+                          `${t('PlaceOrder.max')}: ${category.maxItems}`}
                       </p>
                     )}
                   </div>
@@ -819,7 +862,7 @@ const PackageDetails = () => {
 
             {/* Right Side Price */}
             <span className='absolute right-4 top-1/2 -translate-y-1/2'>
-              {finalTotal.toFixed(3)} {packageData?.package?.currency}
+              {finalTotal.toFixed(3)} {t('ShoopingCart.KD')}
             </span>
           </button>
         </div>

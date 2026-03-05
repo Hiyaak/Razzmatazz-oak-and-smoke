@@ -44,7 +44,9 @@
     "Mobile Number": "Mobile Number",
     "Continue": "Login with",
     "Delivery addresses": "Delivery addresses",
-    "Delete account": "Delete account"
+    "Delete account": "Delete account",
+    "Back": "Back",
+    "Note": "Note"
   },
   "ShoopingCart": {
     "ShoppingCart": "Shopping Cart",
@@ -103,7 +105,11 @@
     "Schedule Delivery": "Schedule Delivery",
     "Schedule Order": "Schedule Order",
     "Cash on Delivery": "Cash on Delivery",
-    "Online (TAP)": "Online"
+    "Online (TAP)": "Online",
+    "Required": "Required",
+    "Optional": "Optional",
+    "min": "min",
+    "max": "max"
   },
   "MyOrders": {
     "MyOrders": "My Orders",

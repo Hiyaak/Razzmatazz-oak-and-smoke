@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AlarmClock, ArrowLeft } from 'lucide-react'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { Minus, Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const Subproducts = () => {
+  const { t } = useTranslation()
+  const { language } = useContext(LanguageContext)
   const { name } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -22,7 +26,7 @@ const Subproducts = () => {
 
   useEffect(() => {
     getAllPackages()
-  }, [])
+  }, [language])
 
   const getAllPackages = async () => {
     try {
@@ -62,7 +66,7 @@ const Subproducts = () => {
             </button>
 
             <h1 className='text-xl font-semibold text-gray-900 text-center flex-1'>
-              Catering - Set Menu's
+              {t('PlaceOrder.Catering')}
             </h1>
 
             <div className='w-9' />
@@ -100,7 +104,7 @@ const Subproducts = () => {
 
                   {/* Price */}
                   <div className='text-[#FA0303] font-bold text-right mb-3'>
-                    {item.pricing.packagePrice} KD
+                    {item.pricing.packagePrice} {t('ShoopingCart.KD')}
                   </div>
 
                   {/* Add / Quantity */}
@@ -114,7 +118,7 @@ const Subproducts = () => {
                       }
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                     >
-                      + Add
+                      + {t('ShoopingCart.Add')}
                     </button>
                   ) : (
                     <div className='flex items-center justify-between rounded-md px-2 py-1'>

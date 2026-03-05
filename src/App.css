@@ -31,3 +31,10 @@
 .react-calendar__tile:enabled:hover {
   background-color: #f3f4f6;
 }
+
+.blocked-date {
+  background-color: #e5e7eb !important; /* gray-200 */
+  color: #9ca3af !important; /* gray-400 */
+  pointer-events: none;
+  border-radius: 6px;
+}
