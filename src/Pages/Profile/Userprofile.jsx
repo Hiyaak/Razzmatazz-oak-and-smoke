@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { ArrowLeft, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -12,9 +12,11 @@ import {
   MdApartment
 } from 'react-icons/md'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const Userprofile = () => {
   const { t } = useTranslation()
+  const { language } = useContext(LanguageContext)
   const [profile, setProfile] = useState(null)
   const [userAdress, setUserAdress] = useState([])
   const [showAddressModal, setShowAddressModal] = useState(false)
@@ -69,7 +71,7 @@ const Userprofile = () => {
   useEffect(() => {
     fetchProfile()
     fetchAdress()
-  }, [])
+  }, [language])
 
   const handleSignOut = () => {
     const storedBrandId = localStorage.getItem('brandId')
@@ -275,7 +277,7 @@ const Userprofile = () => {
                             </p>
                             {address.additional && (
                               <p className='text-xs text-gray-500 mt-2'>
-                                Note: {address.additional}
+                                {t('profile.Note')}: {address.additional}
                               </p>
                             )}
                           </div>
@@ -302,7 +304,7 @@ const Userprofile = () => {
                   onClick={() => setShowAddressModal(false)}
                   className='w-full bg-[#FA0303] text-white py-2 rounded font-medium hover:bg-red-600 transition-colors text-base'
                 >
-                  Back
+                  {t('profile.Back')}
                 </button>
               </div>
             </div>
