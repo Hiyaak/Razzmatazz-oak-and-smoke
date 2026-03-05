@@ -15,7 +15,16 @@
     "Choose": "Choose a Store",
     "Method": "Method",
     "Search": "Search ...",
-     "Done": "Done"
+    "Done": "Done",
+    "Next": "Next",
+    "Delivery Area & Location": "Delivery Area & Location",
+    "Address Details": "Address Details",
+    "Change": "Change",
+    "Details": "Details",
+    "Address": "Address",
+    "Hours": "Hours",
+    "Get Directions": "Get Directions",
+    "Call": "Call"
   },
   "profile": {
     "Menu": "Menu",
@@ -53,6 +62,9 @@
     "Review Order": "Review Order"
   },
   "Contact": {
+    "invoice": "for your invoice",
+    "phone": "Phone",
+    "Contact Information": "Contact Information",
     "ourBranches": "Our branches",
     "nobranchesavailable": "No branches available",
     "youropinionmatters": "Your opinion matters",
@@ -64,7 +76,9 @@
     "name": "Name",
     "phoneOptional": "Phone (Optional)",
     "leaveusacomment": "Leave us a comment",
-    "SEND": "SEND"
+    "SEND": "SEND",
+    "save": "Save",
+    "saving": "Saving..."
   },
   "PlaceOrder": {
     "Pickupfrom": "Pickup from",
@@ -85,7 +99,11 @@
     "Description": "Description",
     "DIY": "DIY",
     "COMBOS": "COMBOS",
-    "Catering": "Catering - Set Menu's"
+    "Catering": "Catering - Set Menu's",
+    "Schedule Delivery": "Schedule Delivery",
+    "Schedule Order": "Schedule Order",
+    "Cash on Delivery": "Cash on Delivery",
+    "Online (TAP)": "Online"
   },
   "MyOrders": {
     "MyOrders": "My Orders",
@@ -114,15 +132,32 @@
     "max people": "Max Extra Persons",
     "Note": "*Please note that the set up may differ from the photo. Please contact us to request specific details relating to chafing dish & decor selection. We will try our best to accommodate your request."
   },
-  
-    "login":
-    {
-      "ContactInformation": "Contact Information",
-      "Saveyouraddresses": "Save your addresses",
-      "Saveyourcontactinformation": "Save your contact information",
-      "Onetapreordering": "One-tap re-ordering",
-      "OrcontinueasGuest": "Or continue as Guest",
-      "signup": "SIGN UP"
-    }
-  
+  "login": {
+    "ContactInformation": "Contact Information",
+    "Saveyouraddresses": "Save your addresses",
+    "Saveyourcontactinformation": "Save your contact information",
+    "Onetapreordering": "One-tap re-ordering",
+    "OrcontinueasGuest": "Or continue as Guest",
+    "signup": "SIGN UP"
+  },
+  "address": {
+    "block": "Block",
+    "street": "Street",
+    "floor": "Floor",
+    "building": "Building",
+    "apartment": "Apartment",
+    "house": "House",
+    "office": "Office",
+    "paci": "Civil ID",
+    "additional": "Additional Details",
+    "avenue": "Avenue",
+    "home": "Home"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": "Loading notifications...",
+    "empty": "No notifications.",
+    "orderId": "Order ID",
+    "amount": "Amount"
+  }
 }

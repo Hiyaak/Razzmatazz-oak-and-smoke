@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ArrowLeft, ChevronDown, Search, CarFront, Store } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { FaCarSide, FaWalking } from 'react-icons/fa'
@@ -6,9 +6,11 @@ import { FaCarSide, FaWalking } from 'react-icons/fa'
 import ApiService from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const HeroSection = () => {
   const { t } = useTranslation()
+  const { language } = useContext(LanguageContext)
   const navigate = useNavigate()
   const location = useLocation()
   const brandId = localStorage.getItem('brandId')
@@ -178,7 +180,7 @@ const HeroSection = () => {
         getAllGovernates()
       }
     }
-  }, [brandId, selectedMethod])
+  }, [brandId, selectedMethod, language])
 
   // Auto-fetch areas for visible governates during search
   useEffect(() => {

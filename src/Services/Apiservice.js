@@ -8,14 +8,22 @@ const API_URL = import.meta.env.VITE_API_URL
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' }
-})
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
 
 axiosInstance.interceptors.request.use((config) => {
-  const language = localStorage.getItem('lang') || 'en'
-  config.headers['Accept-Language'] = language
-  return config
-})
+  const language = localStorage.getItem("lang") || "en";
+
+  if (!config.headers) {
+    config.headers = {};
+  }
+
+  config.headers["Accept-Language"] = language;
+
+  return config;
+});
 
 const ApiService = {
   get: (endpoint, params, token) =>

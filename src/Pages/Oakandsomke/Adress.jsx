@@ -122,7 +122,9 @@ const Adress = () => {
           {/* Method Section */}
           <div>
             <div className='bg-gray-100 p-4 border-b'>
-              <h2 className='text-base font-semibold text-gray-800'>Method</h2>
+              <h2 className='text-base font-semibold text-gray-800'>
+                {t(`brand.Method`)}
+              </h2>
             </div>
             <div className='bg-white p-5 border-gray-300'>
               <div className='flex justify-center gap-24'>
@@ -147,7 +149,7 @@ const Adress = () => {
                   }`}
                 >
                   <FaWalking className='w-5 h-5' />
-                  Pickup
+                  {t(`brand.Pickup`)}
                 </button>
               </div>
             </div>
@@ -157,7 +159,7 @@ const Adress = () => {
           <div>
             <div className='bg-gray-100 p-4 border-b'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Delivery Area & Location
+                {t('brand.Delivery Area & Location')}
               </h2>
             </div>
 
@@ -178,7 +180,7 @@ const Adress = () => {
                     onClick={() => navigate('/pickupdeviler')}
                     className='text-sm font-semibold text-gray-700 flex items-center justify-center gap-1'
                   >
-                    <span>Change</span>
+                    <span>{t('brand.Change')}</span>
                     {/* <FaGreaterThan /> */}
                   </button>
                 </div>
@@ -200,7 +202,7 @@ const Adress = () => {
           <div>
             <div className='bg-gray-100 p-4 border-b'>
               <h2 className='text-base font-semibold text-gray-800'>
-                Address Details
+                {t('brand.Address Details')}
               </h2>
             </div>
 
@@ -208,12 +210,12 @@ const Adress = () => {
               {/* Type Selector Buttons */}
               <div className='flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mb-10 px-4'>
                 {[
-                  { label: 'Home', icon: <FaHome className='w-5 h-5' /> },
+                  { label: t('address.home'), icon: <FaHome className='w-5 h-5' /> },
                   {
-                    label: 'Apartment',
+                    label: t('address.apartment'),
                     icon: <FaBuilding className='w-5 h-5' />
                   },
-                  { label: 'Office', icon: <FaBriefcase className='w-5 h-5' /> }
+                  { label: t('address.office'), icon: <FaBriefcase className='w-5 h-5' /> }
                 ].map(({ label, icon }) => (
                   <button
                     key={label}
@@ -237,7 +239,7 @@ const Adress = () => {
                   name='Block'
                   value={formData.Block}
                   onChange={handleChange}
-                  placeholder='Block *'
+                  placeholder={t('address.block') + ' *'}
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                 />
 
@@ -246,7 +248,7 @@ const Adress = () => {
                   name='Street'
                   value={formData.Street}
                   onChange={handleChange}
-                  placeholder='Street *'
+                  placeholder={t('address.street') + ' *'}
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                 />
 
@@ -257,7 +259,7 @@ const Adress = () => {
                     name='house'
                     value={formData.house}
                     onChange={handleChange}
-                    placeholder='House # *'
+                    placeholder={t('address.house') + ' *'}
                     className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                   />
                 )}
@@ -269,7 +271,7 @@ const Adress = () => {
                       name='Floor'
                       value={formData.Floor}
                       onChange={handleChange}
-                      placeholder='Floor *'
+                      placeholder={t('address.floor') + ' *'}
                       className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                     />
                     <input
@@ -277,7 +279,7 @@ const Adress = () => {
                       name='Building'
                       value={formData.Building}
                       onChange={handleChange}
-                      placeholder='Building Name *'
+                      placeholder={t('address.building') + ' *'}
                       className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                     />
                     <input
@@ -285,7 +287,7 @@ const Adress = () => {
                       name='Apartment'
                       value={formData.Apartment}
                       onChange={handleChange}
-                      placeholder='Apartment # *'
+                      placeholder={t('address.apartment') + ' *'}
                       className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                     />
                   </>
@@ -298,7 +300,7 @@ const Adress = () => {
                       name='Floor'
                       value={formData.Floor}
                       onChange={handleChange}
-                      placeholder='Floor *'
+                      placeholder={t('address.floor') + ' *'}
                       className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                     />
                     <input
@@ -306,7 +308,7 @@ const Adress = () => {
                       name='Building'
                       value={formData.Building}
                       onChange={handleChange}
-                      placeholder='Building Name *'
+                      placeholder={t('address.building') + ' *'}
                       className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                     />
                     <input
@@ -314,7 +316,7 @@ const Adress = () => {
                       name='Office'
                       value={formData.Office}
                       onChange={handleChange}
-                      placeholder='Office # *'
+                      placeholder={t('address.office') + ' *'}
                       className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                     />
                   </>
@@ -326,7 +328,7 @@ const Adress = () => {
                   name='Avenue'
                   value={formData.Avenue}
                   onChange={handleChange}
-                  placeholder='Avenue'
+                  placeholder={t('address.avenue') + ' *'}
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                 />
 
@@ -335,7 +337,7 @@ const Adress = () => {
                   name='paci'
                   value={formData.paci}
                   onChange={handleChange}
-                  placeholder='PACI'
+                  placeholder={t('address.paci') + ' *'}
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                 />
 
@@ -344,7 +346,7 @@ const Adress = () => {
                   name='additional'
                   value={formData.additional}
                   onChange={handleChange}
-                  placeholder='Additional'
+                  placeholder={t('address.additional') + ' *'}
                   className='w-full bg-transparent border-b border-gray-300 focus:border-red-500 outline-none text-gray-700 placeholder-gray-500 pb-1'
                 />
 
@@ -352,7 +354,7 @@ const Adress = () => {
                   type='submit'
                   className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white py-3 rounded-lg transition-colors mt-6'
                 >
-                  Next
+                  {t('brand.Next')}
                 </button>
               </form>
             </div>

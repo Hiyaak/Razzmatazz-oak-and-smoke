@@ -1,17 +1,18 @@
 import { ArrowLeft } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ApiService, { ImagePath } from '../../Services/Apiservice'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { toast } from 'react-toastify'
 import { useCart } from '../../Context/CartContext'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const Myorders = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { clearCart } = useCart()
-
+  const { language } = useContext(LanguageContext)
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancellingId, setCancellingId] = useState(null)
@@ -125,7 +126,7 @@ const Myorders = () => {
     } else {
       getOrders()
     }
-  }, [])
+  }, [language])
 
   useEffect(() => {
     if (paymentStatus) {
@@ -186,17 +187,6 @@ const Myorders = () => {
       toast.error('Something went wrong')
     }
   }
-
-  // const checkFeedbackExists = async orderId => {
-  //   try {
-  //     const { data } = await ApiService.get(`getFeedbacksByOrder/${orderId}`)
-
-  //     return data.status && data.feedback?.length > 0
-  //   } catch (error) {
-  //     console.log('Check feedback error:', error)
-  //     return false
-  //   }
-  // }
 
   // ✅ Cancel Order
   const cancelOrder = async orderId => {

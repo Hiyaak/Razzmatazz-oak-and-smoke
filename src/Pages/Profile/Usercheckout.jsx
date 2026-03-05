@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
 import ApiService from '../../Services/Apiservice'
+import { useTranslation } from 'react-i18next'
 
 const Usercheckout = () => {
   const navigate = useNavigate()
   const location = useLocation()
-
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -178,7 +179,7 @@ const Usercheckout = () => {
                 </svg>
               </div>
               <h2 className='text-2xl font-semibold text-gray-600'>
-                Contact Information
+                {t('Contact.Contact Information')}
               </h2>
             </div>
 
@@ -187,7 +188,7 @@ const Usercheckout = () => {
               {/* Name Field */}
               <div>
                 <label className='block text-sm text-gray-500 mb-1'>
-                  Name <span className='text-red-500'>*</span>
+                  {t('Contact.name')} <span className='text-red-500'>*</span>
                 </label>
                 <input
                   type='text'
@@ -202,9 +203,9 @@ const Usercheckout = () => {
               {/* Email Field (Read-only) */}
               <div>
                 <label className='block text-sm text-gray-500 mb-1'>
-                  Email{' '}
+                  {t('profile.Email')}
                   <span className='text-xs text-gray-400'>
-                    (for your invoice)
+                    ({t('Contact.invoice')})
                   </span>
                 </label>
                 <input
@@ -220,7 +221,7 @@ const Usercheckout = () => {
               {/* Phone Field */}
               <div>
                 <label className='block text-sm text-gray-500 mb-1'>
-                  Phone <span className='text-red-500'>*</span>
+                  {t('Contact.phone')} <span className='text-red-500'>*</span>
                 </label>
                 <div className='flex items-center border-b border-gray-300 focus-within:border-red-600 transition-colors py-3'>
                   <span className='text-base mr-2'>KW</span>
@@ -247,7 +248,7 @@ const Usercheckout = () => {
             disabled={loading || !formData.name || !formData.phone}
             className='w-full bg-[#FA0303] hover:bg-[#AF0202] disabled:bg-red-400 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors text-base'
           >
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? t('Contact.saving') : t('Contact.save')}
           </button>
         </div>
       </div>

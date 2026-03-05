@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { ArrowLeft, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import ApiService from '../../Services/Apiservice'
@@ -9,6 +9,8 @@ import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { useTranslation } from 'react-i18next'
 
 const ContactInfoForm = () => {
+  const { t } = useTranslation()
+ 
   const [showGuestForm, setShowGuestForm] = useState(false)
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -16,7 +18,6 @@ const ContactInfoForm = () => {
     email: '',
     phone: ''
   })
-   const { t } = useTranslation()
 
   const storedBrandId = localStorage.getItem('brandId')
   console.log('Retrieved brandId:', storedBrandId)
@@ -197,7 +198,7 @@ const ContactInfoForm = () => {
 
                 {/* Title */}
                 <h2 className='text-2xl font-semibold text-gray-700 text-center mb-8'>
-                  Contact Information
+                  {t('login.ContactInformation')}
                 </h2>
 
                 {/* Form Fields */}
@@ -207,7 +208,7 @@ const ContactInfoForm = () => {
                     <input
                       type='text'
                       name='name'
-                      placeholder='Name *'
+                      placeholder={t('Contact.name')}
                       value={formData.name}
                       onChange={handleInputChange}
                       className='w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-gray-500 focus:outline-none text-gray-800 placeholder-gray-500 transition-colors'
@@ -219,7 +220,9 @@ const ContactInfoForm = () => {
                     <input
                       type='email'
                       name='email'
-                      placeholder='Email (for your invoice)'
+                      placeholder={`${t('profile.Email')} (${t(
+                        'Contact.invoice'
+                      )})`}
                       value={formData.email}
                       onChange={handleInputChange}
                       className='w-full px-0 py-3 border-0 border-b-2 border-gray-300 focus:border-gray-500 focus:outline-none text-gray-800 placeholder-gray-500 transition-colors pr-10'
@@ -251,7 +254,7 @@ const ContactInfoForm = () => {
                       <input
                         type='tel'
                         name='phone'
-                        placeholder='Phone *'
+                        placeholder={t('Contact.phone')}
                         value={formData.phone}
                         onChange={handleInputChange}
                         maxLength={8}
@@ -266,7 +269,7 @@ const ContactInfoForm = () => {
                   onClick={handleGuestlogin}
                   className='w-full bg-[#FA0303] hover:bg-[#AF0202] text-white font-semibold py-3.5 rounded-lg transition-colors shadow-sm'
                 >
-                  Next
+                  {t('brand.Next')}
                 </button>
               </div>
             </>

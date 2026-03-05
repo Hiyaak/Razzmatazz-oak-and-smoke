@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import {
   ArrowLeft,
   ThumbsUp,
@@ -18,10 +18,12 @@ import RightPanelLayout from '../../Layout/RightPanelLayout'
 import { IoSendSharp } from 'react-icons/io5'
 import { IoMdThumbsUp } from 'react-icons/io'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from '../../Context/LanguageContext'
 
 const Contact = () => {
   const navigate = useNavigate()
   const [showFeedbackForm, setShowFeedbackForm] = useState(false)
+  const { language } = useContext(LanguageContext)
   const [showReviews, setShowReviews] = useState(false)
   const [locations, setLocations] = useState([])
   const [branchDetails, setBranchDetails] = useState([])
@@ -78,7 +80,7 @@ const Contact = () => {
     getLocations()
     getBranchDetails()
     getReviews()
-  }, [])
+  }, [language])
 
   // Handle input changes
   const handleInputChange = e => {

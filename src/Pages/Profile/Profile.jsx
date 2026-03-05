@@ -18,7 +18,6 @@ const MenuPage = () => {
   const [activeView, setActiveView] = useState('menu')
   const [activeTab, setActiveTab] = useState('register')
   const [showPassword, setShowPassword] = useState(false)
-  const [otp, setOtp] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -45,6 +44,7 @@ const MenuPage = () => {
       .min(8, 'Password must be at least 8 characters')
       .required('Password is required')
   })
+  
   const registerSchema = Yup.object().shape({
     name: Yup.string()
       .trim()
