@@ -15,7 +15,16 @@
     "Choose": "اختر متجرًا",
     "Method": "اختر طريقة التسليم",
     "Search": "ابحث عن وجبتك المفضلة ...",
-    "Done": "تم"
+    "Done": "تم",
+    "Next": "التالي",
+    "Delivery Area & Location": "منطقة التوصيل والموقع",
+    "Address Details": "تفاصيل العنوان",
+    "Change": "تغيير",
+    "Details": "التفاصيل",
+    "Address": "العنوان",
+    "Hours": "ساعات العمل",
+    "Get Directions": "الحصول على الاتجاهات",
+    "Call": "اتصال"
   },
   "profile": {
     "Menu": "القائمة",
@@ -53,6 +62,9 @@
     "Review Order": "مراجعة الطلب"
   },
   "Contact": {
+    "phone": "الهاتف",
+    "invoice": "للفاتورتك",
+    "Contact Information": "معلومات الاتصال",
     "ourBranches": "فروعنا",
     "nobranchesavailable": "لا توجد فروع متاحة",
     "youropinionmatters": "رأيك مهم",
@@ -64,7 +76,9 @@
     "name": "الاسم",
     "phoneOptional": "الهاتف (اختياري)",
     "leaveusacomment": "اترك لنا تعليقًا",
-    "SEND": "إرسال"
+    "SEND": "إرسال",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ..."
   },
   "PlaceOrder": {
     "Pickupfrom": "الاستلام من",
@@ -85,7 +99,11 @@
     "Description": "الوصف",
     "DIY": "العمل يدوي",
     "COMBOS": "الوجبات الجاهزة",
-    "Catering": "التموين - قوائم الطعام"
+    "Catering": "التموين - قوائم الطعام",
+    "Schedule Delivery": "جدولة التوصيل",
+    "Schedule Order": "جدولة الطلب",
+    "Cash on Delivery": "الدفع عند الاستلام",
+    "Online (TAP)": "عبر الإنترنت"
   },
   "MyOrders": {
     "MyOrders": "طلباتي",
@@ -121,5 +139,25 @@
     "Onetapreordering": "إعادة الطلب بضغطة واحدة",
     "OrcontinueasGuest": "أو استمر كضيف",
     "signup": "التسجيل"
+  },
+  "address": {
+    "block": "القطعة",
+    "street": "الشارع",
+    "floor": "الدور",
+    "building": "المبنى",
+    "apartment": "الشقة",
+    "house": "المنزل",
+    "office": "المكتب",
+    "paci": "الرقم المدني",
+    "additional": "تفاصيل إضافية",
+    "avenue": "الجادة",
+    "home": "المنزل"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "loading": "جارٍ تحميل الإشعارات...",
+    "empty": "لا توجد إشعارات.",
+    "orderId": "رقم الطلب",
+    "amount": "المبلغ"
   }
 }
