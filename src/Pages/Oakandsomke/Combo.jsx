@@ -79,6 +79,12 @@ const Combo = () => {
     return cartItem ? cartItem.quantity : 0
   }
 
+  const handleNavigate = combo => {
+    navigate(`/combodetails/${combo._id}`, {
+      state: { combo: combo }
+    })
+  }
+
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
@@ -117,6 +123,7 @@ const Combo = () => {
                         src={`${ImagePath}${combo.comboImage}`}
                         alt={combo.comboName}
                         className='w-full h-full object-cover'
+                        onClick={() => handleNavigate(combo)}
                       />
                     )}
                   </div>

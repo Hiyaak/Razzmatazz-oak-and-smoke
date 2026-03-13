@@ -157,16 +157,6 @@ const HeroSection = () => {
     }
   }
 
-  // useEffect(() => {
-  //   if (brandId) {
-  //     setGovernates([])
-  //     setAreasByGovernate({})
-  //     setManuallyExpanded(new Set())
-  //     setExpandedGovernateId(null)
-  //     getAllGovernates()
-  //   }
-  // }, [brandId, selectedMethod])
-
   useEffect(() => {
     if (brandId) {
       setGovernates([])
@@ -325,6 +315,29 @@ const HeroSection = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          <div className='flex flex-col  border-gray-200'>
+            <h2 className='font-medium text-gray-700 bg-gray-100 px-6 py-3 border-b border-gray-200'>
+              Location
+            </h2>
+
+            {/* Search only for Delivery */}
+            {selectedMethod === 'delivery' && (
+              <div className='border-gray-200'>
+                <div className='relative'>
+                  <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+
+                  <input
+                    type='text'
+                    placeholder='Search...'
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className='w-full p-3 pl-10 border-b border-gray-300 focus:outline-none focus:border-red-500'
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Governate / Area Selection */}

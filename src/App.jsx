@@ -5,6 +5,7 @@ import Loader from './Components/Loader/Loader'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ComboDetails from './Pages/Oakandsomke/ComboDetails'
 
 const Oakandsomke = lazy(() => import('./Pages/Oakandsomke/Ordernowsomke'))
 const Profile = lazy(() => import('./Pages/Profile/Profile'))
@@ -61,6 +62,7 @@ function App () {
               path='/subproductdetails/:id'
               element={<SubproductDetails />}
             />
+            <Route path='/combodetails/:id' element={<ComboDetails />} />
             <Route path='/shoopingcart' element={<Shoopingcart />} />
             <Route path='/adress' element={<Adress />} />
             <Route path='/contact' element={<Contact />} />

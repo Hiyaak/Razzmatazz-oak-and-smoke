@@ -144,10 +144,6 @@ const Subproducts = () => {
                           price: item.price,
                           image: item.image
                         })
-
-                        navigate(`/subproductdetails/${item._id}`, {
-                          state: { product: item }
-                        })
                       }}
                       className='border border-[#FA0303] text-[#FA0303] px-4 rounded hover:bg-red-50 transition-colors font-medium w-full'
                     >
