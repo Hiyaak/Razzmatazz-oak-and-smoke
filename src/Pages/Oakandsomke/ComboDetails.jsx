@@ -1,28 +1,20 @@
-import { ArrowLeft } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import React from 'react'
 import RightPanelLayout from '../../Layout/RightPanelLayout'
+import { ArrowLeft } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { ImagePath } from '../../Services/Apiservice'
 import { useCart } from '../../Context/CartContext'
-import { useTranslation } from 'react-i18next'
 
-const SubproductDetails = () => {
+const ComboDetails = () => {
   const { t } = useTranslation()
 
   const navigate = useNavigate()
   const location = useLocation()
-
-  const [selectedDate, setSelectedDate] = useState(new Date())
-  const [disabledDates, setDisabledDates] = useState([])
   const { cart, addToCart, updateQuantity } = useCart()
-  const product = location.state?.product
+  const combo = location.state?.combo
 
-  console.log('Product:', product)
-  console.log('Cart:', cart)
-
-  const cartItem = cart.find(
-    item => item.cartItemId === `product-${product?._id}`
-  )
+  const cartItem = cart.find(item => item.cartItemId === `combo-${combo?._id}`)
 
   const quantity = cartItem ? cartItem.quantity : 0
 
@@ -32,39 +24,11 @@ const SubproductDetails = () => {
     localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
 
-  useEffect(() => {
-    const fetchMonthlyReport = async () => {
-      try {
-        const year = selectedDate.getFullYear()
-        const month = selectedDate.getMonth() + 1 // JS month starts from 0
-
-        const response = await ApiService.post('getMonthlyDiyComboReport', {
-          brandId: product?.brandId,
-          year,
-          month
-        })
-
-        if (response.data.status) {
-          const exceededDates = response.data.report
-            .filter(item => item.exceeded)
-            .map(item => new Date(item._id))
-
-          setDisabledDates(exceededDates)
-        }
-      } catch (error) {
-        console.log('Report API error:', error)
-      }
-    }
-
-    if (product?.brandId) {
-      fetchMonthlyReport()
-    }
-  }, [selectedDate, product])
+  console.log('combo:', combo)
 
   const handleReviewOrder = () => {
     navigate('/shoopingcart')
   }
-
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
       {/* Left Sidebar */}
@@ -80,7 +44,7 @@ const SubproductDetails = () => {
             </button>
 
             <h1 className='text-2xl font-semibold text-gray-900 text-center flex-1'>
-              {product?.name?.toUpperCase()}
+              {combo?.comboName?.toUpperCase()}
             </h1>
 
             <div className='w-9' />
@@ -89,15 +53,14 @@ const SubproductDetails = () => {
 
         {/* Scrollable Content */}
         <div className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden'>
-          {/* Product Image */}
+          {/* combo Image */}
           <div className='w-full h-96'>
             <img
-              src={`${ImagePath}${product?.image}`}
-              alt={product?.name}
+              src={`${ImagePath}${combo?.comboImage}`}
+              alt={combo?.comboName}
               className='w-full h-full object-cover'
             />
           </div>
-
           {/* Product Info Section */}
           <div className=''>
             {/* Name + Quantity Row */}
@@ -105,11 +68,11 @@ const SubproductDetails = () => {
               {/* Left Side - Name & Price */}
               <div className='p-4'>
                 <h2 className='text-xl font-semibold text-gray-900'>
-                  {product?.name}
+                  {combo?.comboName}
                 </h2>
 
                 <p className='text-red-600 font-medium mt-1'>
-                  {product?.price} {t('ShoopingCart.KD')}
+                  {combo?.price} {t('ShoopingCart.KD')}
                 </p>
               </div>
 
@@ -118,14 +81,13 @@ const SubproductDetails = () => {
                 <button
                   onClick={() =>
                     addToCart({
-                      cartItemId: `product-${product._id}`,
-                      _id: product._id,
-                      brandId: product.brandId,
-                      product_id: product.product_id,
-                      type: 'product',
-                      name: product.name,
-                      price: product.price,
-                      image: product.image
+                      cartItemId: `combo-${combo._id}`,
+                      _id: combo._id,
+                      brandId: combo.brandId,
+                      type: 'combo',
+                      name: combo.comboName,
+                      price: combo.price,
+                      image: combo.comboImage
                     })
                   }
                   className='px-4 py-1 border border-red-600 text-red-600 rounded-full font-semibold mr-4'
@@ -170,7 +132,7 @@ const SubproductDetails = () => {
               <div className='p-4 space-y-3'>
                 {/* API Description */}
                 <p className='text-sm whitespace-pre-line'>
-                  {product?.description}
+                  {combo?.description}
                 </p>
               </div>
             </div>
@@ -218,11 +180,10 @@ const SubproductDetails = () => {
           )}
         </div>
       </div>
-
       {/* Right Panel - Fixed, No Scroll */}
       <RightPanelLayout />
     </div>
   )
 }
 
-export default SubproductDetails
+export default ComboDetails

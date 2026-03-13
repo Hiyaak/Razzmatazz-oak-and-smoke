@@ -6,7 +6,9 @@ import {
   ShoppingBag,
   Search,
   AlertCircle,
-  Instagram
+  Instagram,
+  Globe,
+  Type
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import heroImage from '../../assets/concept.jpg'
@@ -22,7 +24,7 @@ import { LanguageContext } from '../../Context/LanguageContext'
 
 const FoodDeliveryApp = () => {
   const { t } = useTranslation()
-  const { language } = useContext(LanguageContext)
+  const { language, changeLanguage } = useContext(LanguageContext)
   const [productCategories, setproductCategories] = useState([])
   const [managementStatus, setManagementStatus] = useState({
     deliveryStatus: true,
@@ -358,6 +360,16 @@ const FoodDeliveryApp = () => {
             </div>
 
             <div className='flex items-center space-x-2'>
+              <button
+                onClick={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
+                className='w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-all'
+              >
+                {language === 'en' ? (
+                  <Globe className='w-5 h-5' />
+                ) : (
+                  <Type className='w-5 h-5' />
+                )}
+              </button>
               <button onClick={handleshoopingcartClick} className='p-2'>
                 <ShoppingBag className='w-6 h-6 text-gray-700' />
               </button>
@@ -401,9 +413,9 @@ const FoodDeliveryApp = () => {
                 />
                 <div>
                   <h1 className='text-md font-bold text-gray-900'>
-                    Oak and Smoke
+                    {t('brand.name')}
                   </h1>
-                  <p className='text-sm text-gray-500'>Smoke Meat Everyday</p>
+                  <p className='text-sm text-gray-500'> {t('brand.tagline')}</p>
                 </div>
               </div>
 
@@ -427,7 +439,7 @@ const FoodDeliveryApp = () => {
                     : 'bg-white text-gray-700 border border-gray-400 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Delivery
+                {t('brand.Delivery')}
               </button>
               <button
                 onClick={e => {
@@ -441,7 +453,7 @@ const FoodDeliveryApp = () => {
                     : 'bg-white text-gray-700 border border-gray-400 hover:border-gray-500 hover:text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                Pickup
+                {t('brand.Pickup')}
               </button>
             </div>
 
@@ -474,7 +486,7 @@ const FoodDeliveryApp = () => {
                       onClick={() => navigate('/pickupdeviler')}
                       className='text-sm font-medium text-gray-900 hover:text-gray-700'
                     >
-                      Choose location
+                      {t('brand.Chooselocation')}
                     </button>
                   )}
                 </div>
@@ -491,6 +503,56 @@ const FoodDeliveryApp = () => {
             {/* Product Grid Section - Scrollable */}
             <div className='px-1 py-1'>
               <div className='px-2 pt-8 pb-4 bg-gray-100 grid grid-cols-2 gap-2 cursor-pointer'>
+                {/* Catering */}
+                <div
+                  onClick={() => navigate('/GetAllPackages')}
+                  className='relative rounded-lg overflow-hidden shadow'
+                >
+                  <img
+                    src={CateringImage}
+                    alt='Catering'
+                    className='w-full h-60 object-cover'
+                  />
+                  <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                    <h3 className='text-gray-100 font-bold text-lg text-center'>
+                      {t('PlaceOrder.Catering')}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Combo */}
+                <div
+                  onClick={() => navigate('/combo')}
+                  className='relative rounded-lg overflow-hidden shadow'
+                >
+                  <img
+                    src={ComboImage}
+                    alt='Combo'
+                    className='w-full h-60 object-cover'
+                  />
+                  <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                    <h3 className='text-gray-100 font-bold text-lg text-center'>
+                      {t('PlaceOrder.COMBOS')}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* DIY */}
+                <div
+                  onClick={() => navigate('/diy')}
+                  className='relative rounded-lg overflow-hidden shadow'
+                >
+                  <img
+                    src={ComboDIY}
+                    alt='DIY'
+                    className='w-full h-60 object-cover'
+                  />
+                  <div className='absolute inset-0 bg-black/25 flex items-center justify-center'>
+                    <h3 className='text-gray-100 font-bold text-lg text-center'>
+                      {t('PlaceOrder.DIY')}
+                    </h3>
+                  </div>
+                </div>
                 {productCategories.map(item => (
                   <div
                     key={item._id}
@@ -523,7 +585,7 @@ const FoodDeliveryApp = () => {
               onClick={() => navigate('/pickupdeviler')}
               className='w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors'
             >
-              Select your location
+              {t('brand.Selectlocation')}
             </button>
           </div>
         )}
