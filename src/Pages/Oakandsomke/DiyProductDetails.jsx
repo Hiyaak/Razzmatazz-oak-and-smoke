@@ -16,6 +16,9 @@ const DiyProductDetails = () => {
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [disabledDates, setDisabledDates] = useState([])
+  const [blockedDates, setBlockedDates] = useState([])
+  const [blockedSlots, setBlockedSlots] = useState([])
+  const [isOrderLimitExceeded, setIsOrderLimitExceeded] = useState(false)
   const product = location.state?.product
 
   const { cart, addToCart, updateQuantity } = useCart()
@@ -24,12 +27,15 @@ const DiyProductDetails = () => {
   const { selectedMethod, selectedGovernate, selectedArea } = JSON.parse(
     localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
-
   useEffect(() => {
     const fetchMonthlyReport = async () => {
       try {
         const year = selectedDate.getFullYear()
         const month = selectedDate.getMonth() + 1
+
+        console.log('Selected Date:', selectedDate)
+        console.log('Year:', year, 'Month:', month)
+        console.log('BrandId:', product?.brandId)
 
         const response = await ApiService.post('getMonthlyDiyComboReport', {
           brandId: product?.brandId,
@@ -37,23 +43,43 @@ const DiyProductDetails = () => {
           month
         })
 
-        if (response.data.status) {
-          const exceededDates = response.data.report
-            .filter(item => item.exceeded)
-            .map(item => {
-              const [year, month, day] = item._id.split('-')
-              return new Date(year, month - 1, day)
-            })
+        console.log('API Response:', response.data)
 
-          setDisabledDates(exceededDates)
-          console.log('exceeddates:-', exceededDates)
+        if (response.data.status) {
+          // 🔴 Blocked Dates
+          const blocked = response.data.diyBlocks.flatMap(block =>
+            block.blockedDate.map(d => new Date(d))
+          )
+
+          console.log(
+            'Blocked Dates:',
+            blocked.map(d => d.toDateString())
+          )
+
+          setBlockedDates(blocked)
+
+          // ⏱ Blocked Slots
+          const slots = response.data.diyBlocks.flatMap(
+            block => block.blockedTimeSlots
+          )
+
+          console.log('Blocked Time Slots:', slots)
+
+          setBlockedSlots(slots)
+
+          // ⚠ Exceeded Order Limit
+          const exceeded = response.data.report.some(r => r.exceeded)
+
+          console.log('Order Limit Exceeded:', exceeded)
+
+          setIsOrderLimitExceeded(exceeded)
         }
       } catch (error) {
         console.log('Report API error:', error)
       }
     }
 
-    if (product?.brandId) {
+    if (product?.brandId && selectedDate) {
       fetchMonthlyReport()
     }
   }, [selectedDate, product])
@@ -68,8 +94,12 @@ const DiyProductDetails = () => {
     { start: '2:00 PM', end: '3:00 PM' },
     { start: '3:00 PM', end: '4:00 PM' },
     { start: '4:00 PM', end: '5:00 PM' },
+    { start: '5:00 PM', end: '6:00 PM' },
     { start: '6:00 PM', end: '7:00 PM' },
-    { start: '7:00 PM', end: '8:00 PM' }
+    { start: '7:00 PM', end: '8:00 PM' },
+    { start: '8:00 PM', end: '9:00 PM' },
+    { start: '9:00 PM', end: '10:00 PM' },
+    { start: '10:00 PM', end: '11:00 PM' }
   ]
 
   const scrollLeft = () => {
@@ -112,6 +142,20 @@ const DiyProductDetails = () => {
       setSelectedSlot(null)
     }
   }, [selectedDate])
+
+  const isAddDisabled =
+    isDateDisabled ||
+    isOrderLimitExceeded ||
+    (selectedSlot &&
+      blockedSlots.some(slot => {
+        const slotStart24 = new Date(
+          `1970-01-01 ${selectedSlot.split(' - ')[0]}`
+        )
+          .toTimeString()
+          .slice(0, 5)
+
+        return slotStart24 >= slot.startTime && slotStart24 < slot.endTime
+      }))
 
   return (
     <div className='flex flex-col md:flex-row min-h-screen'>
@@ -170,8 +214,8 @@ const DiyProductDetails = () => {
                         return toast.error('Please select a date')
                       }
 
-                      if (isDateDisabled) {
-                        return toast.error('Order limit reached for this date')
+                      if (isAddDisabled) {
+                        return toast.error('Order limit reached')
                       }
 
                       if (!selectedSlot) {
@@ -190,7 +234,6 @@ const DiyProductDetails = () => {
                         selectedSlot
                       })
                     }}
-                    disabled={isDateDisabled}
                     className={`border px-4 py-1 rounded-full font-medium transition-colors
     ${
       isDateDisabled
@@ -241,22 +284,25 @@ const DiyProductDetails = () => {
                   value={selectedDate}
                   minDate={new Date()}
                   tileClassName={({ date }) => {
-                    const isDisabled = disabledDates.some(
-                      disabled =>
-                        disabled.getTime() === date.setHours(0, 0, 0, 0)
+                    const normalizedDate = new Date(date).setHours(0, 0, 0, 0)
+
+                    const isBlocked = blockedDates.some(
+                      d => new Date(d).setHours(0, 0, 0, 0) === normalizedDate
                     )
 
-                    return isDisabled
-                      ? 'bg-red-200 text-red-600 font-semibold'
-                      : null
+                    if (isBlocked) {
+                      return 'blocked-date'
+                    }
+
+                    return null
                   }}
-                  tileDisabled={({ date }) =>
-                    disabledDates.some(
-                      disabled =>
-                        disabled.getTime() ===
-                        new Date(date).setHours(0, 0, 0, 0)
+                  tileDisabled={({ date }) => {
+                    const normalizedDate = new Date(date).setHours(0, 0, 0, 0)
+
+                    return blockedDates.some(
+                      d => new Date(d).setHours(0, 0, 0, 0) === normalizedDate
                     )
-                  }
+                  }}
                 />
               </div>
             </div>
@@ -288,17 +334,31 @@ const DiyProductDetails = () => {
                       {staticTimeSlots.map((slot, index) => {
                         const slotLabel = `${slot.start} - ${slot.end}`
 
+                        // convert slot.start to 24h
+                        const slotStart24 = new Date(`1970-01-01 ${slot.start}`)
+                          .toTimeString()
+                          .slice(0, 5)
+
+                        const isBlocked = blockedSlots.some(
+                          blocked =>
+                            slotStart24 >= blocked.startTime &&
+                            slotStart24 < blocked.endTime
+                        )
+
                         return (
                           <button
                             key={index}
+                            disabled={isBlocked}
                             onClick={() => setSelectedSlot(slotLabel)}
                             className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
-                ${
-                  selectedSlot === slotLabel
-                    ? 'bg-green-600 text-white'
-                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
-                }
-              `}
+      ${
+        isBlocked
+          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          : selectedSlot === slotLabel
+          ? 'bg-green-600 text-white'
+          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+      }
+    `}
                           >
                             {slotLabel}
                           </button>

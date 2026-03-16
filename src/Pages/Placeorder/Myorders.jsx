@@ -431,6 +431,37 @@ const Myorders = () => {
 
                   {/* Cancel Button */}
                   {(() => {
+                    // ✅ CASH payment logic
+                    if (order.paymentMethod === 'cash') {
+                      // ❌ If already cancelled → show nothing
+                      if (order.status === 'CancelledByUser') {
+                        return (
+                          <div className='mt-3 w-full bg-red-100 text-red-700 py-2 rounded-lg text-center font-medium'>
+                            {t('MyOrders.Cancelled')}
+                          </div>
+                        )
+                      }
+
+                      // ❌ Delivered → no cancel
+                      if (order.status === 'Delivered') {
+                        return null
+                      }
+
+                      // ✅ Otherwise show cancel button
+                      return (
+                        <button
+                          onClick={() => cancelOrder(order._id)}
+                          disabled={cancellingId === order._id}
+                          className='mt-3 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 disabled:opacity-50'
+                        >
+                          {cancellingId === order._id
+                            ? t('MyOrders.Cancelling')
+                            : t('MyOrders.Cancel Order')}
+                        </button>
+                      )
+                    }
+
+                    // ✅ ONLINE payments logic
                     switch (order.status) {
                       case 'CancelledByUser':
                         return (

@@ -24,10 +24,6 @@ const Subproducts = () => {
 
   const [subProductCategories, setSubProductCategories] = useState([])
 
-  useEffect(() => {
-    getAllPackages()
-  }, [language])
-
   const getAllPackages = async () => {
     try {
       const { data } = await ApiService.get(
@@ -41,6 +37,10 @@ const Subproducts = () => {
       console.log('Error fetching packages:', error)
     }
   }
+
+  useEffect(() => {
+    getAllPackages()
+  }, [language])
 
   const handleReviewOrder = () => {
     navigate('/shoopingcart')
