@@ -569,7 +569,7 @@ const Placeorder = () => {
                   </p>
                 </div>
                 <button className='text-gray-600 hover:text-[#FA0303]'>
-                  <HiPencil onClick={handleAdress} className='text-lg' />
+                  <HiPencil className='text-lg' />
                 </button>
               </div>
 

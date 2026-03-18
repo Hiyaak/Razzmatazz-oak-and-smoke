@@ -91,11 +91,6 @@ const FoodDeliveryApp = () => {
     selectedAreaId
   })
 
-  // const handleProduct = (productId, productName) => {
-  //   navigate(
-  //     `/subproduct/${encodeURIComponent(productName)}?productId=${productId}`
-  //   )
-
   const handleProduct = productId => {
     navigate(`/subproduct/${productId}`)
   }
