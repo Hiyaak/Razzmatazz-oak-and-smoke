@@ -13,12 +13,14 @@ const DiyProductDetails = () => {
   const location = useLocation()
   const timeScrollRef = useRef(null)
   const [quantity, setQuantity] = useState(0)
-  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [disabledDates, setDisabledDates] = useState([])
   const [blockedDates, setBlockedDates] = useState([])
-  const [blockedSlots, setBlockedSlots] = useState([])
+  const [blockedSlots, setBlockedSlots] = useState({})
+  const [isMonthFullyBlocked, setIsMonthFullyBlocked] = useState(false)
   const [isOrderLimitExceeded, setIsOrderLimitExceeded] = useState(false)
+  const [dateOrderCount, setDateOrderCount] = useState({})
   const product = location.state?.product
 
   const { cart, addToCart, updateQuantity } = useCart()
@@ -28,61 +30,62 @@ const DiyProductDetails = () => {
     localStorage.getItem(`selectedLocation_${brandId}`) || '{}'
   )
   useEffect(() => {
+    if (!selectedDate || !product?.brandId) return
+
     const fetchMonthlyReport = async () => {
       try {
         const year = selectedDate.getFullYear()
         const month = selectedDate.getMonth() + 1
 
-        console.log('Selected Date:', selectedDate)
-        console.log('Year:', year, 'Month:', month)
-        console.log('BrandId:', product?.brandId)
-
         const response = await ApiService.post('getMonthlyDiyComboReport', {
-          brandId: product?.brandId,
+          brandId: product.brandId,
           year,
           month
         })
 
-        console.log('API Response:', response.data)
+        if (!response.data?.status) return
 
-        if (response.data.status) {
-          // 🔴 Blocked Dates
-          const blocked = response.data.diyBlocks.flatMap(block =>
-            block.blockedDate.map(d => new Date(d))
-          )
+        // ✅ Reset states when month changes
+        setIsMonthFullyBlocked(false)
+        setBlockedDates([])
+        setBlockedSlots({})
 
-          console.log(
-            'Blocked Dates:',
-            blocked.map(d => d.toDateString())
-          )
+        const fullyBlockedDates = []
+        const partiallyBlocked = {}
 
-          setBlockedDates(blocked)
-
-          // ⏱ Blocked Slots
-          const slots = response.data.diyBlocks.flatMap(
-            block => block.blockedTimeSlots
-          )
-
-          console.log('Blocked Time Slots:', slots)
-
-          setBlockedSlots(slots)
-
-          // ⚠ Exceeded Order Limit
-          const exceeded = response.data.report.some(r => r.exceeded)
-
-          console.log('Order Limit Exceeded:', exceeded)
-
-          setIsOrderLimitExceeded(exceeded)
+        // 🚫 If month is fully blocked
+        if (response.data.diyBlocks.length === 0) {
+          setIsMonthFullyBlocked(true)
+          return
         }
+
+        response.data.diyBlocks.forEach(block => {
+          block.blockedDate.forEach(date => {
+            const dateKey = new Date(date).toDateString()
+
+            // ✅ If orderLimit exists → DO NOT fully block
+            if (block.orderLimit && block.orderLimit > 0) {
+              // Treat as partially available (not blocked)
+              partiallyBlocked[dateKey] = block.blockedTimeSlots || []
+            } else if (block.blockedTimeSlots.length === 0) {
+              // 🚫 Fully blocked only if no slots AND no order limit
+              fullyBlockedDates.push(new Date(date))
+            } else {
+              // ⏱ Partially blocked slots
+              partiallyBlocked[dateKey] = block.blockedTimeSlots
+            }
+          })
+        })
+
+        setBlockedDates(fullyBlockedDates)
+        setBlockedSlots(partiallyBlocked)
       } catch (error) {
         console.log('Report API error:', error)
       }
     }
 
-    if (product?.brandId && selectedDate) {
-      fetchMonthlyReport()
-    }
-  }, [selectedDate, product])
+    fetchMonthlyReport()
+  }, [selectedDate?.getFullYear(), selectedDate?.getMonth(), product])
 
   const handleReviewOrder = () => {
     navigate('/shoopingcart')
@@ -142,19 +145,16 @@ const DiyProductDetails = () => {
       setSelectedSlot(null)
     }
   }, [selectedDate])
+  const slotsForSelectedDate =
+    blockedSlots[new Date(selectedDate).toDateString()] || []
 
   const isAddDisabled =
     isDateDisabled ||
     isOrderLimitExceeded ||
     (selectedSlot &&
-      blockedSlots.some(slot => {
-        const slotStart24 = new Date(
-          `1970-01-01 ${selectedSlot.split(' - ')[0]}`
-        )
-          .toTimeString()
-          .slice(0, 5)
-
-        return slotStart24 >= slot.startTime && slotStart24 < slot.endTime
+      slotsForSelectedDate.some(slot => {
+        const selectedStart = selectedSlot.split(' - ')[0]
+        return slot.startTime === selectedStart
       }))
 
   return (
@@ -281,22 +281,25 @@ const DiyProductDetails = () => {
               <div className='p-4'>
                 <Calendar
                   onChange={setSelectedDate}
+                  onActiveStartDateChange={({ activeStartDate }) => {
+                    setSelectedDate(activeStartDate)
+                  }}
                   value={selectedDate}
                   minDate={new Date()}
                   tileClassName={({ date }) => {
+                    if (isMonthFullyBlocked) return 'blocked-date'
+
                     const normalizedDate = new Date(date).setHours(0, 0, 0, 0)
 
                     const isBlocked = blockedDates.some(
                       d => new Date(d).setHours(0, 0, 0, 0) === normalizedDate
                     )
 
-                    if (isBlocked) {
-                      return 'blocked-date'
-                    }
-
-                    return null
+                    return isBlocked ? 'blocked-date' : null
                   }}
                   tileDisabled={({ date }) => {
+                    if (isMonthFullyBlocked) return true
+
                     const normalizedDate = new Date(date).setHours(0, 0, 0, 0)
 
                     return blockedDates.some(
@@ -334,15 +337,10 @@ const DiyProductDetails = () => {
                       {staticTimeSlots.map((slot, index) => {
                         const slotLabel = `${slot.start} - ${slot.end}`
 
-                        // convert slot.start to 24h
-                        const slotStart24 = new Date(`1970-01-01 ${slot.start}`)
-                          .toTimeString()
-                          .slice(0, 5)
-
-                        const isBlocked = blockedSlots.some(
+                        const isBlocked = slotsForSelectedDate.some(
                           blocked =>
-                            slotStart24 >= blocked.startTime &&
-                            slotStart24 < blocked.endTime
+                            blocked.startTime === slot.start &&
+                            blocked.endTime === slot.end
                         )
 
                         return (
@@ -351,14 +349,13 @@ const DiyProductDetails = () => {
                             disabled={isBlocked}
                             onClick={() => setSelectedSlot(slotLabel)}
                             className={`min-w-fit px-5 py-2 rounded-md border text-sm transition
-      ${
-        isBlocked
-          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          : selectedSlot === slotLabel
-          ? 'bg-green-600 text-white'
-          : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
-      }
-    `}
+        ${
+          isBlocked
+            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            : selectedSlot === slotLabel
+            ? 'bg-green-600 text-white'
+            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'
+        }`}
                           >
                             {slotLabel}
                           </button>
@@ -377,7 +374,6 @@ const DiyProductDetails = () => {
                 </div>
               </div>
             )}
-
             {/* Description Section */}
             <div className='border-b border-gray-200'>
               {/* Heading */}

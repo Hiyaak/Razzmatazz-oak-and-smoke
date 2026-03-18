@@ -45,12 +45,16 @@ const Search = () => {
     }
 
     const filtered = subProducts.filter(product => {
-      const enName = product?.name?.en?.toLowerCase() || ''
-      const arName = product?.name?.ar?.toLowerCase() || ''
+      const name = product?.name?.toLowerCase() || ''
+      const description = product?.description?.toLowerCase() || ''
+      const productName = product?.productName?.toLowerCase() || ''
 
-      return enName.includes(query) || arName.includes(query)
+      return (
+        name.includes(query) ||
+        description.includes(query) ||
+        productName.includes(query)
+      )
     })
-
     setFilteredProducts(filtered)
   }
 
@@ -111,12 +115,16 @@ const Search = () => {
                           {/* Name + Description */}
                           <div>
                             <h2 className='font-bold text-gray-900'>
-                              {item.name?.[language] || item.name?.en}
+                              {typeof item.name === 'string'
+                                ? item.name
+                                : item.name?.[language] || item.name?.en}
                             </h2>
 
                             <p className='text-sm text-gray-600'>
-                              {item.description?.[language] ||
-                                item.description?.en}
+                              {typeof item.description === 'string'
+                                ? item.description
+                                : item.description?.[language] ||
+                                  item.description?.en}
                             </p>
                           </div>
 
